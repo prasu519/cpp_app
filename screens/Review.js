@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
-import AppFormTextBox from "../components/AppFormTextBox";
+import AppTextBox from "../components/AppTextBox";
 import FieldSet from "react-native-fieldset";
 import axios from "axios";
 import AppButton from "../components/AppButton";
@@ -179,7 +179,7 @@ export default function Review({ navigation }) {
       <ScrollView style={{ padding: 10 }}>
         <FieldSet label="Feeding Data">
           <>
-            <AppFormTextBox
+            <AppTextBox
               label="CT-1"
               labelcolor="#6a994e"
               value={feeding.ct1.toString()}
@@ -188,7 +188,7 @@ export default function Review({ navigation }) {
               }}
               editable={editFeeding}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="CT-2"
               labelcolor="#6a994e"
               value={feeding.ct2.toString()}
@@ -197,7 +197,7 @@ export default function Review({ navigation }) {
               }}
               editable={editFeeding}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="CT-3"
               labelcolor="#6a994e"
               value={feeding.ct3.toString()}
@@ -206,7 +206,7 @@ export default function Review({ navigation }) {
               }}
               editable={editFeeding}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="Stream-1"
               labelcolor="#e9c46a"
               value={feeding.stream1.toString()}
@@ -215,7 +215,7 @@ export default function Review({ navigation }) {
               }}
               editable={editFeeding}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="Stream-1A"
               labelcolor="#e9c46a"
               value={feeding.stream1A.toString()}
@@ -271,7 +271,7 @@ export default function Review({ navigation }) {
         </FieldSet>
         <FieldSet label="Reclaiming Data">
           <>
-            <AppFormTextBox
+            <AppTextBox
               label="GYC"
               labelcolor="#6a994e"
               value={reclaiming.coal1.toString()}
@@ -280,7 +280,7 @@ export default function Review({ navigation }) {
               }}
               editable={editReclaiming}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="MCC"
               labelcolor="#6a994e"
               value={reclaiming.coal2.toString()}
@@ -289,7 +289,7 @@ export default function Review({ navigation }) {
               }}
               editable={editReclaiming}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="BROOKS"
               labelcolor="#6a994e"
               value={reclaiming.coal3.toString()}
@@ -298,7 +298,7 @@ export default function Review({ navigation }) {
               }}
               editable={editReclaiming}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="MSOFT"
               labelcolor="#6a994e"
               value={reclaiming.coal4.toString()}
@@ -307,7 +307,7 @@ export default function Review({ navigation }) {
               }}
               editable={editReclaiming}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="PCI"
               labelcolor="#6a994e"
               value={reclaiming.coal5.toString()}
@@ -316,7 +316,7 @@ export default function Review({ navigation }) {
               }}
               editable={editReclaiming}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="CC-49"
               labelcolor="#e9c46a"
               value={reclaiming.cc49.toString()}
@@ -325,7 +325,7 @@ export default function Review({ navigation }) {
               }}
               editable={editReclaiming}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="CC-50"
               labelcolor="#e9c46a"
               value={reclaiming.cc50.toString()}
@@ -334,7 +334,7 @@ export default function Review({ navigation }) {
               }}
               editable={editReclaiming}
             />
-            <AppFormTextBox
+            <AppTextBox
               label="CC-126"
               labelcolor="#e9c46a"
               value={reclaiming.cc126.toString()}

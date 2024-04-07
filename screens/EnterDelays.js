@@ -1,76 +1,105 @@
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
 import DelayMessageComponent from "../components/DelayMessageComponent";
 import AppButton from "../components/AppButton";
 import FieldSet from "react-native-fieldset";
-import { Formik } from "formik";
-import { date } from "yup";
 import axios from "axios";
 import BaseUrl from "../config/BaseUrl";
+import DoneScreen from "./DoneScreen";
 
 export default function EnterDelays({ navigation }) {
-  const [DelayComponent, setDelayComponent] = useState([""]);
+  const [newDelayComponent, setNewDelayComponent] = useState([""]);
   const [count, setCount] = useState(1);
-  const [myInitialValues, setMyInitialValues] = useState({});
   const [delays, setDelays] = useState([{}]);
+  const [delayComponent, setDelayComponent] = useState({});
+  const [buttonVisible, setButtonVisible] = useState(true);
+  const [doneScreen, setDoneScreen] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-  const handleInitialiseValues = () => {
-    console.log(count);
-    myInitialValues[`fromhr${count}`] = "0";
-    myInitialValues[`frommin${count}`] = "00";
-    myInitialValues[`tohr${count}`] = "0";
-    myInitialValues[`tomin${count}`] = "00";
-    myInitialValues[`desc${count}`] = "";
-    myInitialValues[`date`] = currentDate;
-    myInitialValues[`shift`] = currentShift;
-    console.log(myInitialValues);
+  const initialiseDelayComponent = () => {
+    delayComponent[`fromhr${count}`] = "";
+    delayComponent[`frommin${count}`] = "";
+    delayComponent[`tohr${count}`] = "";
+    delayComponent[`tomin${count}`] = "";
+    delayComponent[`desc${count}`] = "";
+    delayComponent[`date`] = currentDate;
+    delayComponent[`shift`] = currentShift;
   };
 
   useEffect(() => {
-    handleInitialiseValues();
+    initialiseDelayComponent();
   }, [count]);
 
-  const handleAddDelayComponent = () => {
-    setDelayComponent([...DelayComponent, ""]);
+  const handleNewDelayComponent = () => {
+    setNewDelayComponent([...newDelayComponent, ""]);
     setCount(count + 1);
+    setButtonVisible(true);
   };
-  /* const newInitialValues = { ...initialValues };
-    newInitialValues[`fromhr${count}`] = ""; // You can set default value here if needed
-    newInitialValues[`frommin${count}`] = ""; // You can set default value here if needed
-    newInitialValues[`tohr${count}`] = ""; // You can set default value here if needed
-    newInitialValues[`tomin${count}`] = ""; // You can set default value here if needed
-    setInitialValues(newInitialValues);
-  };*/
 
   const handleDelete = (index) => {
-    const updatedDelayComponents = DelayComponent.filter((_, i) => i !== index);
-    setDelayComponent(updatedDelayComponents);
+    const updatedDelayComponents = newDelayComponent.filter(
+      (_, i) => i !== index
+    );
+    setNewDelayComponent(updatedDelayComponents);
     setCount(count - 1);
+
+    const tempObject = { ...delayComponent };
+
+    delete tempObject["fromhr" + (index + 1)];
+    delete tempObject["frommin" + (index + 1)];
+    delete tempObject["tohr" + (index + 1)];
+    delete tempObject["tomin" + (index + 1)];
+    delete tempObject["desc" + (index + 1)];
+
+    setDelayComponent(tempObject);
+
+    if (count === 1) {
+      setButtonVisible(false);
+    }
   };
 
-  const handleSubmit = async (values) => {
-    console.log(values);
+  const handleSubmit = async () => {
+    if (count === 0) {
+      alert("Add atleat one Delay..");
+      return;
+    }
+
     for (let i = 0; i < count; i++) {
       delays[i] = {
         date: currentDate,
         shift: currentShift,
         fromTime:
-          values["fromhr" + (i + 1)] + ":" + values["frommin" + (i + 1)],
-        toTime: values["tohr" + (i + 1)] + ":" + values["tomin" + (i + 1)],
-        reason: values["desc" + (i + 1)],
+          delayComponent["fromhr" + (i + 1)] +
+          ":" +
+          delayComponent["frommin" + (i + 1)],
+        toTime:
+          delayComponent["tohr" + (i + 1)] +
+          ":" +
+          delayComponent["tomin" + (i + 1)],
+        reason: delayComponent["desc" + (i + 1)],
       };
-      console.log(delays);
     }
 
-    /* for (let i = 0; i < count; i++) {
+    setProgress(0);
+    setDoneScreen(true);
+
+    for (let i = 0; i < count; i++) {
       await axios
-        .post(BaseUrl + "/shiftdelay", delays[i])
+        .post(BaseUrl + "/shiftdelay", delays[i], {
+          onUploadProgress: (progress) =>
+            setProgress(progress.loaded / progress.total),
+        })
         .then((response) => console.log(response.data))
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          setDoneScreen(false);
+          alert("Could not save data..");
+        });
       console.log(delays[i]);
-    }*/
+    }
+    setDelayComponent({});
+    setNewDelayComponent([""]);
   };
 
   const currentDate =
@@ -82,120 +111,219 @@ export default function EnterDelays({ navigation }) {
 
   const currentShift = shift(new Date().getHours());
 
-  const finalValues = {
-    ...myInitialValues,
-    date: currentDate,
-    shift: currentShift,
-  };
-
   return (
-    <View style={{ flex: 1, backgroundColor: "#FFCAD4", paddingBottom: 10 }}>
-      <View
-        style={{
-          paddingTop: 40,
-          paddingLeft: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 80,
-        }}
-      >
-        <AntDesign
-          name="leftcircle"
-          size={40}
-          color="black"
-          onPress={() => navigation.goBack()}
-        />
-        <Text
+    <>
+      <DoneScreen
+        progress={progress}
+        onDone={() => setDoneScreen(false)}
+        visible={doneScreen}
+      />
+      <View style={{ flex: 1, backgroundColor: "#FFCAD4", paddingBottom: 10 }}>
+        <View
           style={{
-            fontSize: 25,
-            textDecorationLine: "underline",
-            color: "red",
-            alignSelf: "center",
-            fontWeight: "bold",
+            paddingTop: 40,
+            paddingLeft: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 80,
           }}
         >
-          Enter Delays
-        </Text>
-      </View>
-      <Formik initialValues={myInitialValues} onSubmit={handleSubmit}>
-        {({ handleSubmit, setFieldValue, values }) => (
-          <>
-            <View
-              style={{
-                flexDirection: "row",
-                gap: 80,
-                paddingTop: 20,
-                alignItems: "center",
-                justifyContent: "center",
-                borderBottomWidth: 2,
-              }}
-            >
-              <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
-                DATE :{currentDate}
-              </Text>
-              <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
-                SHIFT :{currentShift}
-              </Text>
-            </View>
+          <AntDesign
+            name="leftcircle"
+            size={40}
+            color="black"
+            onPress={() => navigation.goBack()}
+          />
+          <Text
+            style={{
+              fontSize: 25,
+              textDecorationLine: "underline",
+              color: "red",
+              alignSelf: "center",
+              fontWeight: "bold",
+            }}
+          >
+            Enter Delays
+          </Text>
+        </View>
 
-            <ScrollView style={{ padding: 10 }}>
-              <FieldSet>
-                <View style={{ flex: 1, alignItems: "center", gap: 20 }}>
-                  {DelayComponent.map((value, index) => (
-                    <DelayMessageComponent
-                      key={index}
-                      slno={index + 1}
-                      onDelete={() => handleDelete(index)}
-                      selectedValueFromHr={
-                        values["fromhr" + (index + 1).toString()]
-                      }
-                      onSelectFromHr={(value) => {
-                        // setFieldValue("fromhr" + (index + 1).toString(), value);
-                      }}
-                      selectedValueFromMin={
-                        values["frommin" + (index + 1).toString()]
-                      }
-                      onSelectFromMin={(value) => {
-                        setFieldValue(
-                          "frommin" + (index + 1).toString(),
-                          value
-                        );
-                      }}
-                      selectedValueToHr={
-                        values["tohr" + (index + 1).toString()]
-                      }
-                      onSelectToHr={(value) => {
-                        setFieldValue("tohr" + (index + 1).toString(), value);
-                      }}
-                      selectedValueToMin={
-                        values["tomin" + (index + 1).toString()]
-                      }
-                      onSelectToMin={(value) => {
-                        setFieldValue("tomin" + (index + 1).toString(), value);
-                      }}
-                      onChangeDesc={(value) => {
-                        setFieldValue("desc" + (index + 1).toString(), value);
-                      }}
-                    />
-                  ))}
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 80,
+            paddingTop: 20,
+            alignItems: "center",
+            justifyContent: "center",
+            borderBottomWidth: 2,
+          }}
+        >
+          <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+            DATE :{currentDate}
+          </Text>
+          <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+            SHIFT :{currentShift}
+          </Text>
+        </View>
 
-                  <AppButton
-                    buttonName="Add New Delay"
-                    buttonColour="#87A922"
-                    width="60%"
-                    onPress={handleAddDelayComponent}
-                  />
-                </View>
-              </FieldSet>
+        <ScrollView style={{ padding: 10 }}>
+          <FieldSet>
+            <View style={{ flex: 1, alignItems: "center", gap: 20 }}>
+              {newDelayComponent.map((value, index) => (
+                <DelayMessageComponent
+                  key={index}
+                  slno={index + 1}
+                  onDelete={() => handleDelete(index)}
+                  items={
+                    currentShift == "A"
+                      ? ["", "6", "7", "8", "9", "10", "11", "12", "13", "14"]
+                      : currentShift == "B"
+                      ? [
+                          "",
+                          "14",
+                          "15",
+                          "16",
+                          "17",
+                          "18",
+                          "19",
+                          "20",
+                          "21",
+                          "22",
+                        ]
+                      : ["", "22", "23", "24", "1", "2", "3", "4", "5", "6"]
+                  }
+                  selectedValueFromHr={
+                    delayComponent["fromhr" + (index + 1).toString()]
+                  }
+                  onSelectFromHr={(value) => {
+                    if (
+                      parseInt(value) >
+                      parseInt(delayComponent["tohr" + (index + 1)])
+                    ) {
+                      alert("From time not more than To time..");
+                      return;
+                    }
+
+                    setDelayComponent({
+                      ...delayComponent,
+                      ["fromhr" + (index + 1)]: value,
+                    });
+                  }}
+                  selectedValueFromMin={
+                    delayComponent["frommin" + (index + 1).toString()]
+                  }
+                  onSelectFromMin={(value) => {
+                    if (
+                      parseInt(value) >
+                        parseInt(delayComponent["tomin" + (index + 1)]) &&
+                      parseInt(delayComponent["fromhr" + (index + 1)]) >
+                        parseInt(delayComponent["tohr" + (index + 1)])
+                    ) {
+                      alert("From time not more than To time..");
+                      return;
+                    }
+
+                    setDelayComponent({
+                      ...delayComponent,
+                      ["frommin" + (index + 1)]: value,
+                    });
+                  }}
+                  selectedValueToHr={
+                    delayComponent["tohr" + (index + 1).toString()]
+                  }
+                  onSelectToHr={(value) => {
+                    if (
+                      parseInt(value) <
+                      parseInt(delayComponent["fromhr" + (index + 1)])
+                    ) {
+                      alert("To time should not less than From time..");
+                      return;
+                    }
+
+                    if (
+                      parseInt(delayComponent["frommin" + (index + 1)]) >
+                      parseInt(delayComponent["tomin" + (index + 1)])
+                    ) {
+                      alert("From time not more than To time..");
+                      return;
+                    }
+
+                    setDelayComponent({
+                      ...delayComponent,
+                      ["tohr" + (index + 1)]: value,
+                    });
+                  }}
+                  selectedValueToMin={
+                    delayComponent["tomin" + (index + 1).toString()]
+                  }
+                  onSelectToMin={(value) => {
+                    if (
+                      parseInt(delayComponent["fromhr" + (index + 1)]) ===
+                        parseInt(delayComponent["tohr" + (index + 1)]) &&
+                      parseInt(value) <=
+                        parseInt(delayComponent["frommin" + (index + 1)])
+                    ) {
+                      alert("To time should not less than From time..");
+                      return;
+                    }
+
+                    setDelayComponent({
+                      ...delayComponent,
+                      ["tomin" + (index + 1)]: value,
+                    });
+                  }}
+                  onChangeDesc={(value) => {
+                    if (value === "") {
+                      alert("Enter Reason for Delay..");
+                      setButtonVisible(true);
+                      setDelayComponent({
+                        ...delayComponent,
+                        ["desc" + (index + 1)]: "",
+                      });
+                      return;
+                    }
+
+                    if (
+                      value != "" &&
+                      delayComponent["fromhr" + (index + 1).toString()] ===
+                        "0" &&
+                      delayComponent["frommin" + (index + 1).toString()] ===
+                        "00" &&
+                      delayComponent["tohr" + (index + 1).toString()] === "0" &&
+                      delayComponent["tomin" + (index + 1).toString()] === "00"
+                    ) {
+                      setButtonVisible(true);
+                      return;
+                    }
+
+                    setButtonVisible(false);
+                    setDelayComponent({
+                      ...delayComponent,
+                      ["desc" + (index + 1)]: value,
+                    });
+                  }}
+                  descvalue={delayComponent["desc" + (index + 1).toString()]}
+                />
+              ))}
+
               <AppButton
-                buttonName="Submit"
-                buttonColour="#fc5c65"
-                onPress={handleSubmit}
+                buttonName="Add New Delay"
+                buttonColour={buttonVisible ? "#C7B7A3" : "#87A922"}
+                //buttonColour="#87A922"
+                width="60%"
+                disabled={buttonVisible}
+                onPress={handleNewDelayComponent}
               />
-            </ScrollView>
-          </>
-        )}
-      </Formik>
-    </View>
+            </View>
+          </FieldSet>
+          <AppButton
+            buttonName="Submit"
+            buttonColour={buttonVisible ? "#C7B7A3" : "#fc5c65"}
+            //buttonColour="#fc5c65"
+            disabled={buttonVisible}
+            onPress={handleSubmit}
+          />
+        </ScrollView>
+      </View>
+    </>
   );
 }

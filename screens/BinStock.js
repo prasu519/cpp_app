@@ -11,7 +11,7 @@ import BaseUrl from "../config/BaseUrl";
 import FieldSet from "react-native-fieldset";
 import DoneScreen from "./DoneScreen";
 
-export default function EnterReclaiming({ navigation }) {
+export default function BinStock({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
   const [count, setCount] = useState();
   const [doneScreen, setDoneScreen] = useState(false);
@@ -41,60 +41,25 @@ export default function EnterReclaiming({ navigation }) {
 
   const handleSubmit = async (values) => {
     const reclaimRegex = /^[0-9]*$/;
-    let coaltotal = 0;
+    let TotalStock = 0;
 
     for (let i = 1; i <= count; i++) {
-      if (!reclaimRegex.test(values["coal" + i + "recl"])) {
+      if (!reclaimRegex.test(values["coal" + i + "stock"])) {
         return alert("Please enter only numbers in Coal-Wise...");
       }
 
-      if (values["coal" + i + "recl"] === "") {
-        values["coal" + i + "recl"] = 0;
+      if (values["coal" + i + "stock"] === "") {
+        values["coal" + i + "stock"] = 0;
       }
 
-      coaltotal = coaltotal + parseInt(values["coal" + i + "recl"]);
+      TotalStock = TotalStock + parseInt(values["coal" + i + "stock"]);
     }
 
-    let cc49 = values["cc49recl"];
-    let cc50 = values["cc50recl"];
-    let cc126 = values["cc126recl"];
-
-    if (
-      !reclaimRegex.test(cc49) ||
-      !reclaimRegex.test(cc50) ||
-      !reclaimRegex.test(cc126)
-    ) {
-      return alert("Please enter only numbers in Stream-Wise...");
-    }
-
-    if (cc49 === "") {
-      values["cc49recl"] = 0;
-    }
-    if (cc50 === "") {
-      values["cc50recl"] = 0;
-    }
-    if (cc126 === "") {
-      values["cc126recl"] = 0;
-    }
-
-    let streamtotal =
-      parseInt(values.cc49recl) +
-      parseInt(values.cc50recl) +
-      parseInt(values.cc126recl);
-
-    if (coaltotal !== streamtotal) {
-      return alert("CoalTotal and StreamTotal should be equal..");
-    }
-
-    if (coaltotal === 0 && streamtotal === 0) {
+    if (TotalStock === 0) {
       for (let i = 1; i <= count; i++) {
-        values["coal" + i + "recl"] = "";
+        values["coal" + i + "stock"] = "";
       }
-      values["cc49recl"] = "";
-      values["cc50recl"] = "";
-      values["cc126recl"] = "";
-
-      return alert("Enter Reclaiming Data before submitting...");
+      return alert("Enter Coal Stock before submitting...");
     }
 
     let newValues = {
@@ -107,14 +72,14 @@ export default function EnterReclaiming({ navigation }) {
       coal6name: coalNames.cn6,
       coal7name: coalNames.cn7,
       coal8name: coalNames.cn8,
-      total_reclaiming: streamtotal,
+      total_stock: TotalStock,
     };
 
     setProgress(0);
     setDoneScreen(true);
 
     await axios
-      .post(BaseUrl + "/reclaiming", newValues, {
+      .post(BaseUrl + "/mbtopstock", newValues, {
         onUploadProgress: (progress) =>
           setProgress(progress.loaded / progress.total),
       })
@@ -127,11 +92,8 @@ export default function EnterReclaiming({ navigation }) {
       });
 
     for (let i = 1; i <= count; i++) {
-      values["coal" + i + "recl"] = "";
+      values["coal" + i + "stock"] = "";
     }
-    values["cc49recl"] = "";
-    values["cc50recl"] = "";
-    values["cc126recl"] = "";
   };
 
   return (
@@ -148,7 +110,7 @@ export default function EnterReclaiming({ navigation }) {
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 40,
+            gap: 35,
           }}
         >
           <AntDesign
@@ -166,7 +128,7 @@ export default function EnterReclaiming({ navigation }) {
               fontWeight: "bold",
             }}
           >
-            Enter Enter Reclaiming
+            Enter MB-Top Stocks
           </Text>
         </View>
 
@@ -175,25 +137,22 @@ export default function EnterReclaiming({ navigation }) {
             date: currentDate,
             shift: currentShift,
             coal1name: "",
-            coal1recl: "",
+            coal1stock: "",
             coal2name: "",
-            coal2recl: "",
+            coal2stock: "",
             coal3name: "",
-            coal3recl: "",
+            coal3stock: "",
             coal4name: "",
-            coal4recl: "",
+            coal4stock: "",
             coal5name: "",
-            coal5recl: "",
+            coal5stock: "",
             coal6name: "",
-            coal6recl: "",
+            coal6stock: "",
             coal7name: "",
-            coal7recl: "",
+            coal7stock: "",
             coal8name: "",
-            coal8recl: "",
-            cc49recl: "",
-            cc50recl: "",
-            cc126recl: "",
-            total_reclaiming: 0,
+            coal8stock: "",
+            total_stock: 0,
           }}
           onSubmit={handleSubmit}
         >
@@ -238,43 +197,12 @@ export default function EnterReclaiming({ navigation }) {
                         labelcolor="orange"
                         key={index}
                         onChangeText={(text) =>
-                          setFieldValue("coal" + (index + 1) + "recl", text)
+                          setFieldValue("coal" + (index + 1) + "stock", text)
                         }
                         keyboardType="number-pad"
-                        value={values["coal" + (index + 1) + "recl"]}
+                        value={values["coal" + (index + 1) + "stock"]}
                       />
                     ))}
-                    <Text
-                      style={{
-                        alignSelf: "center",
-                        fontSize: 25,
-                        fontWeight: "bold",
-                        color: "#416D19",
-                        paddingTop: 20,
-                      }}
-                    >
-                      Enter Stream-wise
-                    </Text>
-                    <AppTextBox
-                      label={"CC49"}
-                      labelcolor={"#e9c46a"}
-                      onChangeText={(text) => setFieldValue("cc49recl", text)}
-                      value={values["cc49recl"]}
-                    />
-
-                    <AppTextBox
-                      label={"CC50"}
-                      labelcolor={"#e9c46a"}
-                      onChangeText={(text) => setFieldValue("cc50recl", text)}
-                      value={values["cc50recl"]}
-                    />
-
-                    <AppTextBox
-                      label={"CC126"}
-                      labelcolor={"#e9c46a"}
-                      onChangeText={(text) => setFieldValue("cc126recl", text)}
-                      value={values["cc126recl"]}
-                    />
                     <AppFormButton buttonText="Submit" />
                   </>
                 </FieldSet>

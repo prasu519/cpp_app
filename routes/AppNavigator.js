@@ -11,6 +11,7 @@ import AddBlend from "../screens/AddBlend";
 import AppBlendTextBox from "../components/AppBlendTextBox";
 import DoneScreen from "../screens/DoneScreen";
 import EnterDelays from "../screens/EnterDelays";
+import BinStock from "../screens/BinStock";
 
 const stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ function AppNavigator(props) {
       <stack.Screen name="EnterDelays" component={EnterDelays} />
       <stack.Screen name="Review" component={Review} />
       <stack.Screen name="AddBlend" component={AddBlend} />
+      <stack.Screen name="BinStock" component={BinStock} />
     </stack.Navigator>
   );
 }

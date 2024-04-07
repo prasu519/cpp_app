@@ -135,6 +135,22 @@ export default function ShiftReportEntry({ navigation }) {
           style={{
             height: 50,
             width: "70%",
+            backgroundColor: "#50C4ED",
+            borderRadius: 25,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onPress={() => navigation.navigate("BinStock")}
+        >
+          <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+            Enter Bins Stock
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{
+            height: 50,
+            width: "70%",
             backgroundColor: "yellow",
             borderRadius: 25,
             alignItems: "center",

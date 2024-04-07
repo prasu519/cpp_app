@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 
 import { AntDesign } from "@expo/vector-icons";
 import { Formik } from "formik";
@@ -7,6 +7,7 @@ import AppDropdown from "../components/AppDropdown";
 import AppFormButton from "../components/AppFormButton";
 import axios from "axios";
 import * as Yup from "yup";
+import DoneScreen from "./DoneScreen";
 
 import shift from "../utils/Shift";
 
@@ -27,6 +28,9 @@ const validationSchema = Yup.object().shape({
 
 export default function EnterRunningHours({ navigation }) {
   //const [shift, setShift] = useState("X");
+  const [doneScreen, setDoneScreen] = useState(false);
+  const [progress, setProgress] = useState(0);
+
   const date =
     new Date().getDate() +
     "/" +
@@ -36,8 +40,43 @@ export default function EnterRunningHours({ navigation }) {
 
   const currentShift = shift(new Date().getHours());
 
+  const handleSubmit = async (values, { resetForm }) => {
+    if (
+      values.str2hrs === "" ||
+      values.str2min === "" ||
+      values.str3hrs === "" ||
+      values.str3min === "" ||
+      values.str4hrs === "" ||
+      values.str4min === "" ||
+      values.cc49hrs === "" ||
+      values.cc49min === "" ||
+      values.cc50hrs === "" ||
+      values.cc50min === "" ||
+      values.cc126hrs === "" ||
+      values.cc126min === ""
+    ) {
+      alert("Make sure to enter all values..");
+      return;
+    }
+
+    setProgress(0);
+    setDoneScreen(true);
+
+    await axios
+      .post(BaseUrl + "/runninghours", values, {
+        onUploadProgress: (progress) =>
+          setProgress(progress.loaded / progress.total),
+      })
+      .then((responce) => console.log(responce.data))
+      .catch((error) => {
+        setDoneScreen(false);
+        alert("Could not save data..");
+      });
+    resetForm();
+  };
+
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#C7B7A3" }}>
       <View
         style={{
           paddingTop: 40,
@@ -83,17 +122,17 @@ export default function EnterRunningHours({ navigation }) {
             cc126hrs: "",
             cc126min: "",
           }}
-          onSubmit={async (values) => {
-            await axios
-              .post("http://192.168.202.52:3000/api/runninghours/", values)
-              .then((responce) => console.log(responce))
-              .catch((error) => console.log(error));
-            console.log(values);
-          }}
+          onSubmit={handleSubmit}
           validationSchema={validationSchema}
         >
           {({ handleChange, values, setFieldTouched, touched }) => (
             <>
+              <DoneScreen
+                progress={progress}
+                onDone={() => setDoneScreen(false)}
+                visible={doneScreen}
+              />
+
               <View
                 style={{
                   flexDirection: "row",
@@ -158,7 +197,7 @@ export default function EnterRunningHours({ navigation }) {
                 >
                   <AppDropdown
                     id="str2hrs"
-                    items={["0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
                     selectedValue={values.str2hrs}
                     onValueChange={handleChange("str2hrs")}
                     onBlur={() => setFieldTouched("str2hrs")}
@@ -166,7 +205,7 @@ export default function EnterRunningHours({ navigation }) {
                   <Text style={{ fontWeight: "900" }}>:</Text>
                   <AppDropdown
                     id="str2min"
-                    items={["00", "10", "20", "30", "40", "50"]}
+                    items={["", "00", "10", "20", "30", "40", "50"]}
                     selectedValue={values.str2min}
                     onValueChange={handleChange("str2min")}
                     onBlur={() => setFieldTouched("str2min")}
@@ -198,7 +237,7 @@ export default function EnterRunningHours({ navigation }) {
                 >
                   <AppDropdown
                     id="str3hrs"
-                    items={["0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
                     selectedValue={values.str3hrs}
                     onValueChange={handleChange("str3hrs")}
                     onBlur={() => setFieldTouched("str3hrs")}
@@ -206,7 +245,7 @@ export default function EnterRunningHours({ navigation }) {
                   <Text style={{ fontWeight: "900" }}>:</Text>
                   <AppDropdown
                     id="str3min"
-                    items={["00", "10", "20", "30", "40", "50"]}
+                    items={["", "00", "10", "20", "30", "40", "50"]}
                     selectedValue={values.str3min}
                     onValueChange={handleChange("str3min")}
                     onBlur={() => setFieldTouched("str3min")}
@@ -238,7 +277,7 @@ export default function EnterRunningHours({ navigation }) {
                 >
                   <AppDropdown
                     id="str4hrs"
-                    items={["0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
                     selectedValue={values.str4hrs}
                     onValueChange={handleChange("str4hrs")}
                     onBlur={() => setFieldTouched("str4hrs")}
@@ -246,7 +285,7 @@ export default function EnterRunningHours({ navigation }) {
                   <Text style={{ fontWeight: "900" }}>:</Text>
                   <AppDropdown
                     id="str4min"
-                    items={["00", "10", "20", "30", "40", "50"]}
+                    items={["", "00", "10", "20", "30", "40", "50"]}
                     selectedValue={values.str4min}
                     onValueChange={handleChange("str4min")}
                     onBlur={() => setFieldTouched("str4min")}
@@ -276,7 +315,7 @@ export default function EnterRunningHours({ navigation }) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: 40,
+                  gap: 80,
                   padding: 20,
                   justifyContent: "center",
                 }}
@@ -294,7 +333,7 @@ export default function EnterRunningHours({ navigation }) {
                 >
                   <AppDropdown
                     id="cc49hrs"
-                    items={["0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
                     selectedValue={values.cc49hrs}
                     onValueChange={handleChange("cc49hrs")}
                     onBlur={() => setFieldTouched("cc49hrs")}
@@ -302,7 +341,7 @@ export default function EnterRunningHours({ navigation }) {
                   <Text style={{ fontWeight: "900" }}>:</Text>
                   <AppDropdown
                     id="cc49min"
-                    items={["00", "10", "20", "30", "40", "50"]}
+                    items={["", "00", "10", "20", "30", "40", "50"]}
                     selectedValue={values.cc49min}
                     onValueChange={handleChange("cc49min")}
                     onBlur={() => setFieldTouched("cc49min")}
@@ -314,7 +353,7 @@ export default function EnterRunningHours({ navigation }) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: 40,
+                  gap: 80,
                   padding: 5,
                   justifyContent: "center",
                 }}
@@ -332,7 +371,7 @@ export default function EnterRunningHours({ navigation }) {
                 >
                   <AppDropdown
                     id="cc50hrs"
-                    items={["0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
                     selectedValue={values.cc50hrs}
                     onValueChange={handleChange("cc50hrs")}
                     onBlur={() => setFieldTouched("cc50hrs")}
@@ -340,7 +379,7 @@ export default function EnterRunningHours({ navigation }) {
                   <Text style={{ fontWeight: "900" }}>:</Text>
                   <AppDropdown
                     id="cc50min"
-                    items={["00", "10", "20", "30", "40", "50"]}
+                    items={["", "00", "10", "20", "30", "40", "50"]}
                     selectedValue={values.cc50min}
                     onValueChange={handleChange("cc50min")}
                     onBlur={() => setFieldTouched("cc50min")}
@@ -352,7 +391,7 @@ export default function EnterRunningHours({ navigation }) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: 40,
+                  gap: 70,
                   padding: 20,
                   justifyContent: "center",
                 }}
@@ -370,7 +409,7 @@ export default function EnterRunningHours({ navigation }) {
                 >
                   <AppDropdown
                     id="cc126hrs"
-                    items={["0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
                     selectedValue={values.cc126hrs}
                     onValueChange={handleChange("cc126hrs")}
                     onBlur={() => setFieldTouched("cc126hrs")}
@@ -378,7 +417,7 @@ export default function EnterRunningHours({ navigation }) {
                   <Text style={{ fontWeight: "900" }}>:</Text>
                   <AppDropdown
                     id="cc126min"
-                    items={["00", "10", "20", "30", "40", "50"]}
+                    items={["", "00", "10", "20", "30", "40", "50"]}
                     selectedValue={values.cc126min}
                     onValueChange={handleChange("cc126min")}
                     onBlur={() => setFieldTouched("cc126min")}

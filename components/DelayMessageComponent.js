@@ -9,11 +9,13 @@ export default function DelayMessageComponent({
   onSelectFromMin,
   onSelectToHr,
   onSelectToMin,
-  selectedValueFromHr = "0",
-  selectedValueFromMin = "0",
-  selectedValueToHr = "0",
-  selectedValueToMin = "0",
+  selectedValueFromHr = "",
+  selectedValueFromMin = "",
+  selectedValueToHr = "",
+  selectedValueToMin = "",
+  descvalue = "",
   onChangeDesc,
+  items,
   ...otherProps
 }) {
   return (
@@ -91,30 +93,16 @@ export default function DelayMessageComponent({
           From
         </Text>
         <AppDropdown
-          id="str2hrs"
-          items={[
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-          ]}
-          selectedValue={selectedValueFromHr || "0"}
+          id="fromhrs"
+          items={items}
+          selectedValue={selectedValueFromHr}
           onValueChange={onSelectFromHr}
         />
         <Text style={{ fontWeight: "bold", alignSelf: "center" }}>:</Text>
         <AppDropdown
-          id="str2min"
-          items={["00", "10", "20", "30", "40", "50"]}
-          selectedValue={selectedValueFromMin || "0"}
+          id="frommin"
+          items={["", "00", "10", "20", "30", "40", "50"]}
+          selectedValue={selectedValueFromMin}
           onValueChange={onSelectFromMin}
         />
       </View>
@@ -141,31 +129,17 @@ export default function DelayMessageComponent({
           To
         </Text>
         <AppDropdown
-          id="str2hrs"
-          items={[
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "10",
-            "11",
-            "12",
-          ]}
-          selectedValue={selectedValueToHr || "0"}
+          id="tohrs"
+          items={items}
+          selectedValue={selectedValueToHr}
           onValueChange={onSelectToHr}
           {...otherProps}
         />
         <Text style={{ fontWeight: "bold", alignSelf: "center" }}>:</Text>
         <AppDropdown
-          id="str2min"
-          items={["00", "10", "20", "30", "40", "50"]}
-          selectedValue={selectedValueToMin || "0"}
+          id="tomin"
+          items={["", "00", "10", "20", "30", "40", "50"]}
+          selectedValue={selectedValueToMin}
           onValueChange={onSelectToMin}
           {...otherProps}
         />
@@ -186,6 +160,7 @@ export default function DelayMessageComponent({
           placeholder="Enter description..."
           underlineColorAndroid={"transparent"}
           onChangeText={onChangeDesc}
+          value={descvalue}
         ></TextInput>
       </View>
     </View>

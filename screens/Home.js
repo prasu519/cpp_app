@@ -29,7 +29,7 @@ export default function Home({ navigation }) {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{
             height: 100,
             width: "50%",
@@ -43,7 +43,7 @@ export default function Home({ navigation }) {
           >
             Enter Problems
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity>*/}
 
         <TouchableOpacity
           style={{
