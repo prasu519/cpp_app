@@ -63,7 +63,7 @@ export default function EnterRunningHours({ navigation }) {
     setDoneScreen(true);
 
     await axios
-      .post(BaseUrl + "/runninghours", values, {
+      .post(BaseUrl + "/runningHours", values, {
         onUploadProgress: (progress) =>
           setProgress(progress.loaded / progress.total),
       })
@@ -123,7 +123,7 @@ export default function EnterRunningHours({ navigation }) {
             cc126min: "",
           }}
           onSubmit={handleSubmit}
-          validationSchema={validationSchema}
+          //validationSchema={validationSchema}
         >
           {({ handleChange, values, setFieldTouched, touched }) => (
             <>
@@ -315,7 +315,7 @@ export default function EnterRunningHours({ navigation }) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: 80,
+                  gap: 75,
                   padding: 20,
                   justifyContent: "center",
                 }}
@@ -353,7 +353,7 @@ export default function EnterRunningHours({ navigation }) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: 80,
+                  gap: 75,
                   padding: 5,
                   justifyContent: "center",
                 }}
@@ -391,7 +391,7 @@ export default function EnterRunningHours({ navigation }) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: 70,
+                  gap: 60,
                   padding: 20,
                   justifyContent: "center",
                 }}

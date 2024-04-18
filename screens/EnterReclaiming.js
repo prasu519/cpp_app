@@ -237,11 +237,17 @@ export default function EnterReclaiming({ navigation }) {
                         label={coalNames["cn" + (index + 1)]}
                         labelcolor="orange"
                         key={index}
-                        onChangeText={(text) =>
-                          setFieldValue("coal" + (index + 1) + "recl", text)
-                        }
+                        onChangeText={(value) => {
+                          if (!/^[0-9]*$/.test(value)) {
+                            alert("Enter Numbers only...");
+                            return;
+                          } else {
+                            setFieldValue("coal" + (index + 1) + "recl", value);
+                          }
+                        }}
                         keyboardType="number-pad"
-                        value={values["coal" + (index + 1) + "recl"]}
+                        value={values["coal" + (index + 1) + "recl"].toString()}
+                        maxLength={4}
                       />
                     ))}
                     <Text
@@ -258,22 +264,46 @@ export default function EnterReclaiming({ navigation }) {
                     <AppTextBox
                       label={"CC49"}
                       labelcolor={"#e9c46a"}
-                      onChangeText={(text) => setFieldValue("cc49recl", text)}
-                      value={values["cc49recl"]}
+                      onChangeText={(value) => {
+                        if (!/^[0-9]*$/.test(value)) {
+                          alert("Enter Numbers only...");
+                          return;
+                        } else {
+                          setFieldValue("cc49recl", value);
+                        }
+                      }}
+                      value={values["cc49recl"].toString()}
+                      maxLength={4}
                     />
 
                     <AppTextBox
                       label={"CC50"}
                       labelcolor={"#e9c46a"}
-                      onChangeText={(text) => setFieldValue("cc50recl", text)}
-                      value={values["cc50recl"]}
+                      onChangeText={(value) => {
+                        if (!/^[0-9]*$/.test(value)) {
+                          alert("Enter Numbers only...");
+                          return;
+                        } else {
+                          setFieldValue("cc50recl", value);
+                        }
+                      }}
+                      value={values["cc50recl"].toString()}
+                      maxLength={4}
                     />
 
                     <AppTextBox
                       label={"CC126"}
                       labelcolor={"#e9c46a"}
-                      onChangeText={(text) => setFieldValue("cc126recl", text)}
-                      value={values["cc126recl"]}
+                      onChangeText={(value) => {
+                        if (!/^[0-9]*$/.test(value)) {
+                          alert("Enter Numbers only...");
+                          return;
+                        } else {
+                          setFieldValue("cc126recl", value);
+                        }
+                      }}
+                      value={values["cc126recl"].toString()}
+                      maxLength={4}
                     />
                     <AppFormButton buttonText="Submit" />
                   </>

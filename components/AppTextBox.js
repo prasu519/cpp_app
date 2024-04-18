@@ -1,7 +1,13 @@
 import { View, Text, TextInput } from "react-native";
 import React from "react";
 
-const AppTextBox = ({ label, labelcolor, ...otherProps }) => {
+const AppTextBox = ({
+  label,
+  labelcolor,
+  tbSize = "40%",
+  lbSize = "50%",
+  ...otherProps
+}) => {
   return (
     <View
       style={{
@@ -17,7 +23,7 @@ const AppTextBox = ({ label, labelcolor, ...otherProps }) => {
     >
       <View
         style={{
-          width: "50%",
+          width: lbSize,
 
           backgroundColor: labelcolor,
           height: 50,
@@ -40,7 +46,7 @@ const AppTextBox = ({ label, labelcolor, ...otherProps }) => {
       <View
         style={{
           borderRadius: 25,
-          width: "40%",
+          width: tbSize,
           height: 50,
           alignItems: "center",
           justifyContent: "center",

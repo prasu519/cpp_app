@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
@@ -60,125 +60,161 @@ export default function ShiftReportEntry({ navigation }) {
           SHIFT :{currentShift}
         </Text>
       </View>
-
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          paddingTop: 50,
-          gap: 50,
-        }}
-      >
-        <TouchableOpacity
+      <ScrollView>
+        <View
           style={{
-            height: 50,
-            width: "70%",
-            backgroundColor: "#50C4ED",
-            borderRadius: 25,
+            flex: 1,
             alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={() => navigation.navigate("EnterReclaiming")}
-        >
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-            Enter Reclaiming
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            height: 50,
-            width: "70%",
-            backgroundColor: "#50C4ED",
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={() => navigation.navigate("EnterFeeding")}
-        >
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-            Enter Feeding
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            height: 50,
-            width: "70%",
-            backgroundColor: "#50C4ED",
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={() => navigation.navigate("EnterRunningHours")}
-        >
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-            Enter Running Hours
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            height: 50,
-            width: "70%",
-            backgroundColor: "#50C4ED",
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={() => navigation.navigate("EnterDelays")}
-        >
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>Enter Delays</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            height: 50,
-            width: "70%",
-            backgroundColor: "#50C4ED",
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={() => navigation.navigate("BinStock")}
-        >
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-            Enter Bins Stock
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            height: 50,
-            width: "70%",
-            backgroundColor: "yellow",
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={() =>
-            navigation.navigate("Review", {
-              date: currentDate,
-              shift: currentShift,
-            })
-          }
-        >
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>Review</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{
-            height: 50,
-            width: "70%",
-            backgroundColor: "orange",
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
+            paddingTop: 50,
+            gap: 50,
           }}
         >
-          <Text style={{ fontSize: 25, fontWeight: "bold" }}>Final Report</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={{
+              height: 50,
+              width: "70%",
+              backgroundColor: "#50C4ED",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => navigation.navigate("EnterReclaiming")}
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              Enter Reclaiming
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              height: 50,
+              width: "70%",
+              backgroundColor: "#50C4ED",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => navigation.navigate("EnterFeeding")}
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              Enter Feeding
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              height: 50,
+              width: "70%",
+              backgroundColor: "#50C4ED",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => navigation.navigate("EnterRunningHours")}
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              Enter Running Hours
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              height: 50,
+              width: "70%",
+              backgroundColor: "#50C4ED",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => navigation.navigate("EnterDelays")}
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              Enter Delays
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              height: 50,
+              width: "70%",
+              backgroundColor: "#50C4ED",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => navigation.navigate("BinStock")}
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              Enter Bins Stock
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              height: 50,
+              width: "70%",
+              backgroundColor: "#50C4ED",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => navigation.navigate("EnterCoalAnalysis")}
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              Coal Analysis
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              height: 50,
+              width: "70%",
+              backgroundColor: "#50C4ED",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() => navigation.navigate("PushingSchedule")}
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              Enter Pushing Schedule
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              height: 50,
+              width: "70%",
+              backgroundColor: "yellow",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onPress={() =>
+              navigation.navigate("Review", {
+                date: currentDate,
+                shift: currentShift,
+              })
+            }
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>Review</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              height: 50,
+              width: "70%",
+              backgroundColor: "orange",
+              borderRadius: 25,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              Final Report
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </View>
   );
 }

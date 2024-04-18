@@ -95,6 +95,7 @@ export default function AddBlend({ navigation }) {
                 placeholder="%"
                 onChangeText={handleChange("cp" + i)}
                 inputMode="numeric"
+                maxLength={2}
               />
             </View>
           </View>

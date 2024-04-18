@@ -12,6 +12,8 @@ import AppBlendTextBox from "../components/AppBlendTextBox";
 import DoneScreen from "../screens/DoneScreen";
 import EnterDelays from "../screens/EnterDelays";
 import BinStock from "../screens/BinStock";
+import EnterCoalAnalysis from "../screens/EnterCoalAnalysis";
+import PushingSchedule from "../screens/PushingSchedule";
 
 const stack = createNativeStackNavigator();
 
@@ -28,6 +30,8 @@ function AppNavigator(props) {
       <stack.Screen name="EnterFeeding" component={EnterFeeding} />
       <stack.Screen name="EnterRunningHours" component={EnterRunningHours} />
       <stack.Screen name="EnterDelays" component={EnterDelays} />
+      <stack.Screen name="EnterCoalAnalysis" component={EnterCoalAnalysis} />
+      <stack.Screen name="PushingSchedule" component={PushingSchedule} />
       <stack.Screen name="Review" component={Review} />
       <stack.Screen name="AddBlend" component={AddBlend} />
       <stack.Screen name="BinStock" component={BinStock} />

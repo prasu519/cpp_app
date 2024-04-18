@@ -17,6 +17,7 @@ export default function EnterDelays({ navigation }) {
   const [buttonVisible, setButtonVisible] = useState(true);
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [allEntrys, setAllEntrys] = useState(false);
 
   const initialiseDelayComponent = () => {
     delayComponent[`fromhr${count}`] = "";
@@ -87,7 +88,7 @@ export default function EnterDelays({ navigation }) {
 
     for (let i = 0; i < count; i++) {
       await axios
-        .post(BaseUrl + "/shiftdelay", delays[i], {
+        .post(BaseUrl + "/shiftDelay", delays[i], {
           onUploadProgress: (progress) =>
             setProgress(progress.loaded / progress.total),
         })
@@ -96,10 +97,10 @@ export default function EnterDelays({ navigation }) {
           setDoneScreen(false);
           alert("Could not save data..");
         });
-      console.log(delays[i]);
     }
     setDelayComponent({});
     setNewDelayComponent([""]);
+    setButtonVisible(true);
   };
 
   const currentDate =
@@ -195,14 +196,25 @@ export default function EnterDelays({ navigation }) {
                     delayComponent["fromhr" + (index + 1).toString()]
                   }
                   onSelectFromHr={(value) => {
+                    if (value === "") {
+                      setDelayComponent({
+                        ...delayComponent,
+                        ["fromhr" + (index + 1)]: value,
+                      });
+
+                      alert("Select From-time..");
+                      setButtonVisible(true);
+                      return;
+                    }
+
                     if (
                       parseInt(value) >
                       parseInt(delayComponent["tohr" + (index + 1)])
                     ) {
-                      alert("From time not more than To time..");
+                      alert("From time should not be more than To time..");
                       return;
                     }
-
+                    if (allEntrys) setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
                       ["fromhr" + (index + 1)]: value,
@@ -212,16 +224,26 @@ export default function EnterDelays({ navigation }) {
                     delayComponent["frommin" + (index + 1).toString()]
                   }
                   onSelectFromMin={(value) => {
+                    if (value === "") {
+                      setDelayComponent({
+                        ...delayComponent,
+                        ["frommin" + (index + 1)]: value,
+                      });
+
+                      alert("Select From-time..");
+                      setButtonVisible(true);
+                      return;
+                    }
                     if (
                       parseInt(value) >
                         parseInt(delayComponent["tomin" + (index + 1)]) &&
                       parseInt(delayComponent["fromhr" + (index + 1)]) >
                         parseInt(delayComponent["tohr" + (index + 1)])
                     ) {
-                      alert("From time not more than To time..");
+                      alert("From time should not be more than To time..");
                       return;
                     }
-
+                    if (allEntrys) setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
                       ["frommin" + (index + 1)]: value,
@@ -231,11 +253,22 @@ export default function EnterDelays({ navigation }) {
                     delayComponent["tohr" + (index + 1).toString()]
                   }
                   onSelectToHr={(value) => {
+                    if (value === "") {
+                      setDelayComponent({
+                        ...delayComponent,
+                        ["tohr" + (index + 1)]: value,
+                      });
+
+                      alert("Select To-time..");
+                      setButtonVisible(true);
+                      return;
+                    }
+
                     if (
                       parseInt(value) <
                       parseInt(delayComponent["fromhr" + (index + 1)])
                     ) {
-                      alert("To time should not less than From time..");
+                      alert("To time should not be less than From time..");
                       return;
                     }
 
@@ -243,10 +276,10 @@ export default function EnterDelays({ navigation }) {
                       parseInt(delayComponent["frommin" + (index + 1)]) >
                       parseInt(delayComponent["tomin" + (index + 1)])
                     ) {
-                      alert("From time not more than To time..");
+                      alert("From time should not be more than To time..");
                       return;
                     }
-
+                    if (allEntrys) setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
                       ["tohr" + (index + 1)]: value,
@@ -256,16 +289,26 @@ export default function EnterDelays({ navigation }) {
                     delayComponent["tomin" + (index + 1).toString()]
                   }
                   onSelectToMin={(value) => {
+                    if (value === "") {
+                      setDelayComponent({
+                        ...delayComponent,
+                        ["tomin" + (index + 1)]: value,
+                      });
+
+                      alert("Select To-time..");
+                      setButtonVisible(true);
+                      return;
+                    }
                     if (
                       parseInt(delayComponent["fromhr" + (index + 1)]) ===
                         parseInt(delayComponent["tohr" + (index + 1)]) &&
                       parseInt(value) <=
                         parseInt(delayComponent["frommin" + (index + 1)])
                     ) {
-                      alert("To time should not less than From time..");
+                      alert("To time should not be less than From time..");
                       return;
                     }
-
+                    if (allEntrys) setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
                       ["tomin" + (index + 1)]: value,
@@ -273,7 +316,7 @@ export default function EnterDelays({ navigation }) {
                   }}
                   onChangeDesc={(value) => {
                     if (value === "") {
-                      alert("Enter Reason for Delay..");
+                      alert("Enter reason for the delay..");
                       setButtonVisible(true);
                       setDelayComponent({
                         ...delayComponent,
@@ -283,23 +326,24 @@ export default function EnterDelays({ navigation }) {
                     }
 
                     if (
-                      value != "" &&
+                      value === "" ||
                       delayComponent["fromhr" + (index + 1).toString()] ===
-                        "0" &&
+                        "" ||
                       delayComponent["frommin" + (index + 1).toString()] ===
-                        "00" &&
-                      delayComponent["tohr" + (index + 1).toString()] === "0" &&
-                      delayComponent["tomin" + (index + 1).toString()] === "00"
+                        "" ||
+                      delayComponent["tohr" + (index + 1).toString()] === "" ||
+                      delayComponent["tomin" + (index + 1).toString()] === ""
                     ) {
                       setButtonVisible(true);
+                      alert("Enter delay time first..");
                       return;
                     }
-
                     setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
                       ["desc" + (index + 1)]: value,
                     });
+                    setAllEntrys(true);
                   }}
                   descvalue={delayComponent["desc" + (index + 1).toString()]}
                 />

@@ -22,7 +22,8 @@ export default function Review({ navigation }) {
   const [editFeeding, setEditFeeding] = useState(false);
   const [editReclaiming, setEditReclaiming] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-
+  const [updateFeedButtVisible, setUpdateFeedButtVisible] = useState(false);
+  const [updateReclButtVisible, setUpdateReclButtVisible] = useState(false);
   const currentDate =
     new Date().getDate() +
     "/" +
@@ -60,6 +61,7 @@ export default function Review({ navigation }) {
       })
       .then((responce) => setReclaiming(responce.data.data[0]))
       .catch((error) => console.log(error));
+
     setIsLoaded(true);
   };
 
@@ -81,20 +83,25 @@ export default function Review({ navigation }) {
       .put(BaseUrl + "/feeding", updatedFeeding)
       .then((response) => console.log(response.data))
       .catch((error) => console.log(error));
+
+    setEditFeeding(false);
   };
 
   const onUpdateReclaiming = async () => {
     const streamtotal =
-      parseInt(reclaiming.cc49) +
-      parseInt(reclaiming.cc50) +
-      parseInt(reclaiming.cc126);
+      parseInt(reclaiming.cc49recl) +
+      parseInt(reclaiming.cc50recl) +
+      parseInt(reclaiming.cc126recl);
 
     const coaltotal =
-      parseInt(reclaiming.coal1) +
-      parseInt(reclaiming.coal2) +
-      parseInt(reclaiming.coal3) +
-      parseInt(reclaiming.coal4) +
-      parseInt(reclaiming.coal5);
+      parseInt(reclaiming.coal1recl) +
+      parseInt(reclaiming.coal2recl) +
+      parseInt(reclaiming.coal3recl) +
+      parseInt(reclaiming.coal4recl) +
+      parseInt(reclaiming.coal5recl) +
+      parseInt(reclaiming.coal6recl) +
+      parseInt(reclaiming.coal7recl) +
+      parseInt(reclaiming.coal8recl);
 
     if (coaltotal !== streamtotal) {
       alert("CoalTotal and StreamTotal should be equal..");
@@ -130,6 +137,7 @@ export default function Review({ navigation }) {
   const toggleSwitchReclaiming = () => {
     setEditReclaiming((previousState) => !previousState);
   };
+
   return (
     <View style={{ flex: 1, backgroundColor: "#F1F5A8" }}>
       <View
@@ -179,51 +187,33 @@ export default function Review({ navigation }) {
       <ScrollView style={{ padding: 10 }}>
         <FieldSet label="Feeding Data">
           <>
-            <AppTextBox
-              label="CT-1"
-              labelcolor="#6a994e"
-              value={feeding.ct1.toString()}
-              onChangeText={(newValue) => {
-                setFeeding({ ...feeding, ct1: newValue });
-              }}
-              editable={editFeeding}
-            />
-            <AppTextBox
-              label="CT-2"
-              labelcolor="#6a994e"
-              value={feeding.ct2.toString()}
-              onChangeText={(newValue) => {
-                setFeeding({ ...feeding, ct2: newValue });
-              }}
-              editable={editFeeding}
-            />
-            <AppTextBox
-              label="CT-3"
-              labelcolor="#6a994e"
-              value={feeding.ct3.toString()}
-              onChangeText={(newValue) => {
-                setFeeding({ ...feeding, ct3: newValue });
-              }}
-              editable={editFeeding}
-            />
-            <AppTextBox
-              label="Stream-1"
-              labelcolor="#e9c46a"
-              value={feeding.stream1.toString()}
-              onChangeText={(newValue) => {
-                setFeeding({ ...feeding, stream1: newValue });
-              }}
-              editable={editFeeding}
-            />
-            <AppTextBox
-              label="Stream-1A"
-              labelcolor="#e9c46a"
-              value={feeding.stream1A.toString()}
-              onChangeText={(newValue) => {
-                setFeeding({ ...feeding, stream1A: newValue });
-              }}
-              editable={editFeeding}
-            />
+            {["ct1", "ct2", "ct3", "stream1", "stream1A"].map((item, index) => (
+              <AppTextBox
+                key={index}
+                label={item}
+                labelcolor="#6a994e"
+                value={feeding[item].toString()}
+                onChangeText={(newValue) => {
+                  if (newValue === "") {
+                    alert("Enter " + item + " Feeding..");
+                    setUpdateFeedButtVisible(true);
+                    setFeeding({ ...feeding, [item]: "" });
+                    return;
+                  }
+
+                  if (!/^[0-9]*$/.test(newValue)) {
+                    alert("Enter Numbers only...");
+                    return;
+                  } else {
+                    setUpdateFeedButtVisible(false);
+                    setFeeding({ ...feeding, [item]: newValue });
+                  }
+                }}
+                editable={editFeeding}
+                maxLength={4}
+              />
+            ))}
+
             <View
               style={{
                 flexDirection: "row",
@@ -241,108 +231,86 @@ export default function Review({ navigation }) {
               />
             </View>
             {editFeeding && (
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#fc5c65",
-                  borderRadius: 25,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 15,
-                  marginTop: 30,
-                  width: "90%",
-                  marginVertical: 10,
-                  alignSelf: "center",
-                }}
+              <AppButton
+                buttonName="Update Feeding"
+                buttonColour={updateFeedButtVisible ? "#C7B7A3" : "#fc5c65"}
+                disabled={updateFeedButtVisible}
                 onPress={onUpdateFeeding}
-              >
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 18,
-                    textTransform: "uppercase",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Update Feeding
-                </Text>
-              </TouchableOpacity>
+              />
             )}
           </>
         </FieldSet>
         <FieldSet label="Reclaiming Data">
           <>
-            <AppTextBox
-              label="GYC"
-              labelcolor="#6a994e"
-              value={reclaiming.coal1.toString()}
-              onChangeText={(newValue) => {
-                setReclaiming({ ...reclaiming, coal1: newValue });
-              }}
-              editable={editReclaiming}
-            />
-            <AppTextBox
-              label="MCC"
-              labelcolor="#6a994e"
-              value={reclaiming.coal2.toString()}
-              onChangeText={(newValue) => {
-                setReclaiming({ ...reclaiming, coal2: newValue });
-              }}
-              editable={editReclaiming}
-            />
-            <AppTextBox
-              label="BROOKS"
-              labelcolor="#6a994e"
-              value={reclaiming.coal3.toString()}
-              onChangeText={(newValue) => {
-                setReclaiming({ ...reclaiming, coal3: newValue });
-              }}
-              editable={editReclaiming}
-            />
-            <AppTextBox
-              label="MSOFT"
-              labelcolor="#6a994e"
-              value={reclaiming.coal4.toString()}
-              onChangeText={(newValue) => {
-                setReclaiming({ ...reclaiming, coal4: newValue });
-              }}
-              editable={editReclaiming}
-            />
-            <AppTextBox
-              label="PCI"
-              labelcolor="#6a994e"
-              value={reclaiming.coal5.toString()}
-              onChangeText={(newValue) => {
-                setReclaiming({ ...reclaiming, coal5: newValue });
-              }}
-              editable={editReclaiming}
-            />
-            <AppTextBox
-              label="CC-49"
-              labelcolor="#e9c46a"
-              value={reclaiming.cc49.toString()}
-              onChangeText={(newValue) => {
-                setReclaiming({ ...reclaiming, cc49: newValue });
-              }}
-              editable={editReclaiming}
-            />
-            <AppTextBox
-              label="CC-50"
-              labelcolor="#e9c46a"
-              value={reclaiming.cc50.toString()}
-              onChangeText={(newValue) => {
-                setReclaiming({ ...reclaiming, cc50: newValue });
-              }}
-              editable={editReclaiming}
-            />
-            <AppTextBox
-              label="CC-126"
-              labelcolor="#e9c46a"
-              value={reclaiming.cc126.toString()}
-              onChangeText={(newValue) => {
-                setReclaiming({ ...reclaiming, cc126: newValue });
-              }}
-              editable={editReclaiming}
-            />
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
+              reclaiming["coal" + item + "name"] === null ? null : (
+                <AppTextBox
+                  key={index}
+                  label={reclaiming["coal" + item + "name"]}
+                  labelcolor="#6a994e"
+                  value={reclaiming["coal" + item + "recl"]}
+                  onChangeText={(newValue) => {
+                    if (newValue === "") {
+                      alert(
+                        "Enter " +
+                          reclaiming["coal" + item + "name"] +
+                          " Reclaiming.."
+                      );
+                      setUpdateReclButtVisible(true);
+                      setReclaiming({
+                        ...reclaiming,
+                        ["coal" + item + "recl"]: "",
+                      });
+                      return;
+                    }
+
+                    if (!/^[0-9]*$/.test(newValue)) {
+                      alert("Enter Numbers only...");
+                      return;
+                    } else {
+                      setUpdateReclButtVisible(false);
+                      setReclaiming({
+                        ...reclaiming,
+                        ["coal" + item + "recl"]: newValue,
+                      });
+                    }
+                  }}
+                  editable={editReclaiming}
+                />
+              )
+            )}
+
+            {["cc49", "cc50", "cc126"].map((item, index) => (
+              <AppTextBox
+                key={index}
+                label={item}
+                labelcolor="#e9c46a"
+                value={reclaiming[item + "recl"]}
+                onChangeText={(newValue) => {
+                  if (newValue === "") {
+                    alert("Enter " + item + " Reclaiming..");
+                    setUpdateReclButtVisible(true);
+                    setReclaiming({
+                      ...reclaiming,
+                      [item + "recl"]: "",
+                    });
+                    return;
+                  }
+
+                  if (!/^[0-9]*$/.test(newValue)) {
+                    alert("Enter Numbers only...");
+                    return;
+                  } else {
+                    setUpdateReclButtVisible(false);
+                    setReclaiming({
+                      ...reclaiming,
+                      [item + "recl"]: newValue,
+                    });
+                  }
+                }}
+                editable={editReclaiming}
+              />
+            ))}
 
             <View
               style={{
@@ -361,34 +329,16 @@ export default function Review({ navigation }) {
               />
             </View>
             {editReclaiming && (
-              <TouchableOpacity
-                style={{
-                  backgroundColor: "#fc5c65",
-                  borderRadius: 25,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  padding: 15,
-                  marginTop: 30,
-                  width: "90%",
-                  marginVertical: 10,
-                  alignSelf: "center",
-                }}
+              <AppButton
+                buttonName="Update Reclaiming"
+                buttonColour={updateReclButtVisible ? "#C7B7A3" : "#fc5c65"}
+                disabled={updateReclButtVisible}
                 onPress={onUpdateReclaiming}
-              >
-                <Text
-                  style={{
-                    color: "white",
-                    fontSize: 18,
-                    textTransform: "uppercase",
-                    fontWeight: "bold",
-                  }}
-                >
-                  Update Reclaiming
-                </Text>
-              </TouchableOpacity>
+              />
             )}
           </>
         </FieldSet>
+
         <AppButton
           buttonName="Back"
           buttonColour="#fc5c65"

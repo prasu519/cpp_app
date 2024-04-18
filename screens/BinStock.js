@@ -40,26 +40,13 @@ export default function BinStock({ navigation }) {
   }, []);
 
   const handleSubmit = async (values) => {
-    const reclaimRegex = /^[0-9]*$/;
     let TotalStock = 0;
 
     for (let i = 1; i <= count; i++) {
-      if (!reclaimRegex.test(values["coal" + i + "stock"])) {
-        return alert("Please enter only numbers in Coal-Wise...");
-      }
-
       if (values["coal" + i + "stock"] === "") {
-        values["coal" + i + "stock"] = 0;
-      }
-
-      TotalStock = TotalStock + parseInt(values["coal" + i + "stock"]);
-    }
-
-    if (TotalStock === 0) {
-      for (let i = 1; i <= count; i++) {
-        values["coal" + i + "stock"] = "";
-      }
-      return alert("Enter Coal Stock before submitting...");
+        alert("Enter all fields..");
+        return;
+      } else TotalStock = TotalStock + parseInt(values["coal" + i + "stock"]);
     }
 
     let newValues = {
@@ -79,7 +66,7 @@ export default function BinStock({ navigation }) {
     setDoneScreen(true);
 
     await axios
-      .post(BaseUrl + "/mbtopstock", newValues, {
+      .post(BaseUrl + "/mbtopStock", newValues, {
         onUploadProgress: (progress) =>
           setProgress(progress.loaded / progress.total),
       })
@@ -196,11 +183,20 @@ export default function BinStock({ navigation }) {
                         label={coalNames["cn" + (index + 1)]}
                         labelcolor="orange"
                         key={index}
-                        onChangeText={(text) =>
-                          setFieldValue("coal" + (index + 1) + "stock", text)
-                        }
+                        onChangeText={(value) => {
+                          if (!/^[0-9]*$/.test(value)) {
+                            alert("Enter Numbers only...");
+                            return;
+                          } else {
+                            setFieldValue(
+                              "coal" + (index + 1) + "stock",
+                              value
+                            );
+                          }
+                        }}
                         keyboardType="number-pad"
                         value={values["coal" + (index + 1) + "stock"]}
+                        maxLength={4}
                       />
                     ))}
                     <AppFormButton buttonText="Submit" />

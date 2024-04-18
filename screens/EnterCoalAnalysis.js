@@ -12,39 +12,35 @@ import BaseUrl from "../config/BaseUrl";
 import DoneScreen from "./DoneScreen";
 
 const validationSchema = Yup.object().shape({
-  ct1: Yup.number()
-    .typeError("Feeding must be number")
+  ci: Yup.number()
+    .typeError("Crushing Index must be number")
     .required()
     .integer()
-    .max(3000)
-    .label("Ct-1"),
-  ct2: Yup.number()
-    .typeError("Feeding must be number")
+    .max(80)
+    .label("C.I"),
+  ash: Yup.number()
+    .typeError("Ash must be number")
     .required()
-    .integer()
-    .max(3000)
-    .label("Ct-2"),
-  ct3: Yup.number()
-    .typeError("Feeding must be number")
+    .max(13)
+    .label("Ash"),
+  vm: Yup.number()
+    .typeError("Volatile Matter must be number")
     .required()
-    .integer()
-    .max(3000)
-    .label("Ct-3"),
-  stream1: Yup.number()
-    .typeError("Feeding must be number")
+    .max(30)
+    .label("Volatile Matter"),
+  fc: Yup.number()
+    .typeError("Fixed Carbor must be number")
     .required()
-    .integer()
-    .max(5000)
-    .label("Stream1"),
-  stream1A: Yup.number()
-    .typeError("Feeding must be number")
+    .max(70)
+    .label("Fixed Carbor"),
+  tm: Yup.number()
+    .typeError("Total moisture must be number")
     .required()
-    .integer()
-    .max(5000)
-    .label("Stream1A"),
+    .max(13)
+    .label("Total moisture"),
 });
 
-export default function EnterFeeding({ navigation, route }) {
+export default function EnterCoalAnalysis({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -58,25 +54,19 @@ export default function EnterFeeding({ navigation, route }) {
   const currentShift = shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
-    const totalFeeding =
-      parseInt(values.ct1) + parseInt(values.ct2) + parseInt(values.ct3);
-
-    const streamTotal = parseInt(values.stream1) + parseInt(values.stream1A);
-
-    if (totalFeeding !== streamTotal) {
-      alert("Coal Tower total and Stream total should be equal..");
+    let totalOfAVF =
+      parseFloat(values.ash) + parseFloat(values.vm) + parseFloat(values.fc);
+    console.log(totalOfAVF);
+    if (totalOfAVF != 100) {
+      alert("Total of Ash,Vm,Fc should be 100..");
       return;
     }
-    const newValues = {
-      ...values,
-      total_feeding: totalFeeding,
-    };
 
     setProgress(0);
     setDoneScreen(true);
 
     await axios
-      .post(BaseUrl + "/feeding", newValues, {
+      .post(BaseUrl + "/coalAnalysis", values, {
         onUploadProgress: (progress) =>
           setProgress(progress.loaded / progress.total),
       })
@@ -104,7 +94,7 @@ export default function EnterFeeding({ navigation, route }) {
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 40,
+            gap: 20,
           }}
         >
           <AntDesign
@@ -123,7 +113,7 @@ export default function EnterFeeding({ navigation, route }) {
               marginLeft: 25,
             }}
           >
-            Enter Feeding
+            Enter Coal Analysis
           </Text>
         </View>
 
@@ -131,12 +121,11 @@ export default function EnterFeeding({ navigation, route }) {
           initialValues={{
             date: currentDate,
             shift: currentShift,
-            ct1: "",
-            ct2: "",
-            ct3: "",
-            stream1: "",
-            stream1A: "",
-            total_feeding: "",
+            ci: "",
+            ash: "",
+            vm: "",
+            fc: "",
+            tm: "",
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -172,79 +161,63 @@ export default function EnterFeeding({ navigation, route }) {
                 </Text>
               </View>
               <ScrollView>
-                <Text
-                  style={{
-                    alignSelf: "center",
-                    fontSize: 25,
-                    fontWeight: "bold",
-                    color: "red",
-                    paddingTop: 20,
-                  }}
-                >
-                  Enter CoalTower-wise
-                </Text>
                 <AppTextBox
-                  label="CT-1"
+                  label="C.I"
                   labelcolor="#6a994e"
-                  onChangeText={handleChange("ct1")}
-                  onBlur={() => setFieldTouched("ct1")}
-                  value={values["ct1"].toString()}
-                  maxLength={4}
+                  tbSize="30%"
+                  lbSize="30%"
+                  onChangeText={handleChange("ci")}
+                  onBlur={() => setFieldTouched("ci")}
+                  value={values["ci"]}
+                  maxLength={2}
+                  placeholder="%"
                 />
-                <ErrorMessage error={errors.ct1} visible={touched.ct1} />
+                <ErrorMessage error={errors.ci} visible={touched.ci} />
                 <AppTextBox
-                  label="CT-2"
+                  label="ASH"
                   labelcolor="#6a994e"
-                  onChangeText={handleChange("ct2")}
-                  onBlur={() => setFieldTouched("ct2")}
-                  value={values["ct2"].toString()}
-                  maxLength={4}
+                  tbSize="30%"
+                  lbSize="30%"
+                  onChangeText={handleChange("ash")}
+                  onBlur={() => setFieldTouched("ash")}
+                  value={values["ash"]}
+                  maxLength={5}
                 />
-                <ErrorMessage error={errors.ct2} visible={touched.ct2} />
+                <ErrorMessage error={errors.ash} visible={touched.ash} />
                 <AppTextBox
-                  label="CT-3"
+                  label="V.M"
                   labelcolor="#6a994e"
-                  onChangeText={handleChange("ct3")}
-                  onBlur={() => setFieldTouched("ct3")}
-                  value={values["ct3"].toString()}
-                  maxLength={4}
+                  tbSize="30%"
+                  lbSize="30%"
+                  onChangeText={handleChange("vm")}
+                  onBlur={() => setFieldTouched("vm")}
+                  value={values["vm"]}
+                  maxLength={5}
                 />
-                <ErrorMessage error={errors.ct3} visible={touched.ct3} />
-                <Text
-                  style={{
-                    alignSelf: "center",
-                    fontSize: 25,
-                    fontWeight: "bold",
-                    color: "red",
-                    paddingTop: 20,
-                  }}
-                >
-                  Enter Stream-wise
-                </Text>
+                <ErrorMessage error={errors.vm} visible={touched.vm} />
                 <AppTextBox
-                  label="Stream-1"
-                  labelcolor="#e9c46a"
-                  onChangeText={handleChange("stream1")}
-                  onBlur={() => setFieldTouched("stream1")}
-                  value={values["stream1"].toString()}
-                  maxLength={4}
+                  label="F.C"
+                  labelcolor="#6a994e"
+                  tbSize="30%"
+                  lbSize="30%"
+                  onChangeText={handleChange("fc")}
+                  onBlur={() => setFieldTouched("fc")}
+                  value={values["fc"]}
+                  maxLength={5}
                 />
-                <ErrorMessage
-                  error={errors.stream1}
-                  visible={touched.stream1}
-                />
+                <ErrorMessage error={errors.fc} visible={touched.fc} />
                 <AppTextBox
-                  label="Stream-1A"
-                  labelcolor="#e9c46a"
-                  onChangeText={handleChange("stream1A")}
-                  onBlur={() => setFieldTouched("stream1A")}
-                  value={values["stream1A"].toString()}
-                  maxLength={4}
+                  label="T.M"
+                  labelcolor="#6a994e"
+                  tbSize="30%"
+                  lbSize="30%"
+                  onChangeText={handleChange("tm")}
+                  onBlur={() => setFieldTouched("tm")}
+                  value={values["tm"]}
+                  maxLength={5}
                 />
-                <ErrorMessage
-                  error={errors.stream1A}
-                  visible={touched.stream1A}
-                />
+                <ErrorMessage error={errors.tm} visible={touched.tm} />
+
                 <AppFormButton buttonText="Submit" />
               </ScrollView>
             </>
