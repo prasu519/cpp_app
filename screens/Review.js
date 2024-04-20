@@ -5,6 +5,7 @@ import {
   Switch,
   Button,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -14,16 +15,26 @@ import FieldSet from "react-native-fieldset";
 import axios from "axios";
 import AppButton from "../components/AppButton";
 import BaseUrl from "../config/BaseUrl";
+import AppDropdown from "../components/AppDropdown";
 
 export default function Review({ navigation }) {
   const [feeding, setFeeding] = useState();
   const [reclaiming, setReclaiming] = useState();
+  const [runningHours, setRunningHours] = useState();
 
   const [editFeeding, setEditFeeding] = useState(false);
   const [editReclaiming, setEditReclaiming] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [editRunningHours, setEditRunningHours] = useState(false);
+
+  const [isLoaded, setIsLoaded] = useState(true);
+  const [isDataLoaded, setIsDataLoaded] = useState(true);
+  const [reclaimingCount, setReclaimingCount] = useState(0);
+
   const [updateFeedButtVisible, setUpdateFeedButtVisible] = useState(false);
   const [updateReclButtVisible, setUpdateReclButtVisible] = useState(false);
+  const [updateRunnHrsButtVisible, setUpdateRunnhrsHButtVisible] =
+    useState(false);
+
   const currentDate =
     new Date().getDate() +
     "/" +
@@ -34,9 +45,27 @@ export default function Review({ navigation }) {
   const currentShift = shift(new Date().getHours());
 
   useEffect(() => {
-    getfeedingdata();
-    getReclaimingData();
+    if (isLoaded) {
+      getfeedingdata();
+      getReclaimingData();
+      getRunningHoursdata();
+      getTotalCoals();
+    }
   }, []);
+
+  useEffect(() => {
+    if (runningHours == undefined) return;
+    checkIsRunningHoursNull();
+  }, [runningHours]);
+
+  const getTotalCoals = async () => {
+    await axios
+      .get(BaseUrl + "/blend")
+      .then((response) => {
+        setReclaimingCount(response.data.data.total);
+      })
+      .catch((error) => console.log(error));
+  };
 
   const getfeedingdata = async () => {
     await axios
@@ -48,7 +77,7 @@ export default function Review({ navigation }) {
       })
       .then((responce) => setFeeding(responce.data.data[0]))
       .catch((error) => console.log(error));
-    setIsLoaded(true);
+    setIsLoaded(false);
   };
 
   const getReclaimingData = async () => {
@@ -62,7 +91,20 @@ export default function Review({ navigation }) {
       .then((responce) => setReclaiming(responce.data.data[0]))
       .catch((error) => console.log(error));
 
-    setIsLoaded(true);
+    setIsLoaded(false);
+  };
+
+  const getRunningHoursdata = async () => {
+    await axios
+      .get(BaseUrl + "/runningHours", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
+      .then((responce) => setRunningHours(responce.data.data[0]))
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
   };
 
   const onUpdateFeeding = async () => {
@@ -92,22 +134,14 @@ export default function Review({ navigation }) {
       parseInt(reclaiming.cc49recl) +
       parseInt(reclaiming.cc50recl) +
       parseInt(reclaiming.cc126recl);
-
-    const coaltotal =
-      parseInt(reclaiming.coal1recl) +
-      parseInt(reclaiming.coal2recl) +
-      parseInt(reclaiming.coal3recl) +
-      parseInt(reclaiming.coal4recl) +
-      parseInt(reclaiming.coal5recl) +
-      parseInt(reclaiming.coal6recl) +
-      parseInt(reclaiming.coal7recl) +
-      parseInt(reclaiming.coal8recl);
-
+    let coaltotal = 0;
+    for (let i = 1; i <= reclaimingCount; i++) {
+      coaltotal = coaltotal + parseInt(reclaiming["coal" + i + "recl"]);
+    }
     if (coaltotal !== streamtotal) {
       alert("CoalTotal and StreamTotal should be equal..");
       return;
     }
-
     const updatedReclaiming = {
       ...reclaiming,
       total_reclaiming: streamtotal,
@@ -120,16 +154,48 @@ export default function Review({ navigation }) {
       .catch(function (error) {
         console.log(error);
       });
+    setEditReclaiming(false);
   };
 
-  if (!isLoaded || feeding == undefined || reclaiming == undefined) {
-    return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Text>No Data Available..</Text>
-        <Button title="Go Back" onPress={() => navigation.goBack()} />
-      </View>
-    );
-  }
+  const onUpdateRunningHours = async () => {
+    await axios
+      .put(BaseUrl + "/runningHours", runningHours)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+    setEditRunningHours(false);
+  };
+
+  const checkIsRunningHoursNull = () => {
+    for (let i = 2; i <= 4; i++) {
+      if (
+        runningHours["str" + i + "hrs"] === "" ||
+        runningHours["str" + i + "hrs"] === "" ||
+        runningHours["str" + i + "hrs"] === "" ||
+        runningHours["str" + i + "min"] === "" ||
+        runningHours["str" + i + "min"] === "" ||
+        runningHours["str" + i + "min"] === ""
+      ) {
+        alert("Make sure to enter all values..");
+        setUpdateRunnhrsHButtVisible(true);
+        return;
+      }
+    }
+    if (
+      runningHours["cc49hrs"] === "" ||
+      runningHours["cc49min"] === "" ||
+      runningHours["cc50hrs"] === "" ||
+      runningHours["cc50min"] === "" ||
+      runningHours["cc126hrs"] === "" ||
+      runningHours["cc126min"] === ""
+    ) {
+      alert("Make sure to enter all values..");
+      setUpdateRunnhrsHButtVisible(true);
+      return;
+    } else {
+      setUpdateRunnhrsHButtVisible(false);
+      return;
+    }
+  };
 
   const toggleSwitchFeeding = () => {
     setEditFeeding((previousState) => !previousState);
@@ -137,6 +203,70 @@ export default function Review({ navigation }) {
   const toggleSwitchReclaiming = () => {
     setEditReclaiming((previousState) => !previousState);
   };
+  const toggleSwitchRunningHours = () => {
+    setEditRunningHours((previousState) => !previousState);
+  };
+
+  if (
+    isLoaded ||
+    feeding == undefined ||
+    reclaiming == undefined ||
+    runningHours == undefined
+  ) {
+    return (
+      <View style={{ flex: 1, backgroundColor: "#F1F5A8" }}>
+        <View
+          style={{
+            paddingTop: 40,
+            paddingLeft: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 90,
+          }}
+        >
+          <AntDesign
+            name="leftcircle"
+            size={40}
+            color="black"
+            onPress={() => navigation.goBack()}
+          />
+          <Text
+            style={{
+              fontSize: 35,
+              textDecorationLine: "underline",
+              color: "red",
+              fontWeight: "bold",
+            }}
+          >
+            Review
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 80,
+            paddingTop: 20,
+            alignItems: "center",
+            justifyContent: "center",
+            borderBottomWidth: 2,
+          }}
+        >
+          <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+            DATE :{currentDate}
+          </Text>
+          <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+            SHIFT :{currentShift}
+          </Text>
+        </View>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: "#F1F5A8" }}>
@@ -338,6 +468,148 @@ export default function Review({ navigation }) {
             )}
           </>
         </FieldSet>
+
+        <FieldSet label="Running Hours">
+          <>
+            {["2", "3", "4"].map((item, index) => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+
+                  padding: 20,
+                  justifyContent: "space-between",
+                }}
+                key={index}
+              >
+                <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+                  {"Stream-" + item}
+                </Text>
+                <View
+                  style={{
+                    width: 210,
+                    backgroundColor: "white",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    borderRadius: 23,
+                    gap: 1,
+                  }}
+                >
+                  <AppDropdown
+                    id={"str" + item + "hrs"}
+                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                    selectedValue={runningHours["str" + item + "hrs"]}
+                    onValueChange={(newValue) => {
+                      setRunningHours({
+                        ...runningHours,
+                        ["str" + item + "hrs"]: newValue,
+                      });
+                      // checkIsRunningHoursNull(newValue, "str" + item + "hrs");
+                    }}
+                    enabled={editRunningHours}
+                  />
+                  <Text style={{ fontWeight: "900" }}>:</Text>
+                  <AppDropdown
+                    id={"str" + item + "min"}
+                    items={["", "00", "10", "20", "30", "40", "50"]}
+                    selectedValue={runningHours["str" + item + "min"]}
+                    onValueChange={(newValue) => {
+                      setRunningHours({
+                        ...runningHours,
+                        ["str" + item + "min"]: newValue,
+                      });
+                      // checkIsRunningHoursNull(newValue, "str" + item + "min");
+                    }}
+                    enabled={editRunningHours}
+                  />
+                </View>
+              </View>
+            ))}
+            {["49", "50", "126"].map((item, index) => (
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  padding: 20,
+                  justifyContent: "space-between",
+                }}
+                key={index}
+              >
+                <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+                  {"CC-" + item}
+                </Text>
+                <View
+                  style={{
+                    width: 210,
+                    backgroundColor: "white",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    borderRadius: 23,
+                    gap: 1,
+                  }}
+                >
+                  <AppDropdown
+                    id={"cc" + item + "hrs"}
+                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                    selectedValue={runningHours["cc" + item + "hrs"]}
+                    onValueChange={(newValue) => {
+                      setRunningHours({
+                        ...runningHours,
+                        ["cc" + item + "hrs"]: newValue,
+                      });
+                      // checkIsRunningHoursNull();
+                    }}
+                    enabled={editRunningHours}
+                  />
+                  <Text style={{ fontWeight: "900" }}>:</Text>
+                  <AppDropdown
+                    id={"cc" + item + "min"}
+                    items={["", "00", "10", "20", "30", "40", "50"]}
+                    selectedValue={runningHours["cc" + item + "min"]}
+                    onValueChange={(newValue) => {
+                      setRunningHours({
+                        ...runningHours,
+                        ["cc" + item + "min"]: newValue,
+                      });
+
+                      /* if (newValue === "") {
+                        alert("Make sure to enter all values..");
+                        setUpdateRunnhrsHButtVisible(true);
+                        return;
+                      } else checkIsRunningHoursNull();*/
+                    }}
+                    enabled={editRunningHours}
+                  />
+                </View>
+              </View>
+            ))}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Switch
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={editRunningHours ? "f5dd4b" : "#f4f3f4"}
+                onValueChange={toggleSwitchRunningHours}
+                value={editRunningHours}
+              />
+            </View>
+            {editRunningHours && (
+              <AppButton
+                buttonName="Update Running Hours"
+                buttonColour={updateRunnHrsButtVisible ? "#C7B7A3" : "#fc5c65"}
+                disabled={updateRunnHrsButtVisible}
+                onPress={onUpdateRunningHours}
+              />
+            )}
+          </>
+        </FieldSet>
+        <FieldSet label="Delays"></FieldSet>
 
         <AppButton
           buttonName="Back"

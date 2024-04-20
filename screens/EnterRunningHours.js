@@ -172,130 +172,52 @@ export default function EnterRunningHours({ navigation }) {
                   Enter CPP Running Hours
                 </Text>
               </View>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 40,
-                  padding: 20,
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-                  Stream-2
-                </Text>
+              {["2", "3", "4"].map((item, index) => (
                 <View
                   style={{
-                    width: 210,
-                    backgroundColor: "white",
                     flexDirection: "row",
                     alignItems: "center",
-                    borderRadius: 23,
-                    gap: 1,
+
+                    padding: 20,
+                    justifyContent: "space-between",
                   }}
+                  key={index}
                 >
-                  <AppDropdown
-                    id="str2hrs"
-                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                    selectedValue={values.str2hrs}
-                    onValueChange={handleChange("str2hrs")}
-                    onBlur={() => setFieldTouched("str2hrs")}
-                  />
-                  <Text style={{ fontWeight: "900" }}>:</Text>
-                  <AppDropdown
-                    id="str2min"
-                    items={["", "00", "10", "20", "30", "40", "50"]}
-                    selectedValue={values.str2min}
-                    onValueChange={handleChange("str2min")}
-                    onBlur={() => setFieldTouched("str2min")}
-                  />
+                  <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+                    {"Stream-" + item}
+                  </Text>
+                  <View
+                    style={{
+                      width: 210,
+                      backgroundColor: "white",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderRadius: 23,
+                      gap: 1,
+                    }}
+                  >
+                    <AppDropdown
+                      id={"str" + item + "hrs"}
+                      items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                      selectedValue={values["str" + item + "hrs"]}
+                      onValueChange={handleChange("str" + item + "hrs")}
+                      // onBlur={() => setFieldTouched("str"+item+"hrs")}
+                    />
+                    <Text style={{ fontWeight: "900" }}>:</Text>
+                    <AppDropdown
+                      id={"str" + item + "min"}
+                      items={["", "00", "10", "20", "30", "40", "50"]}
+                      selectedValue={values["str" + item + "min"]}
+                      onValueChange={handleChange("str" + item + "min")}
+                      //onBlur={() => setFieldTouched("str2min")}
+                    />
+                  </View>
                 </View>
-              </View>
+              ))}
 
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 40,
-                  padding: 5,
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-                  Stream-3
-                </Text>
-                <View
-                  style={{
-                    width: 210,
-                    backgroundColor: "white",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    borderRadius: 23,
-                    gap: 1,
-                  }}
-                >
-                  <AppDropdown
-                    id="str3hrs"
-                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                    selectedValue={values.str3hrs}
-                    onValueChange={handleChange("str3hrs")}
-                    onBlur={() => setFieldTouched("str3hrs")}
-                  />
-                  <Text style={{ fontWeight: "900" }}>:</Text>
-                  <AppDropdown
-                    id="str3min"
-                    items={["", "00", "10", "20", "30", "40", "50"]}
-                    selectedValue={values.str3min}
-                    onValueChange={handleChange("str3min")}
-                    onBlur={() => setFieldTouched("str3min")}
-                  />
-                </View>
-              </View>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 40,
-                  padding: 20,
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-                  Stream-4
-                </Text>
-                <View
-                  style={{
-                    width: 210,
-                    backgroundColor: "white",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    borderRadius: 23,
-                    gap: 1,
-                  }}
-                >
-                  <AppDropdown
-                    id="str4hrs"
-                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                    selectedValue={values.str4hrs}
-                    onValueChange={handleChange("str4hrs")}
-                    onBlur={() => setFieldTouched("str4hrs")}
-                  />
-                  <Text style={{ fontWeight: "900" }}>:</Text>
-                  <AppDropdown
-                    id="str4min"
-                    items={["", "00", "10", "20", "30", "40", "50"]}
-                    selectedValue={values.str4min}
-                    onValueChange={handleChange("str4min")}
-                    onBlur={() => setFieldTouched("str4min")}
-                  />
-                </View>
-              </View>
-
-              <View
-                style={{
-                  paddingTop: 20,
+                  paddingTop: 50,
                   flexDirection: "row",
                   justifyContent: "center",
                 }}
@@ -311,119 +233,48 @@ export default function EnterRunningHours({ navigation }) {
                 </Text>
               </View>
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 75,
-                  padding: 20,
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ fontSize: 25, fontWeight: "bold" }}>CC-49</Text>
+              {["49", "50", "126"].map((item, index) => (
                 <View
                   style={{
-                    width: 210,
-                    backgroundColor: "white",
                     flexDirection: "row",
                     alignItems: "center",
-                    borderRadius: 23,
-                    gap: 1,
+                    padding: 20,
+                    justifyContent: "space-between",
                   }}
+                  key={index}
                 >
-                  <AppDropdown
-                    id="cc49hrs"
-                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                    selectedValue={values.cc49hrs}
-                    onValueChange={handleChange("cc49hrs")}
-                    onBlur={() => setFieldTouched("cc49hrs")}
-                  />
-                  <Text style={{ fontWeight: "900" }}>:</Text>
-                  <AppDropdown
-                    id="cc49min"
-                    items={["", "00", "10", "20", "30", "40", "50"]}
-                    selectedValue={values.cc49min}
-                    onValueChange={handleChange("cc49min")}
-                    onBlur={() => setFieldTouched("cc49min")}
-                  />
+                  <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+                    {"CC" + item}
+                  </Text>
+                  <View
+                    style={{
+                      width: 210,
+                      backgroundColor: "white",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderRadius: 23,
+                      gap: 1,
+                    }}
+                  >
+                    <AppDropdown
+                      id={"cc" + item + "hrs"}
+                      items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
+                      selectedValue={values["cc" + item + "hrs"]}
+                      onValueChange={handleChange("cc" + item + "hrs")}
+                      // onBlur={() => setFieldTouched("str"+item+"hrs")}
+                    />
+                    <Text style={{ fontWeight: "900" }}>:</Text>
+                    <AppDropdown
+                      id={"cc" + item + "min"}
+                      items={["", "00", "10", "20", "30", "40", "50"]}
+                      selectedValue={values["cc" + item + "min"]}
+                      onValueChange={handleChange("cc" + item + "min")}
+                      //onBlur={() => setFieldTouched("str2min")}
+                    />
+                  </View>
                 </View>
-              </View>
+              ))}
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 75,
-                  padding: 5,
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ fontSize: 25, fontWeight: "bold" }}>CC-50</Text>
-                <View
-                  style={{
-                    width: 210,
-                    backgroundColor: "white",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    borderRadius: 23,
-                    gap: 1,
-                  }}
-                >
-                  <AppDropdown
-                    id="cc50hrs"
-                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                    selectedValue={values.cc50hrs}
-                    onValueChange={handleChange("cc50hrs")}
-                    onBlur={() => setFieldTouched("cc50hrs")}
-                  />
-                  <Text style={{ fontWeight: "900" }}>:</Text>
-                  <AppDropdown
-                    id="cc50min"
-                    items={["", "00", "10", "20", "30", "40", "50"]}
-                    selectedValue={values.cc50min}
-                    onValueChange={handleChange("cc50min")}
-                    onBlur={() => setFieldTouched("cc50min")}
-                  />
-                </View>
-              </View>
-
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 60,
-                  padding: 20,
-                  justifyContent: "center",
-                }}
-              >
-                <Text style={{ fontSize: 25, fontWeight: "bold" }}>CC-126</Text>
-                <View
-                  style={{
-                    width: 210,
-                    backgroundColor: "white",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    borderRadius: 23,
-                    gap: 1,
-                  }}
-                >
-                  <AppDropdown
-                    id="cc126hrs"
-                    items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                    selectedValue={values.cc126hrs}
-                    onValueChange={handleChange("cc126hrs")}
-                    onBlur={() => setFieldTouched("cc126hrs")}
-                  />
-                  <Text style={{ fontWeight: "900" }}>:</Text>
-                  <AppDropdown
-                    id="cc126min"
-                    items={["", "00", "10", "20", "30", "40", "50"]}
-                    selectedValue={values.cc126min}
-                    onValueChange={handleChange("cc126min")}
-                    onBlur={() => setFieldTouched("cc126min")}
-                  />
-                </View>
-              </View>
               <AppFormButton buttonText="Submit" />
             </>
           )}

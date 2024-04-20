@@ -19,20 +19,6 @@ export default function EnterDelays({ navigation }) {
   const [progress, setProgress] = useState(0);
   const [allEntrys, setAllEntrys] = useState(false);
 
-  const initialiseDelayComponent = () => {
-    delayComponent[`fromhr${count}`] = "";
-    delayComponent[`frommin${count}`] = "";
-    delayComponent[`tohr${count}`] = "";
-    delayComponent[`tomin${count}`] = "";
-    delayComponent[`desc${count}`] = "";
-    delayComponent[`date`] = currentDate;
-    delayComponent[`shift`] = currentShift;
-  };
-
-  useEffect(() => {
-    initialiseDelayComponent();
-  }, [count]);
-
   const handleNewDelayComponent = () => {
     setNewDelayComponent([...newDelayComponent, ""]);
     setCount(count + 1);
@@ -41,18 +27,18 @@ export default function EnterDelays({ navigation }) {
 
   const handleDelete = (index) => {
     const updatedDelayComponents = newDelayComponent.filter(
-      (_, i) => i !== index
+      (_, i) => i != index
     );
     setNewDelayComponent(updatedDelayComponents);
     setCount(count - 1);
 
     const tempObject = { ...delayComponent };
 
-    delete tempObject["fromhr" + (index + 1)];
-    delete tempObject["frommin" + (index + 1)];
-    delete tempObject["tohr" + (index + 1)];
-    delete tempObject["tomin" + (index + 1)];
-    delete tempObject["desc" + (index + 1)];
+    delete tempObject["fromhr" + index];
+    delete tempObject["frommin" + index];
+    delete tempObject["tohr" + index];
+    delete tempObject["tomin" + index];
+    delete tempObject["desc" + index];
 
     setDelayComponent(tempObject);
 
@@ -71,15 +57,11 @@ export default function EnterDelays({ navigation }) {
       delays[i] = {
         date: currentDate,
         shift: currentShift,
+        delayNumber: i + 1,
         fromTime:
-          delayComponent["fromhr" + (i + 1)] +
-          ":" +
-          delayComponent["frommin" + (i + 1)],
-        toTime:
-          delayComponent["tohr" + (i + 1)] +
-          ":" +
-          delayComponent["tomin" + (i + 1)],
-        reason: delayComponent["desc" + (i + 1)],
+          delayComponent["fromhr" + i] + ":" + delayComponent["frommin" + i],
+        toTime: delayComponent["tohr" + i] + ":" + delayComponent["tomin" + i],
+        reason: delayComponent["desc" + i],
       };
     }
 
@@ -98,6 +80,7 @@ export default function EnterDelays({ navigation }) {
           alert("Could not save data..");
         });
     }
+
     setDelayComponent({});
     setNewDelayComponent([""]);
     setButtonVisible(true);
@@ -193,13 +176,13 @@ export default function EnterDelays({ navigation }) {
                       : ["", "22", "23", "24", "1", "2", "3", "4", "5", "6"]
                   }
                   selectedValueFromHr={
-                    delayComponent["fromhr" + (index + 1).toString()]
+                    delayComponent["fromhr" + index.toString()]
                   }
                   onSelectFromHr={(value) => {
                     if (value === "") {
                       setDelayComponent({
                         ...delayComponent,
-                        ["fromhr" + (index + 1)]: value,
+                        ["fromhr" + index]: value,
                       });
 
                       alert("Select From-time..");
@@ -208,8 +191,7 @@ export default function EnterDelays({ navigation }) {
                     }
 
                     if (
-                      parseInt(value) >
-                      parseInt(delayComponent["tohr" + (index + 1)])
+                      parseInt(value) > parseInt(delayComponent["tohr" + index])
                     ) {
                       alert("From time should not be more than To time..");
                       return;
@@ -217,17 +199,17 @@ export default function EnterDelays({ navigation }) {
                     if (allEntrys) setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
-                      ["fromhr" + (index + 1)]: value,
+                      ["fromhr" + index]: value,
                     });
                   }}
                   selectedValueFromMin={
-                    delayComponent["frommin" + (index + 1).toString()]
+                    delayComponent["frommin" + index.toString()]
                   }
                   onSelectFromMin={(value) => {
                     if (value === "") {
                       setDelayComponent({
                         ...delayComponent,
-                        ["frommin" + (index + 1)]: value,
+                        ["frommin" + index]: value,
                       });
 
                       alert("Select From-time..");
@@ -236,9 +218,9 @@ export default function EnterDelays({ navigation }) {
                     }
                     if (
                       parseInt(value) >
-                        parseInt(delayComponent["tomin" + (index + 1)]) &&
-                      parseInt(delayComponent["fromhr" + (index + 1)]) >
-                        parseInt(delayComponent["tohr" + (index + 1)])
+                        parseInt(delayComponent["tomin" + index]) &&
+                      parseInt(delayComponent["fromhr" + index]) >
+                        parseInt(delayComponent["tohr" + index])
                     ) {
                       alert("From time should not be more than To time..");
                       return;
@@ -246,17 +228,15 @@ export default function EnterDelays({ navigation }) {
                     if (allEntrys) setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
-                      ["frommin" + (index + 1)]: value,
+                      ["frommin" + index]: value,
                     });
                   }}
-                  selectedValueToHr={
-                    delayComponent["tohr" + (index + 1).toString()]
-                  }
+                  selectedValueToHr={delayComponent["tohr" + index.toString()]}
                   onSelectToHr={(value) => {
                     if (value === "") {
                       setDelayComponent({
                         ...delayComponent,
-                        ["tohr" + (index + 1)]: value,
+                        ["tohr" + index]: value,
                       });
 
                       alert("Select To-time..");
@@ -266,15 +246,15 @@ export default function EnterDelays({ navigation }) {
 
                     if (
                       parseInt(value) <
-                      parseInt(delayComponent["fromhr" + (index + 1)])
+                      parseInt(delayComponent["fromhr" + index])
                     ) {
                       alert("To time should not be less than From time..");
                       return;
                     }
 
                     if (
-                      parseInt(delayComponent["frommin" + (index + 1)]) >
-                      parseInt(delayComponent["tomin" + (index + 1)])
+                      parseInt(delayComponent["frommin" + index]) >
+                      parseInt(delayComponent["tomin" + index])
                     ) {
                       alert("From time should not be more than To time..");
                       return;
@@ -282,17 +262,17 @@ export default function EnterDelays({ navigation }) {
                     if (allEntrys) setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
-                      ["tohr" + (index + 1)]: value,
+                      ["tohr" + index]: value,
                     });
                   }}
                   selectedValueToMin={
-                    delayComponent["tomin" + (index + 1).toString()]
+                    delayComponent["tomin" + index.toString()]
                   }
                   onSelectToMin={(value) => {
                     if (value === "") {
                       setDelayComponent({
                         ...delayComponent,
-                        ["tomin" + (index + 1)]: value,
+                        ["tomin" + index]: value,
                       });
 
                       alert("Select To-time..");
@@ -300,10 +280,10 @@ export default function EnterDelays({ navigation }) {
                       return;
                     }
                     if (
-                      parseInt(delayComponent["fromhr" + (index + 1)]) ===
-                        parseInt(delayComponent["tohr" + (index + 1)]) &&
+                      parseInt(delayComponent["fromhr" + index]) ===
+                        parseInt(delayComponent["tohr" + index]) &&
                       parseInt(value) <=
-                        parseInt(delayComponent["frommin" + (index + 1)])
+                        parseInt(delayComponent["frommin" + index])
                     ) {
                       alert("To time should not be less than From time..");
                       return;
@@ -311,7 +291,7 @@ export default function EnterDelays({ navigation }) {
                     if (allEntrys) setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
-                      ["tomin" + (index + 1)]: value,
+                      ["tomin" + index]: value,
                     });
                   }}
                   onChangeDesc={(value) => {
@@ -320,19 +300,17 @@ export default function EnterDelays({ navigation }) {
                       setButtonVisible(true);
                       setDelayComponent({
                         ...delayComponent,
-                        ["desc" + (index + 1)]: "",
+                        ["desc" + index]: "",
                       });
                       return;
                     }
 
                     if (
                       value === "" ||
-                      delayComponent["fromhr" + (index + 1).toString()] ===
-                        "" ||
-                      delayComponent["frommin" + (index + 1).toString()] ===
-                        "" ||
-                      delayComponent["tohr" + (index + 1).toString()] === "" ||
-                      delayComponent["tomin" + (index + 1).toString()] === ""
+                      delayComponent["fromhr" + index.toString()] === "" ||
+                      delayComponent["frommin" + index.toString()] === "" ||
+                      delayComponent["tohr" + index.toString()] === "" ||
+                      delayComponent["tomin" + index.toString()] === ""
                     ) {
                       setButtonVisible(true);
                       alert("Enter delay time first..");
@@ -341,11 +319,11 @@ export default function EnterDelays({ navigation }) {
                     setButtonVisible(false);
                     setDelayComponent({
                       ...delayComponent,
-                      ["desc" + (index + 1)]: value,
+                      ["desc" + index]: value,
                     });
                     setAllEntrys(true);
                   }}
-                  descvalue={delayComponent["desc" + (index + 1).toString()]}
+                  descvalue={delayComponent["desc" + index.toString()]}
                 />
               ))}
 
