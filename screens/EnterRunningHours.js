@@ -6,25 +6,10 @@ import { Formik } from "formik";
 import AppDropdown from "../components/AppDropdown";
 import AppFormButton from "../components/AppFormButton";
 import axios from "axios";
-import * as Yup from "yup";
+
 import DoneScreen from "./DoneScreen";
 
 import shift from "../utils/Shift";
-
-const validationSchema = Yup.object().shape({
-  str2hrs: Yup.number().required(),
-  str2min: Yup.number().required(),
-  str3hrs: Yup.number().required(),
-  str3min: Yup.number().required(),
-  str4hrs: Yup.number().required(),
-  str4min: Yup.number().required(),
-  cc49hrs: Yup.number().required(),
-  cc49min: Yup.number().required(),
-  cc50hrs: Yup.number().required(),
-  cc50min: Yup.number().required(),
-  cc126hrs: Yup.number().required(),
-  cc126min: Yup.number().required(),
-});
 
 export default function EnterRunningHours({ navigation }) {
   //const [shift, setShift] = useState("X");

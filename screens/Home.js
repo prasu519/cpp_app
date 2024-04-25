@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Button,
+  Pressable,
+} from "react-native";
 import React from "react";
 
 export default function Home({ navigation }) {

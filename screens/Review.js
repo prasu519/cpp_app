@@ -16,24 +16,32 @@ import axios from "axios";
 import AppButton from "../components/AppButton";
 import BaseUrl from "../config/BaseUrl";
 import AppDropdown from "../components/AppDropdown";
+import DelayMessageComponent from "../components/DelayMessageComponent";
 
 export default function Review({ navigation }) {
   const [feeding, setFeeding] = useState();
   const [reclaiming, setReclaiming] = useState();
   const [runningHours, setRunningHours] = useState();
+  const [shiftDelays, setShiftDelays] = useState([]);
+  const [delayComponent, setDelayComponent] = useState({});
 
   const [editFeeding, setEditFeeding] = useState(false);
   const [editReclaiming, setEditReclaiming] = useState(false);
   const [editRunningHours, setEditRunningHours] = useState(false);
+  const [editShiftDelays, setEditShiftDelays] = useState(false);
 
   const [isLoaded, setIsLoaded] = useState(true);
-  const [isDataLoaded, setIsDataLoaded] = useState(true);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [reclaimingCount, setReclaimingCount] = useState(0);
+
+  const [buttonVisible, setButtonVisible] = useState(true);
 
   const [updateFeedButtVisible, setUpdateFeedButtVisible] = useState(false);
   const [updateReclButtVisible, setUpdateReclButtVisible] = useState(false);
   const [updateRunnHrsButtVisible, setUpdateRunnhrsHButtVisible] =
     useState(false);
+  const [updateShiftDelayButtonVisible, setUpdateShiftDelayButtonVisible] =
+    useState(true);
 
   const currentDate =
     new Date().getDate() +
@@ -49,6 +57,7 @@ export default function Review({ navigation }) {
       getfeedingdata();
       getReclaimingData();
       getRunningHoursdata();
+      getShiftDelayData();
       getTotalCoals();
     }
   }, []);
@@ -57,6 +66,10 @@ export default function Review({ navigation }) {
     if (runningHours == undefined) return;
     checkIsRunningHoursNull();
   }, [runningHours]);
+
+  useEffect(() => {
+    copyShiftDelayData();
+  }, [shiftDelays]);
 
   const getTotalCoals = async () => {
     await axios
@@ -92,6 +105,43 @@ export default function Review({ navigation }) {
       .catch((error) => console.log(error));
 
     setIsLoaded(false);
+  };
+
+  const getShiftDelayData = async () => {
+    await axios
+      .get(BaseUrl + "/shiftDelay", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
+      .then((responce) => setShiftDelays(responce.data.data))
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
+  };
+
+  const copyShiftDelayData = () => {
+    let totalDelays = shiftDelays.length;
+    let tempobj = {};
+    for (let i = 0; i < totalDelays; i++) {
+      let fromTime = shiftDelays[i].fromTime.split(":");
+      let toTime = shiftDelays[i].toTime.split(":");
+      let fromhr = fromTime[0].trim();
+      let frommin = fromTime[1].trim();
+      let tohr = toTime[0].trim();
+      let tomin = toTime[1].trim();
+      let desc = shiftDelays[i].reason;
+      tempobj = {
+        ...tempobj,
+        [`fromhr${i}`]: fromhr,
+        [`frommin${i}`]: frommin,
+        [`tohr${i}`]: tohr,
+        [`tomin${i}`]: tomin,
+        [`desc${i}`]: desc,
+      };
+    }
+    setDelayComponent(tempobj);
+    setIsDataLoaded(true);
   };
 
   const getRunningHoursdata = async () => {
@@ -169,10 +219,6 @@ export default function Review({ navigation }) {
     for (let i = 2; i <= 4; i++) {
       if (
         runningHours["str" + i + "hrs"] === "" ||
-        runningHours["str" + i + "hrs"] === "" ||
-        runningHours["str" + i + "hrs"] === "" ||
-        runningHours["str" + i + "min"] === "" ||
-        runningHours["str" + i + "min"] === "" ||
         runningHours["str" + i + "min"] === ""
       ) {
         alert("Make sure to enter all values..");
@@ -197,6 +243,10 @@ export default function Review({ navigation }) {
     }
   };
 
+  const onUpdateShiftDelays = () => {
+    console.log(delayComponent);
+    setEditShiftDelays(false);
+  };
   const toggleSwitchFeeding = () => {
     setEditFeeding((previousState) => !previousState);
   };
@@ -205,6 +255,9 @@ export default function Review({ navigation }) {
   };
   const toggleSwitchRunningHours = () => {
     setEditRunningHours((previousState) => !previousState);
+  };
+  const toggleSwitchShiftDelays = () => {
+    setEditShiftDelays((previousState) => !previousState);
   };
 
   if (
@@ -597,6 +650,7 @@ export default function Review({ navigation }) {
                 thumbColor={editRunningHours ? "f5dd4b" : "#f4f3f4"}
                 onValueChange={toggleSwitchRunningHours}
                 value={editRunningHours}
+                style={{ height: 100, width: 100 }}
               />
             </View>
             {editRunningHours && (
@@ -609,7 +663,208 @@ export default function Review({ navigation }) {
             )}
           </>
         </FieldSet>
-        <FieldSet label="Delays"></FieldSet>
+
+        <FieldSet label="Delays">
+          <View style={{ flex: 1, alignItems: "center", gap: 20 }}>
+            {shiftDelays.map((value, index) => (
+              <DelayMessageComponent
+                key={index}
+                slno={index + 1}
+                onDelete={() => handleDelete(index)}
+                items={
+                  currentShift == "A"
+                    ? ["", "6", "7", "8", "9", "10", "11", "12", "13", "14"]
+                    : currentShift == "B"
+                    ? ["", "14", "15", "16", "17", "18", "19", "20", "21", "22"]
+                    : ["", "22", "23", "24", "1", "2", "3", "4", "5", "6"]
+                }
+                selectedValueFromHr={
+                  delayComponent["fromhr" + index.toString()]
+                }
+                onSelectFromHr={(value) => {
+                  if (value === "") {
+                    /* setDelayComponent({
+                      ...delayComponent,
+                      ["fromhr" + index]: value,
+                    });*/
+
+                    alert("Select From-time..");
+                    // setButtonVisible(true);
+                    return;
+                  }
+
+                  if (
+                    parseInt(value) > parseInt(delayComponent["tohr" + index])
+                  ) {
+                    alert("From time should not be more than To time..");
+                    return;
+                  }
+                  setUpdateShiftDelayButtonVisible(false);
+                  setDelayComponent({
+                    ...delayComponent,
+                    ["fromhr" + index]: value,
+                  });
+                }}
+                selectedValueFromMin={
+                  delayComponent["frommin" + index.toString()]
+                }
+                onSelectFromMin={(value) => {
+                  if (value === "") {
+                    /* setDelayComponent({
+                      ...delayComponent,
+                      ["frommin" + index]: value,
+                    });*/
+
+                    alert("Select From-time..");
+                    //setButtonVisible(true);
+                    return;
+                  }
+                  if (
+                    parseInt(value) >
+                      parseInt(delayComponent["tomin" + index]) &&
+                    parseInt(delayComponent["fromhr" + index]) >
+                      parseInt(delayComponent["tohr" + index])
+                  ) {
+                    alert("From time should not be more than To time..");
+                    return;
+                  }
+                  setUpdateShiftDelayButtonVisible(false);
+                  setDelayComponent({
+                    ...delayComponent,
+                    ["frommin" + index]: value,
+                  });
+                }}
+                selectedValueToHr={delayComponent["tohr" + index.toString()]}
+                onSelectToHr={(value) => {
+                  if (value === "") {
+                    /* setDelayComponent({
+                      ...delayComponent,
+                      ["tohr" + index]: value,
+                    });*/
+
+                    alert("Select To-time..");
+                    // setButtonVisible(true);
+                    return;
+                  }
+
+                  if (
+                    parseInt(value) < parseInt(delayComponent["fromhr" + index])
+                  ) {
+                    alert("To time should not be less than From time..");
+                    return;
+                  }
+
+                  if (
+                    parseInt(delayComponent["frommin" + index]) >
+                    parseInt(delayComponent["tomin" + index])
+                  ) {
+                    alert("From time should not be more than To time..");
+                    return;
+                  }
+                  setUpdateShiftDelayButtonVisible(false);
+                  setDelayComponent({
+                    ...delayComponent,
+                    ["tohr" + index]: value,
+                  });
+                }}
+                selectedValueToMin={delayComponent["tomin" + index.toString()]}
+                onSelectToMin={(value) => {
+                  if (value === "") {
+                    /* setDelayComponent({
+                      ...delayComponent,
+                      ["tomin" + index]: value,
+                    });*/
+
+                    alert("Select To-time..");
+                    //setButtonVisible(true);
+                    return;
+                  }
+                  if (
+                    parseInt(delayComponent["fromhr" + index]) ===
+                      parseInt(delayComponent["tohr" + index]) &&
+                    parseInt(value) <=
+                      parseInt(delayComponent["frommin" + index])
+                  ) {
+                    alert("To time should not be less than From time..");
+                    return;
+                  }
+                  setUpdateShiftDelayButtonVisible(false);
+                  setDelayComponent({
+                    ...delayComponent,
+                    ["tomin" + index]: value,
+                  });
+                }}
+                onChangeDesc={(value) => {
+                  if (value === "") {
+                    alert("Enter reason for the delay..");
+                    setUpdateShiftDelayButtonVisible(true);
+                    setDelayComponent({
+                      ...delayComponent,
+                      ["desc" + index]: "",
+                    });
+                    return;
+                  }
+
+                  /* if (
+                    value === "" ||
+                    delayComponent["fromhr" + index.toString()] === "" ||
+                    delayComponent["frommin" + index.toString()] === "" ||
+                    delayComponent["tohr" + index.toString()] === "" ||
+                    delayComponent["tomin" + index.toString()] === ""
+                  ) {
+                    setUpdateShiftDelayButtonVisible(true);
+                    alert("Make sure to enter all details..");
+                    return;
+                  }*/
+                  setUpdateShiftDelayButtonVisible(false);
+                  setDelayComponent({
+                    ...delayComponent,
+                    ["desc" + index]: value,
+                  });
+                }}
+                descvalue={delayComponent["desc" + index.toString()]}
+              />
+            ))}
+
+            {/*  <AppButton
+                buttonName="Add New Delay"
+                buttonColour={buttonVisible ? "#C7B7A3" : "#87A922"}
+                //buttonColour="#87A922"
+                width="60%"
+                disabled={buttonVisible}
+                onPress={handleNewDelayComponent}
+                />*/}
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Switch
+                trackColor={{ false: "#767577", true: "#81b0ff" }}
+                thumbColor={editShiftDelays ? "f5dd4b" : "#f4f3f4"}
+                onValueChange={toggleSwitchShiftDelays}
+                value={editShiftDelays}
+                style={{ height: 100, width: 100 }}
+              />
+            </View>
+
+            {editShiftDelays && (
+              <AppButton
+                buttonName="Update ShiftDelays"
+                buttonColour={
+                  updateShiftDelayButtonVisible ? "#C7B7A3" : "#fc5c65"
+                }
+                disabled={updateShiftDelayButtonVisible}
+                onPress={onUpdateShiftDelays}
+              />
+            )}
+          </View>
+        </FieldSet>
 
         <AppButton
           buttonName="Back"
