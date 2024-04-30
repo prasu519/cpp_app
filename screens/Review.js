@@ -2,7 +2,6 @@ import {
   View,
   Text,
   ScrollView,
-  Switch,
   Button,
   TouchableOpacity,
   ActivityIndicator,
@@ -13,6 +12,7 @@ import shift from "../utils/Shift";
 import AppTextBox from "../components/AppTextBox";
 import FieldSet from "react-native-fieldset";
 import axios from "axios";
+import { Switch } from "@rneui/themed";
 import AppButton from "../components/AppButton";
 import BaseUrl from "../config/BaseUrl";
 import AppDropdown from "../components/AppDropdown";
@@ -23,18 +23,21 @@ export default function Review({ navigation }) {
   const [reclaiming, setReclaiming] = useState();
   const [runningHours, setRunningHours] = useState();
   const [shiftDelays, setShiftDelays] = useState([]);
+  const [newshiftDelays, setNewShiftDelays] = useState([]);
   const [delayComponent, setDelayComponent] = useState({});
+  const [coalNames, setCoalNames] = useState({});
+  const [mbtopCoalData, setMbtopCoalData] = useState();
 
   const [editFeeding, setEditFeeding] = useState(false);
   const [editReclaiming, setEditReclaiming] = useState(false);
   const [editRunningHours, setEditRunningHours] = useState(false);
   const [editShiftDelays, setEditShiftDelays] = useState(false);
+  const [editMbtopStock, setEditMbtopStock] = useState(false);
 
   const [isLoaded, setIsLoaded] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const [reclaimingCount, setReclaimingCount] = useState(0);
-
-  const [buttonVisible, setButtonVisible] = useState(true);
+  const [coalNameCount, setCoalNameCount] = useState();
 
   const [updateFeedButtVisible, setUpdateFeedButtVisible] = useState(false);
   const [updateReclButtVisible, setUpdateReclButtVisible] = useState(false);
@@ -42,6 +45,8 @@ export default function Review({ navigation }) {
     useState(false);
   const [updateShiftDelayButtonVisible, setUpdateShiftDelayButtonVisible] =
     useState(true);
+  const [updateMbtopStockButtVisible, setUpdateMbtopStockButtVisible] =
+    useState(false);
 
   const currentDate =
     new Date().getDate() +
@@ -59,6 +64,8 @@ export default function Review({ navigation }) {
       getRunningHoursdata();
       getShiftDelayData();
       getTotalCoals();
+      getCoalNames();
+      getMbTopCoalData();
     }
   }, []);
 
@@ -120,6 +127,30 @@ export default function Review({ navigation }) {
     setIsLoaded(false);
   };
 
+  const getCoalNames = async () => {
+    await axios
+      .get(BaseUrl + "/blend")
+      .then((response) => {
+        setCoalNames(response.data.data);
+        setCoalNameCount(response.data.data.total);
+      })
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
+  };
+
+  const getMbTopCoalData = async () => {
+    await axios
+      .get(BaseUrl + "/mbtopStock", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
+      .then((responce) => setMbtopCoalData(responce.data.data[0]))
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
+  };
+
   const copyShiftDelayData = () => {
     let totalDelays = shiftDelays.length;
     let tempobj = {};
@@ -160,9 +191,7 @@ export default function Review({ navigation }) {
   const onUpdateFeeding = async () => {
     const totalFeeding =
       parseInt(feeding.ct1) + parseInt(feeding.ct2) + parseInt(feeding.ct3);
-
     const streamTotal = parseInt(feeding.stream1) + parseInt(feeding.stream1A);
-
     if (totalFeeding !== streamTotal) {
       alert("Coal Tower total and Stream total should be equal..");
       return;
@@ -178,7 +207,6 @@ export default function Review({ navigation }) {
 
     setEditFeeding(false);
   };
-
   const onUpdateReclaiming = async () => {
     const streamtotal =
       parseInt(reclaiming.cc49recl) +
@@ -215,6 +243,63 @@ export default function Review({ navigation }) {
     setEditRunningHours(false);
   };
 
+  const handleDeleteDelay = async (delaynumber) => {
+    const updatedDelayComponents = shiftDelays.filter(
+      (_, i) => i != delaynumber
+    );
+    setShiftDelays(updatedDelayComponents);
+    const tempObject = { ...delayComponent };
+    delete tempObject["fromhr" + delaynumber];
+    delete tempObject["frommin" + delaynumber];
+    delete tempObject["tohr" + delaynumber];
+    delete tempObject["tomin" + delaynumber];
+    delete tempObject["desc" + delaynumber];
+    setDelayComponent(tempObject);
+    const count = shiftDelays.length;
+    for (let i = 0; i < count - 1; i++) {
+      newshiftDelays[i] = {
+        date: currentDate,
+        shift: currentShift,
+        delayNumber: i + 1,
+        fromTime:
+          i >= delaynumber
+            ? delayComponent["fromhr" + (i + 1)] +
+              ":" +
+              delayComponent["frommin" + (i + 1)]
+            : delayComponent["fromhr" + i] +
+              ":" +
+              delayComponent["frommin" + i],
+        toTime:
+          i >= delaynumber
+            ? delayComponent["tohr" + (i + 1)] +
+              ":" +
+              delayComponent["tomin" + (i + 1)]
+            : delayComponent["tohr" + i] + ":" + delayComponent["tomin" + i],
+        reason:
+          i >= delaynumber
+            ? delayComponent["desc" + (i + 1)]
+            : delayComponent["desc" + i],
+      };
+    }
+    await axios
+      .delete(BaseUrl + "/shiftDelay", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
+      .then((responce) => console.log(responce.data))
+      .catch((error) => console.log(error));
+    for (let i = 0; i < count - 1; i++) {
+      await axios
+        .post(BaseUrl + "/shiftDelay", newshiftDelays[i])
+        .then((response) => console.log(response.data))
+        .catch((error) => {
+          alert("Could not updated after delete delay-" + delaynumber);
+        });
+    }
+  };
+
   const checkIsRunningHoursNull = () => {
     for (let i = 2; i <= 4; i++) {
       if (
@@ -243,10 +328,49 @@ export default function Review({ navigation }) {
     }
   };
 
-  const onUpdateShiftDelays = () => {
-    console.log(delayComponent);
+  const onUpdateShiftDelays = async () => {
+    const count = shiftDelays.length;
+    for (let i = 0; i < count; i++) {
+      shiftDelays[i] = {
+        date: currentDate,
+        shift: currentShift,
+        delayNumber: i + 1,
+        fromTime:
+          delayComponent["fromhr" + i] + ":" + delayComponent["frommin" + i],
+        toTime: delayComponent["tohr" + i] + ":" + delayComponent["tomin" + i],
+        reason: delayComponent["desc" + i],
+      };
+    }
+    for (let i = 0; i < count; i++) {
+      await axios
+        .put(BaseUrl + "/shiftDelay", shiftDelays[i])
+        .then((response) => console.log(response.data))
+        .catch((error) => {
+          setDoneScreen(false);
+          alert("Could not save data..");
+        });
+    }
     setEditShiftDelays(false);
   };
+
+  const onUpdateMbtopStock = async () => {
+    let totalMbtopStock = 0;
+    for (let i = 0; i < coalNameCount; i++) {
+      totalMbtopStock =
+        totalMbtopStock + parseInt(mbtopCoalData["coal" + (i + 1) + "stock"]);
+    }
+    const newMbtopData = { ...mbtopCoalData, total_stock: totalMbtopStock };
+
+    await axios
+      .put(BaseUrl + "/mbtopStock", newMbtopData)
+      .then((response) => console.log(response.data))
+      .catch((error) => {
+        setDoneScreen(false);
+        alert("Could not update data..");
+      });
+    setEditMbtopStock(false);
+  };
+
   const toggleSwitchFeeding = () => {
     setEditFeeding((previousState) => !previousState);
   };
@@ -259,12 +383,17 @@ export default function Review({ navigation }) {
   const toggleSwitchShiftDelays = () => {
     setEditShiftDelays((previousState) => !previousState);
   };
-
+  const toggleSwitchMbtopStock = () => {
+    setEditMbtopStock((previousState) => !previousState);
+  };
   if (
     isLoaded ||
     feeding == undefined ||
     reclaiming == undefined ||
-    runningHours == undefined
+    runningHours == undefined ||
+    shiftDelays == undefined ||
+    mbtopCoalData == undefined ||
+    coalNames == undefined
   ) {
     return (
       <View style={{ flex: 1, backgroundColor: "#F1F5A8" }}>
@@ -294,7 +423,6 @@ export default function Review({ navigation }) {
             Review
           </Text>
         </View>
-
         <View
           style={{
             flexDirection: "row",
@@ -406,12 +534,7 @@ export default function Review({ navigation }) {
               }}
             >
               <Text style={{ fontSize: 30 }}>Edit</Text>
-              <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={editFeeding ? "f5dd4b" : "#f4f3f4"}
-                onValueChange={toggleSwitchFeeding}
-                value={editFeeding}
-              />
+              <Switch onValueChange={toggleSwitchFeeding} value={editFeeding} />
             </View>
             {editFeeding && (
               <AppButton
@@ -505,8 +628,6 @@ export default function Review({ navigation }) {
             >
               <Text style={{ fontSize: 30 }}>Edit</Text>
               <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={editReclaiming ? "f5dd4b" : "#f4f3f4"}
                 onValueChange={toggleSwitchReclaiming}
                 value={editReclaiming}
               />
@@ -646,11 +767,8 @@ export default function Review({ navigation }) {
             >
               <Text style={{ fontSize: 30 }}>Edit</Text>
               <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={editRunningHours ? "f5dd4b" : "#f4f3f4"}
                 onValueChange={toggleSwitchRunningHours}
                 value={editRunningHours}
-                style={{ height: 100, width: 100 }}
               />
             </View>
             {editRunningHours && (
@@ -670,7 +788,9 @@ export default function Review({ navigation }) {
               <DelayMessageComponent
                 key={index}
                 slno={index + 1}
-                onDelete={() => handleDelete(index)}
+                onDelete={() => handleDeleteDelay(index)}
+                xbuttoncolor={editShiftDelays ? "#fc5c65" : "#C7B7A3"}
+                disable={editShiftDelays}
                 items={
                   currentShift == "A"
                     ? ["", "6", "7", "8", "9", "10", "11", "12", "13", "14"]
@@ -683,18 +803,20 @@ export default function Review({ navigation }) {
                 }
                 onSelectFromHr={(value) => {
                   if (value === "") {
-                    /* setDelayComponent({
-                      ...delayComponent,
-                      ["fromhr" + index]: value,
-                    });*/
-
                     alert("Select From-time..");
-                    // setButtonVisible(true);
                     return;
                   }
-
                   if (
                     parseInt(value) > parseInt(delayComponent["tohr" + index])
+                  ) {
+                    alert("From time should not be more than To time..");
+                    return;
+                  }
+                  if (
+                    parseInt(value) ===
+                      parseInt(delayComponent["tohr" + index]) &&
+                    parseInt(delayComponent["frommin" + index]) >
+                      parseInt(delayComponent["tomin" + index])
                   ) {
                     alert("From time should not be more than To time..");
                     return;
@@ -710,19 +832,13 @@ export default function Review({ navigation }) {
                 }
                 onSelectFromMin={(value) => {
                   if (value === "") {
-                    /* setDelayComponent({
-                      ...delayComponent,
-                      ["frommin" + index]: value,
-                    });*/
-
                     alert("Select From-time..");
-                    //setButtonVisible(true);
                     return;
                   }
                   if (
                     parseInt(value) >
                       parseInt(delayComponent["tomin" + index]) &&
-                    parseInt(delayComponent["fromhr" + index]) >
+                    parseInt(delayComponent["fromhr" + index]) >=
                       parseInt(delayComponent["tohr" + index])
                   ) {
                     alert("From time should not be more than To time..");
@@ -737,26 +853,20 @@ export default function Review({ navigation }) {
                 selectedValueToHr={delayComponent["tohr" + index.toString()]}
                 onSelectToHr={(value) => {
                   if (value === "") {
-                    /* setDelayComponent({
-                      ...delayComponent,
-                      ["tohr" + index]: value,
-                    });*/
-
                     alert("Select To-time..");
-                    // setButtonVisible(true);
                     return;
                   }
-
                   if (
                     parseInt(value) < parseInt(delayComponent["fromhr" + index])
                   ) {
                     alert("To time should not be less than From time..");
                     return;
                   }
-
                   if (
+                    parseInt(value) ===
+                      parseInt(delayComponent["fromhr" + index]) &&
                     parseInt(delayComponent["frommin" + index]) >
-                    parseInt(delayComponent["tomin" + index])
+                      parseInt(delayComponent["tomin" + index])
                   ) {
                     alert("From time should not be more than To time..");
                     return;
@@ -770,13 +880,7 @@ export default function Review({ navigation }) {
                 selectedValueToMin={delayComponent["tomin" + index.toString()]}
                 onSelectToMin={(value) => {
                   if (value === "") {
-                    /* setDelayComponent({
-                      ...delayComponent,
-                      ["tomin" + index]: value,
-                    });*/
-
                     alert("Select To-time..");
-                    //setButtonVisible(true);
                     return;
                   }
                   if (
@@ -804,18 +908,6 @@ export default function Review({ navigation }) {
                     });
                     return;
                   }
-
-                  /* if (
-                    value === "" ||
-                    delayComponent["fromhr" + index.toString()] === "" ||
-                    delayComponent["frommin" + index.toString()] === "" ||
-                    delayComponent["tohr" + index.toString()] === "" ||
-                    delayComponent["tomin" + index.toString()] === ""
-                  ) {
-                    setUpdateShiftDelayButtonVisible(true);
-                    alert("Make sure to enter all details..");
-                    return;
-                  }*/
                   setUpdateShiftDelayButtonVisible(false);
                   setDelayComponent({
                     ...delayComponent,
@@ -825,16 +917,6 @@ export default function Review({ navigation }) {
                 descvalue={delayComponent["desc" + index.toString()]}
               />
             ))}
-
-            {/*  <AppButton
-                buttonName="Add New Delay"
-                buttonColour={buttonVisible ? "#C7B7A3" : "#87A922"}
-                //buttonColour="#87A922"
-                width="60%"
-                disabled={buttonVisible}
-                onPress={handleNewDelayComponent}
-                />*/}
-
             <View
               style={{
                 flexDirection: "row",
@@ -845,11 +927,8 @@ export default function Review({ navigation }) {
             >
               <Text style={{ fontSize: 30 }}>Edit</Text>
               <Switch
-                trackColor={{ false: "#767577", true: "#81b0ff" }}
-                thumbColor={editShiftDelays ? "f5dd4b" : "#f4f3f4"}
                 onValueChange={toggleSwitchShiftDelays}
                 value={editShiftDelays}
-                style={{ height: 100, width: 100 }}
               />
             </View>
 
@@ -864,6 +943,70 @@ export default function Review({ navigation }) {
               />
             )}
           </View>
+        </FieldSet>
+        <FieldSet label="Bins Coal Stocks">
+          <>
+            {Array.from({ length: coalNameCount }, (_, index) => (
+              <AppTextBox
+                label={coalNames["cn" + (index + 1)]}
+                labelcolor="orange"
+                key={index}
+                onChangeText={(value) => {
+                  if (value === "") {
+                    alert(
+                      "Enter " + coalNames["cn" + (index + 1)] + " stock.."
+                    );
+                    setUpdateMbtopStockButtVisible(true);
+                    setMbtopCoalData({
+                      ...mbtopCoalData,
+                      ["coal" + (index + 1) + "stock"]: "",
+                    });
+                    return;
+                  }
+
+                  if (!/^[0-9]*$/.test(value)) {
+                    alert("Enter Numbers only...");
+                    setUpdateMbtopStockButtVisible(true);
+                    return;
+                  } else {
+                    setMbtopCoalData({
+                      ...mbtopCoalData,
+                      ["coal" + (index + 1) + "stock"]: value,
+                    });
+                    setUpdateMbtopStockButtVisible(false);
+                  }
+                }}
+                keyboardType="number-pad"
+                value={mbtopCoalData["coal" + (index + 1) + "stock"]}
+                editable={editMbtopStock}
+                maxLength={4}
+              />
+            ))}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Switch
+                onValueChange={toggleSwitchMbtopStock}
+                value={editMbtopStock}
+              />
+            </View>
+            {editMbtopStock && (
+              <AppButton
+                buttonName="Update MB-Top Stock"
+                buttonColour={
+                  updateMbtopStockButtVisible ? "#C7B7A3" : "#fc5c65"
+                }
+                disabled={updateMbtopStockButtVisible}
+                onPress={onUpdateMbtopStock}
+              />
+            )}
+          </>
         </FieldSet>
 
         <AppButton

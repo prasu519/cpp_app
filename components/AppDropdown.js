@@ -2,7 +2,12 @@ import { View, Text } from "react-native";
 import React from "react";
 import { Picker } from "@react-native-picker/picker";
 
-export default function AppDropdown({ id, items, ...otherProps }) {
+export default function AppDropdown({
+  id,
+  items,
+  enable = true,
+  ...otherProps
+}) {
   return (
     <Picker
       id={id}
@@ -10,6 +15,7 @@ export default function AppDropdown({ id, items, ...otherProps }) {
         width: 100,
       }}
       mode="dropdown"
+      enabled={enable}
       {...otherProps}
     >
       {items.map((number) => (

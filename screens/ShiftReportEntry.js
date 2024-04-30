@@ -145,7 +145,7 @@ export default function ShiftReportEntry({ navigation }) {
             onPress={() => navigation.navigate("BinStock")}
           >
             <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Enter Bins Stock
+              Enter MB Top Coal Stock
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -160,7 +160,7 @@ export default function ShiftReportEntry({ navigation }) {
             onPress={() => navigation.navigate("EnterCoalAnalysis")}
           >
             <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Coal Analysis
+              Enter Coal Analysis
             </Text>
           </TouchableOpacity>
 

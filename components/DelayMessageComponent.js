@@ -16,6 +16,8 @@ export default function DelayMessageComponent({
   descvalue = "",
   onChangeDesc,
   items,
+  disable,
+  xbuttoncolor = "#fc5c65",
   ...otherProps
 }) {
   return (
@@ -53,13 +55,14 @@ export default function DelayMessageComponent({
           style={{
             height: 50,
             width: 50,
-            backgroundColor: "#FB6D48",
+            backgroundColor: xbuttoncolor,
             borderRadius: 50,
             justifyContent: "center",
             alignItems: "center",
             alignSelf: "center",
           }}
           onPress={onDelete}
+          disabled={!disable}
         >
           <Text
             style={{
@@ -97,6 +100,7 @@ export default function DelayMessageComponent({
           items={items}
           selectedValue={selectedValueFromHr}
           onValueChange={onSelectFromHr}
+          enable={disable}
         />
         <Text style={{ fontWeight: "bold", alignSelf: "center" }}>:</Text>
         <AppDropdown
@@ -104,6 +108,7 @@ export default function DelayMessageComponent({
           items={["", "00", "10", "20", "30", "40", "50"]}
           selectedValue={selectedValueFromMin}
           onValueChange={onSelectFromMin}
+          enable={disable}
         />
       </View>
       <View
@@ -133,6 +138,7 @@ export default function DelayMessageComponent({
           items={items}
           selectedValue={selectedValueToHr}
           onValueChange={onSelectToHr}
+          enable={disable}
           {...otherProps}
         />
         <Text style={{ fontWeight: "bold", alignSelf: "center" }}>:</Text>
@@ -141,6 +147,7 @@ export default function DelayMessageComponent({
           items={["", "00", "10", "20", "30", "40", "50"]}
           selectedValue={selectedValueToMin}
           onValueChange={onSelectToMin}
+          enable={disable}
           {...otherProps}
         />
       </View>
@@ -161,6 +168,7 @@ export default function DelayMessageComponent({
           underlineColorAndroid={"transparent"}
           onChangeText={onChangeDesc}
           value={descvalue}
+          editable={disable}
         ></TextInput>
       </View>
     </View>

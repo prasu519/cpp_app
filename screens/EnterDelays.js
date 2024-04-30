@@ -18,6 +18,11 @@ export default function EnterDelays({ navigation }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
   const [allEntrys, setAllEntrys] = useState(false);
+  const [oldDelays, setOldDelays] = useState([]);
+
+  useEffect(() => {
+    getShiftDelayData();
+  }, []);
 
   const handleNewDelayComponent = () => {
     setNewDelayComponent([...newDelayComponent, ""]);
@@ -31,20 +36,28 @@ export default function EnterDelays({ navigation }) {
     );
     setNewDelayComponent(updatedDelayComponents);
     setCount(count - 1);
-
     const tempObject = { ...delayComponent };
-
     delete tempObject["fromhr" + index];
     delete tempObject["frommin" + index];
     delete tempObject["tohr" + index];
     delete tempObject["tomin" + index];
     delete tempObject["desc" + index];
-
     setDelayComponent(tempObject);
-
     if (count === 1) {
       setButtonVisible(false);
     }
+  };
+
+  const getShiftDelayData = async () => {
+    await axios
+      .get(BaseUrl + "/shiftDelay", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
+      .then((responce) => setOldDelays(responce.data.data))
+      .catch((error) => console.log(error));
   };
 
   const handleSubmit = async () => {
@@ -52,22 +65,22 @@ export default function EnterDelays({ navigation }) {
       alert("Add atleat one Delay..");
       return;
     }
-
-    for (let i = 0; i < count; i++) {
+    const totOldDelays = oldDelays.length;
+    let nextDelayNo = 1;
+    if (totOldDelays != 0) nextDelayNo = totOldDelays + 1;
+    for (i = 0; i < count; i++) {
       delays[i] = {
         date: currentDate,
         shift: currentShift,
-        delayNumber: i + 1,
+        delayNumber: nextDelayNo + i,
         fromTime:
           delayComponent["fromhr" + i] + ":" + delayComponent["frommin" + i],
         toTime: delayComponent["tohr" + i] + ":" + delayComponent["tomin" + i],
         reason: delayComponent["desc" + i],
       };
     }
-
     setProgress(0);
     setDoneScreen(true);
-
     for (let i = 0; i < count; i++) {
       await axios
         .post(BaseUrl + "/shiftDelay", delays[i], {
@@ -80,7 +93,6 @@ export default function EnterDelays({ navigation }) {
           alert("Could not save data..");
         });
     }
-
     setDelayComponent({});
     setNewDelayComponent([""]);
     setButtonVisible(true);
@@ -92,7 +104,6 @@ export default function EnterDelays({ navigation }) {
     (new Date().getMonth() + 1) +
     "/" +
     new Date().getFullYear();
-
   const currentShift = shift(new Date().getHours());
 
   return (
@@ -157,6 +168,7 @@ export default function EnterDelays({ navigation }) {
                   key={index}
                   slno={index + 1}
                   onDelete={() => handleDelete(index)}
+                  disable={true}
                   items={
                     currentShift == "A"
                       ? ["", "6", "7", "8", "9", "10", "11", "12", "13", "14"]
@@ -189,9 +201,17 @@ export default function EnterDelays({ navigation }) {
                       setButtonVisible(true);
                       return;
                     }
-
                     if (
                       parseInt(value) > parseInt(delayComponent["tohr" + index])
+                    ) {
+                      alert("From time should not be more than To time..");
+                      return;
+                    }
+                    if (
+                      parseInt(value) ===
+                        parseInt(delayComponent["tohr" + index]) &&
+                      parseInt(delayComponent["frommin" + index]) >
+                        parseInt(delayComponent["tomin" + index])
                     ) {
                       alert("From time should not be more than To time..");
                       return;
@@ -211,7 +231,6 @@ export default function EnterDelays({ navigation }) {
                         ...delayComponent,
                         ["frommin" + index]: value,
                       });
-
                       alert("Select From-time..");
                       setButtonVisible(true);
                       return;
@@ -219,7 +238,7 @@ export default function EnterDelays({ navigation }) {
                     if (
                       parseInt(value) >
                         parseInt(delayComponent["tomin" + index]) &&
-                      parseInt(delayComponent["fromhr" + index]) >
+                      parseInt(delayComponent["fromhr" + index]) >=
                         parseInt(delayComponent["tohr" + index])
                     ) {
                       alert("From time should not be more than To time..");
@@ -243,7 +262,6 @@ export default function EnterDelays({ navigation }) {
                       setButtonVisible(true);
                       return;
                     }
-
                     if (
                       parseInt(value) <
                       parseInt(delayComponent["fromhr" + index])
@@ -251,10 +269,11 @@ export default function EnterDelays({ navigation }) {
                       alert("To time should not be less than From time..");
                       return;
                     }
-
                     if (
+                      parseInt(value) ===
+                        parseInt(delayComponent["fromhr" + index]) &&
                       parseInt(delayComponent["frommin" + index]) >
-                      parseInt(delayComponent["tomin" + index])
+                        parseInt(delayComponent["tomin" + index])
                     ) {
                       alert("From time should not be more than To time..");
                       return;
@@ -274,7 +293,6 @@ export default function EnterDelays({ navigation }) {
                         ...delayComponent,
                         ["tomin" + index]: value,
                       });
-
                       alert("Select To-time..");
                       setButtonVisible(true);
                       return;
@@ -304,7 +322,6 @@ export default function EnterDelays({ navigation }) {
                       });
                       return;
                     }
-
                     if (
                       value === "" ||
                       delayComponent["fromhr" + index.toString()] === "" ||
@@ -326,7 +343,6 @@ export default function EnterDelays({ navigation }) {
                   descvalue={delayComponent["desc" + index.toString()]}
                 />
               ))}
-
               <AppButton
                 buttonName="Add New Delay"
                 buttonColour={buttonVisible ? "#C7B7A3" : "#87A922"}

@@ -3,10 +3,10 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Button,
   Pressable,
 } from "react-native";
 import React from "react";
+import { Button } from "@rneui/base";
 
 export default function Home({ navigation }) {
   return (
@@ -68,6 +68,13 @@ export default function Home({ navigation }) {
             Add Blend
           </Text>
         </TouchableOpacity>
+        <Button
+          title={"Test"}
+          buttonStyle={{ width: 200, height: 100 }}
+          titleStyle={{ fontSize: 50, color: "black" }}
+          //size="lg"
+          radius={10}
+        ></Button>
       </View>
     </ScrollView>
   );
