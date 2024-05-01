@@ -27,12 +27,16 @@ export default function Review({ navigation }) {
   const [delayComponent, setDelayComponent] = useState({});
   const [coalNames, setCoalNames] = useState({});
   const [mbtopCoalData, setMbtopCoalData] = useState();
+  const [coalAnalysisData, setCoalAnalysisData] = useState();
+  const [pushingSchedule, setPushingSchedule] = useState();
 
   const [editFeeding, setEditFeeding] = useState(false);
   const [editReclaiming, setEditReclaiming] = useState(false);
   const [editRunningHours, setEditRunningHours] = useState(false);
   const [editShiftDelays, setEditShiftDelays] = useState(false);
   const [editMbtopStock, setEditMbtopStock] = useState(false);
+  const [editCoalAnalysis, setEditCoalAnalysis] = useState(false);
+  const [editPushingSchedule, setEditPushingSchedule] = useState(false);
 
   const [isLoaded, setIsLoaded] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -47,6 +51,12 @@ export default function Review({ navigation }) {
     useState(true);
   const [updateMbtopStockButtVisible, setUpdateMbtopStockButtVisible] =
     useState(false);
+  const [updateCoalAnalysisButtVisible, setUpdateCoalAnalysisButtVisible] =
+    useState(false);
+  const [
+    updatePushingScheduleButtVisible,
+    setUpdatePushingScheduleButtVisible,
+  ] = useState(false);
 
   const currentDate =
     new Date().getDate() +
@@ -66,6 +76,8 @@ export default function Review({ navigation }) {
       getTotalCoals();
       getCoalNames();
       getMbTopCoalData();
+      getCoalAnalysisData();
+      getPushingScheduleData();
     }
   }, []);
 
@@ -114,6 +126,19 @@ export default function Review({ navigation }) {
     setIsLoaded(false);
   };
 
+  const getRunningHoursdata = async () => {
+    await axios
+      .get(BaseUrl + "/runningHours", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
+      .then((responce) => setRunningHours(responce.data.data[0]))
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
+  };
+
   const getShiftDelayData = async () => {
     await axios
       .get(BaseUrl + "/shiftDelay", {
@@ -123,30 +148,6 @@ export default function Review({ navigation }) {
         },
       })
       .then((responce) => setShiftDelays(responce.data.data))
-      .catch((error) => console.log(error));
-    setIsLoaded(false);
-  };
-
-  const getCoalNames = async () => {
-    await axios
-      .get(BaseUrl + "/blend")
-      .then((response) => {
-        setCoalNames(response.data.data);
-        setCoalNameCount(response.data.data.total);
-      })
-      .catch((error) => console.log(error));
-    setIsLoaded(false);
-  };
-
-  const getMbTopCoalData = async () => {
-    await axios
-      .get(BaseUrl + "/mbtopStock", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-        },
-      })
-      .then((responce) => setMbtopCoalData(responce.data.data[0]))
       .catch((error) => console.log(error));
     setIsLoaded(false);
   };
@@ -175,15 +176,52 @@ export default function Review({ navigation }) {
     setIsDataLoaded(true);
   };
 
-  const getRunningHoursdata = async () => {
+  const getCoalNames = async () => {
     await axios
-      .get(BaseUrl + "/runningHours", {
+      .get(BaseUrl + "/blend")
+      .then((response) => {
+        setCoalNames(response.data.data);
+        setCoalNameCount(response.data.data.total);
+      })
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
+  };
+
+  const getMbTopCoalData = async () => {
+    await axios
+      .get(BaseUrl + "/mbtopStock", {
         params: {
           date: currentDate,
           shift: currentShift,
         },
       })
-      .then((responce) => setRunningHours(responce.data.data[0]))
+      .then((responce) => setMbtopCoalData(responce.data.data[0]))
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
+  };
+
+  const getCoalAnalysisData = async () => {
+    await axios
+      .get(BaseUrl + "/coalAnalysis", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
+      .then((responce) => setCoalAnalysisData(responce.data.data[0]))
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
+  };
+
+  const getPushingScheduleData = async () => {
+    await axios
+      .get(BaseUrl + "/pushings", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
+      .then((responce) => setPushingSchedule(responce.data.data[0]))
       .catch((error) => console.log(error));
     setIsLoaded(false);
   };
@@ -243,6 +281,34 @@ export default function Review({ navigation }) {
     setEditRunningHours(false);
   };
 
+  const checkIsRunningHoursNull = () => {
+    for (let i = 2; i <= 4; i++) {
+      if (
+        runningHours["str" + i + "hrs"] === "" ||
+        runningHours["str" + i + "min"] === ""
+      ) {
+        alert("Make sure to enter all values..");
+        setUpdateRunnhrsHButtVisible(true);
+        return;
+      }
+    }
+    if (
+      runningHours["cc49hrs"] === "" ||
+      runningHours["cc49min"] === "" ||
+      runningHours["cc50hrs"] === "" ||
+      runningHours["cc50min"] === "" ||
+      runningHours["cc126hrs"] === "" ||
+      runningHours["cc126min"] === ""
+    ) {
+      alert("Make sure to enter all values..");
+      setUpdateRunnhrsHButtVisible(true);
+      return;
+    } else {
+      setUpdateRunnhrsHButtVisible(false);
+      return;
+    }
+  };
+
   const handleDeleteDelay = async (delaynumber) => {
     const updatedDelayComponents = shiftDelays.filter(
       (_, i) => i != delaynumber
@@ -300,34 +366,6 @@ export default function Review({ navigation }) {
     }
   };
 
-  const checkIsRunningHoursNull = () => {
-    for (let i = 2; i <= 4; i++) {
-      if (
-        runningHours["str" + i + "hrs"] === "" ||
-        runningHours["str" + i + "min"] === ""
-      ) {
-        alert("Make sure to enter all values..");
-        setUpdateRunnhrsHButtVisible(true);
-        return;
-      }
-    }
-    if (
-      runningHours["cc49hrs"] === "" ||
-      runningHours["cc49min"] === "" ||
-      runningHours["cc50hrs"] === "" ||
-      runningHours["cc50min"] === "" ||
-      runningHours["cc126hrs"] === "" ||
-      runningHours["cc126min"] === ""
-    ) {
-      alert("Make sure to enter all values..");
-      setUpdateRunnhrsHButtVisible(true);
-      return;
-    } else {
-      setUpdateRunnhrsHButtVisible(false);
-      return;
-    }
-  };
-
   const onUpdateShiftDelays = async () => {
     const count = shiftDelays.length;
     for (let i = 0; i < count; i++) {
@@ -360,7 +398,6 @@ export default function Review({ navigation }) {
         totalMbtopStock + parseInt(mbtopCoalData["coal" + (i + 1) + "stock"]);
     }
     const newMbtopData = { ...mbtopCoalData, total_stock: totalMbtopStock };
-
     await axios
       .put(BaseUrl + "/mbtopStock", newMbtopData)
       .then((response) => console.log(response.data))
@@ -369,6 +406,41 @@ export default function Review({ navigation }) {
         alert("Could not update data..");
       });
     setEditMbtopStock(false);
+  };
+
+  const onUpdateCoalAnalysis = async () => {
+    let totalofAVF =
+      parseFloat(coalAnalysisData.ash) +
+      parseFloat(coalAnalysisData.vm) +
+      parseFloat(coalAnalysisData.fc);
+    if (totalofAVF != 100) {
+      alert("Total of Ash,Vm,Fc should be 100..");
+      return;
+    }
+    await axios
+      .put(BaseUrl + "/coalAnalysis", coalAnalysisData)
+      .then((response) => console.log(response.data))
+      .catch((error) => alert("Could not save data.."));
+    setEditCoalAnalysis(false);
+  };
+
+  const onUpdatePushingSchedule = async () => {
+    let ptotal = 0;
+    ptotal =
+      parseInt(pushingSchedule.bat1) +
+      parseInt(pushingSchedule.bat2) +
+      parseInt(pushingSchedule.bat3) +
+      parseInt(pushingSchedule.bat4) +
+      parseInt(pushingSchedule.bat5);
+    let newValues = { ...pushingSchedule, total_pushings: ptotal.toString() };
+    console.log(newValues);
+    await axios
+      .put(BaseUrl + "/pushings", newValues)
+      .then((response) => console.log(response.data))
+      .catch((error) => {
+        alert("Could not save data..");
+      });
+    setEditPushingSchedule(false);
   };
 
   const toggleSwitchFeeding = () => {
@@ -386,6 +458,13 @@ export default function Review({ navigation }) {
   const toggleSwitchMbtopStock = () => {
     setEditMbtopStock((previousState) => !previousState);
   };
+  const toggleSwitchCoalAnalysis = () => {
+    setEditCoalAnalysis((previousState) => !previousState);
+  };
+  const toggleSwitchPushingSchedule = () => {
+    setEditPushingSchedule((previousState) => !previousState);
+  };
+
   if (
     isLoaded ||
     feeding == undefined ||
@@ -393,7 +472,9 @@ export default function Review({ navigation }) {
     runningHours == undefined ||
     shiftDelays == undefined ||
     mbtopCoalData == undefined ||
-    coalNames == undefined
+    coalNames == undefined ||
+    coalAnalysisData == undefined ||
+    pushingSchedule == undefined
   ) {
     return (
       <View style={{ flex: 1, backgroundColor: "#F1F5A8" }}>
@@ -1008,7 +1089,108 @@ export default function Review({ navigation }) {
             )}
           </>
         </FieldSet>
-
+        <FieldSet label="coalAnalysis">
+          <>
+            {["ci", "ash", "vm", "fc", "tm"].map((item, index) => (
+              <AppTextBox
+                key={index}
+                label={item}
+                labelcolor="#6a994e"
+                tbSize="30%"
+                lbSize="30%"
+                onChangeText={(value) => {
+                  if (value === "") {
+                    setCoalAnalysisData({ ...coalAnalysisData, [item]: "" });
+                    setUpdateCoalAnalysisButtVisible(true);
+                    return;
+                  }
+                  setCoalAnalysisData({ ...coalAnalysisData, [item]: value });
+                  setUpdateCoalAnalysisButtVisible(false);
+                }}
+                value={coalAnalysisData[item]}
+                editable={editCoalAnalysis}
+              />
+            ))}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Switch
+                onValueChange={toggleSwitchCoalAnalysis}
+                value={editCoalAnalysis}
+              />
+            </View>
+            {editCoalAnalysis && (
+              <AppButton
+                buttonName="Update Coal-Analysis"
+                buttonColour={
+                  updateCoalAnalysisButtVisible ? "#C7B7A3" : "#fc5c65"
+                }
+                disabled={updateCoalAnalysisButtVisible}
+                onPress={onUpdateCoalAnalysis}
+              />
+            )}
+          </>
+        </FieldSet>
+        <FieldSet label="PushingSchedule">
+          <>
+            {[1, 2, 3, 4, 5].map((batt, index) => (
+              <AppTextBox
+                key={index}
+                label={"Batt-" + batt}
+                labelcolor="#6a994e"
+                tbSize="20%"
+                onChangeText={(value) => {
+                  if (value === "") {
+                    setPushingSchedule({
+                      ...pushingSchedule,
+                      ["bat" + batt]: "",
+                    });
+                    setUpdatePushingScheduleButtVisible(true);
+                    return;
+                  }
+                  setPushingSchedule({
+                    ...pushingSchedule,
+                    ["bat" + batt]: value,
+                  });
+                  setUpdatePushingScheduleButtVisible(false);
+                }}
+                value={pushingSchedule["bat" + batt]}
+                maxLength={2}
+                editable={editPushingSchedule}
+              />
+            ))}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Switch
+                onValueChange={toggleSwitchPushingSchedule}
+                value={editPushingSchedule}
+              />
+            </View>
+            {editPushingSchedule && (
+              <AppButton
+                buttonName="Update Pushing-Schedule"
+                buttonColour={
+                  updatePushingScheduleButtVisible ? "#C7B7A3" : "#fc5c65"
+                }
+                disabled={updatePushingScheduleButtVisible}
+                onPress={onUpdatePushingSchedule}
+              />
+            )}
+          </>
+        </FieldSet>
         <AppButton
           buttonName="Back"
           buttonColour="#fc5c65"
