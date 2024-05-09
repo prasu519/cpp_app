@@ -100,11 +100,11 @@ export default function EnterFeeding({ navigation, route }) {
       <View style={{ flex: 1, gap: 30 }}>
         <View
           style={{
-            paddingTop: 40,
+            paddingTop: 20,
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 40,
+            gap: 30,
           }}
         >
           <AntDesign
@@ -117,7 +117,7 @@ export default function EnterFeeding({ navigation, route }) {
             style={{
               fontSize: 30,
               textDecorationLine: "underline",
-              color: "red",
+              color: "#000080",
               alignSelf: "center",
               fontWeight: "bold",
               marginLeft: 25,
@@ -153,20 +153,19 @@ export default function EnterFeeding({ navigation, route }) {
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 50,
-
+                  gap: 40,
                   alignItems: "center",
                   justifyContent: "center",
                   borderBottomWidth: 2,
                 }}
               >
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "red" }}
+                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
                 >
                   DATE :{currentDate}
                 </Text>
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "red" }}
+                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
                 >
                   SHIFT :{currentShift}
                 </Text>

@@ -64,11 +64,11 @@ export default function EnterRunningHours({ navigation }) {
     <View style={{ flex: 1, backgroundColor: "#C7B7A3" }}>
       <View
         style={{
-          paddingTop: 40,
+          paddingTop: 20,
           paddingLeft: 20,
           flexDirection: "row",
           alignItems: "center",
-          gap: 40,
+          gap: 30,
         }}
       >
         <AntDesign
@@ -81,7 +81,7 @@ export default function EnterRunningHours({ navigation }) {
           style={{
             fontSize: 25,
             textDecorationLine: "underline",
-            color: "red",
+            color: "#000080",
             alignSelf: "center",
             fontWeight: "bold",
           }}
@@ -121,7 +121,7 @@ export default function EnterRunningHours({ navigation }) {
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 50,
+                  gap: 40,
                   paddingTop: 20,
                   alignItems: "center",
                   justifyContent: "center",
@@ -129,12 +129,12 @@ export default function EnterRunningHours({ navigation }) {
                 }}
               >
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "red" }}
+                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
                 >
                   DATE :{date}
                 </Text>
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "red" }}
+                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
                 >
                   SHIFT :{currentShift}
                 </Text>

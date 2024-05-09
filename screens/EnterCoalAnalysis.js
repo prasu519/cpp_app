@@ -107,7 +107,7 @@ export default function EnterCoalAnalysis({ navigation, route }) {
             style={{
               fontSize: 30,
               textDecorationLine: "underline",
-              color: "red",
+              color: "#000080",
               alignSelf: "center",
               fontWeight: "bold",
               marginLeft: 25,
@@ -150,12 +150,12 @@ export default function EnterCoalAnalysis({ navigation, route }) {
                 }}
               >
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "red" }}
+                  style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}
                 >
                   DATE :{currentDate}
                 </Text>
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "red" }}
+                  style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}
                 >
                   SHIFT :{currentShift}
                 </Text>

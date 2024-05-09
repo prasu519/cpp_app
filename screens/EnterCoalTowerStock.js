@@ -10,42 +10,29 @@ import ErrorMessage from "../components/ErrorMessage";
 import shift from "../utils/Shift";
 import BaseUrl from "../config/BaseUrl";
 import DoneScreen from "./DoneScreen";
-import FieldSet from "react-native-fieldset";
 
 const validationSchema = Yup.object().shape({
-  bat1: Yup.number()
-    .typeError("pushings must be number")
+  ct1stock: Yup.number()
+    .typeError("Stock must be number")
     .required()
     .integer()
-    .max(40)
-    .label("Batt-1 pushings"),
-  bat2: Yup.number()
-    .typeError("pushings must be number")
+    .max(3600)
+    .label("Ct-1"),
+  ct2stock: Yup.number()
+    .typeError("Stock must be number")
     .required()
     .integer()
-    .max(40)
-    .label("Batt-2 pushings"),
-  bat3: Yup.number()
-    .typeError("pushings must be number")
+    .max(3600)
+    .label("Ct-2"),
+  ct3stock: Yup.number()
+    .typeError("Stock must be number")
     .required()
     .integer()
-    .max(40)
-    .label("Batt-3 pushings"),
-  bat4: Yup.number()
-    .typeError("pushings must be number")
-    .required()
-    .integer()
-    .max(40)
-    .label("Batt-4 pushings"),
-  bat5: Yup.number()
-    .typeError("pushings must be number")
-    .required()
-    .integer()
-    .max(40)
-    .label("Batt-5 pushings"),
+    .max(3600)
+    .label("Ct-3"),
 });
 
-export default function PushingSchedule({ navigation, route }) {
+export default function EnterFeeding({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -59,20 +46,21 @@ export default function PushingSchedule({ navigation, route }) {
   const currentShift = shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
-    let ptotal =
-      parseInt(values["bat1"]) +
-      parseInt(values["bat2"]) +
-      parseInt(values["bat3"]) +
-      parseInt(values["bat4"]) +
-      parseInt(values["bat5"]);
-    console.log(ptotal);
-    let newValues = { ...values, totalPushings: ptotal };
+    const totalStock =
+      parseInt(values.ct1stock) +
+      parseInt(values.ct2stock) +
+      parseInt(values.ct3stock);
+
+    const newValues = {
+      ...values,
+      total_stock: totalStock,
+    };
 
     setProgress(0);
     setDoneScreen(true);
 
     await axios
-      .post(BaseUrl + "/pushings", newValues, {
+      .post(BaseUrl + "/coaltowerstock", newValues, {
         onUploadProgress: (progress) =>
           setProgress(progress.loaded / progress.total),
       })
@@ -80,6 +68,7 @@ export default function PushingSchedule({ navigation, route }) {
       .catch((error) => {
         setDoneScreen(false);
         alert("Could not save data..");
+        console.log(error);
       });
 
     resetForm();
@@ -100,7 +89,7 @@ export default function PushingSchedule({ navigation, route }) {
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 10,
+            gap: 20,
           }}
         >
           <AntDesign
@@ -112,14 +101,12 @@ export default function PushingSchedule({ navigation, route }) {
           <Text
             style={{
               fontSize: 28,
-              textDecorationLine: "underline",
               color: "#000080",
               alignSelf: "center",
               fontWeight: "bold",
-              marginLeft: 10,
             }}
           >
-            Enter Pushing Schedule
+            Enter Coal-Tower Stocks
           </Text>
         </View>
 
@@ -127,11 +114,10 @@ export default function PushingSchedule({ navigation, route }) {
           initialValues={{
             date: currentDate,
             shift: currentShift,
-            bat1: "",
-            bat2: "",
-            bat3: "",
-            bat4: "",
-            bat5: "",
+            ct1stock: "",
+            ct2stock: "",
+            ct3stock: "",
+            total_stock: "",
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -149,7 +135,6 @@ export default function PushingSchedule({ navigation, route }) {
                 style={{
                   flexDirection: "row",
                   gap: 50,
-
                   alignItems: "center",
                   justifyContent: "center",
                   borderBottomWidth: 2,
@@ -166,31 +151,56 @@ export default function PushingSchedule({ navigation, route }) {
                   SHIFT :{currentShift}
                 </Text>
               </View>
-              <ScrollView style={{ padding: 10 }}>
-                <FieldSet label="New Blend">
-                  <View style={{ flex: 1, gap: 10 }}>
-                    {[1, 2, 3, 4, 5].map((batt, index) => (
-                      <View key={index}>
-                        <AppTextBox
-                          label={"Batt-" + batt}
-                          labelcolor="#6a994e"
-                          tbSize="20%"
-                          onChangeText={handleChange("bat" + batt)}
-                          onBlur={() => setFieldTouched("bat" + batt)}
-                          value={values["bat" + batt]}
-                          maxLength={2}
-                        />
-
-                        <ErrorMessage
-                          error={errors["bat" + batt]}
-                          visible={touched["bat" + batt]}
-                        />
-                      </View>
-                    ))}
-
-                    <AppFormButton buttonText="Submit" />
-                  </View>
-                </FieldSet>
+              <ScrollView>
+                <Text
+                  style={{
+                    alignSelf: "center",
+                    fontSize: 25,
+                    fontWeight: "bold",
+                    color: "red",
+                    paddingTop: 20,
+                    paddingBottom: 20,
+                  }}
+                >
+                  Enter Coal-Tower Stock
+                </Text>
+                <AppTextBox
+                  label="CT-1 Stock"
+                  labelcolor="#6a994e"
+                  onChangeText={handleChange("ct1stock")}
+                  onBlur={() => setFieldTouched("ct1stock")}
+                  value={values["ct1stock"].toString()}
+                  maxLength={4}
+                />
+                <ErrorMessage
+                  error={errors.ct1stock}
+                  visible={touched.ct1stock}
+                />
+                <AppTextBox
+                  label="CT-2 Stock"
+                  labelcolor="#6a994e"
+                  onChangeText={handleChange("ct2stock")}
+                  onBlur={() => setFieldTouched("ct2stock")}
+                  value={values["ct2stock"].toString()}
+                  maxLength={4}
+                />
+                <ErrorMessage
+                  error={errors.ct2stock}
+                  visible={touched.ct2stock}
+                />
+                <AppTextBox
+                  label="CT-3 Stock"
+                  labelcolor="#6a994e"
+                  onChangeText={handleChange("ct3stock")}
+                  onBlur={() => setFieldTouched("ct3stock")}
+                  value={values["ct3stock"].toString()}
+                  maxLength={4}
+                />
+                <ErrorMessage
+                  error={errors.ct3stock}
+                  visible={touched.ct3stock}
+                />
+                <AppFormButton buttonText="Submit" />
               </ScrollView>
             </>
           )}

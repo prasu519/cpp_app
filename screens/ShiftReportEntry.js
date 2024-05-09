@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
+import { Button } from "@rneui/base";
 
 export default function ShiftReportEntry({ navigation }) {
   const currentDate =
@@ -14,7 +15,7 @@ export default function ShiftReportEntry({ navigation }) {
   const currentShift = shift(new Date().getHours());
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#FFCAD4" }}>
+    <View style={{ flex: 1, backgroundColor: "white" }}>
       <View
         style={{
           paddingTop: 40,
@@ -34,7 +35,7 @@ export default function ShiftReportEntry({ navigation }) {
           style={{
             fontSize: 25,
             textDecorationLine: "underline",
-            color: "red",
+            color: "#000080",
             alignSelf: "center",
             fontWeight: "bold",
           }}
@@ -46,17 +47,17 @@ export default function ShiftReportEntry({ navigation }) {
       <View
         style={{
           flexDirection: "row",
-          gap: 80,
+          gap: 50,
           paddingTop: 20,
           alignItems: "center",
           justifyContent: "center",
           borderBottomWidth: 2,
         }}
       >
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
           DATE :{currentDate}
         </Text>
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
           SHIFT :{currentShift}
         </Text>
       </View>
@@ -66,119 +67,80 @@ export default function ShiftReportEntry({ navigation }) {
             flex: 1,
             alignItems: "center",
             paddingTop: 50,
-            gap: 50,
+            gap: 30,
           }}
         >
-          <TouchableOpacity
-            style={{
-              height: 50,
-              width: "70%",
-              backgroundColor: "#50C4ED",
-              borderRadius: 25,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Button
+            title={"Enter Reclaiming"}
+            buttonStyle={{ width: 200, height: 50 }}
+            titleStyle={{ fontSize: 20, color: "black", fontWeight: "bold" }}
+            radius={25}
+            color="#50C4ED"
             onPress={() => navigation.navigate("EnterReclaiming")}
-          >
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Enter Reclaiming
-            </Text>
-          </TouchableOpacity>
+          ></Button>
 
-          <TouchableOpacity
-            style={{
-              height: 50,
-              width: "70%",
-              backgroundColor: "#50C4ED",
-              borderRadius: 25,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Button
+            title={"Enter Feeding"}
+            buttonStyle={{ width: 200, height: 50 }}
+            titleStyle={{ fontSize: 20, color: "black", fontWeight: "bold" }}
+            radius={25}
+            color="#50C4ED"
             onPress={() => navigation.navigate("EnterFeeding")}
-          >
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Enter Feeding
-            </Text>
-          </TouchableOpacity>
+          ></Button>
 
-          <TouchableOpacity
-            style={{
-              height: 50,
-              width: "70%",
-              backgroundColor: "#50C4ED",
-              borderRadius: 25,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Button
+            title={" Enter Running Hours"}
+            buttonStyle={{ width: 250, height: 50 }}
+            titleStyle={{ fontSize: 20, color: "black", fontWeight: "bold" }}
+            radius={25}
+            color="#50C4ED"
             onPress={() => navigation.navigate("EnterRunningHours")}
-          >
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Enter Running Hours
-            </Text>
-          </TouchableOpacity>
+          ></Button>
 
-          <TouchableOpacity
-            style={{
-              height: 50,
-              width: "70%",
-              backgroundColor: "#50C4ED",
-              borderRadius: 25,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Button
+            title={"Enter Delays"}
+            buttonStyle={{ width: 200, height: 50 }}
+            titleStyle={{ fontSize: 20, color: "black", fontWeight: "bold" }}
+            radius={25}
+            color="#50C4ED"
             onPress={() => navigation.navigate("EnterDelays")}
-          >
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Enter Delays
-            </Text>
-          </TouchableOpacity>
+          ></Button>
 
-          <TouchableOpacity
-            style={{
-              height: 50,
-              width: "70%",
-              backgroundColor: "#50C4ED",
-              borderRadius: 25,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Button
+            title={"Enter MB-TOP Coal Stock"}
+            buttonStyle={{ width: 300, height: 50 }}
+            titleStyle={{ fontSize: 18, color: "black", fontWeight: "bold" }}
+            radius={25}
+            color="#50C4ED"
             onPress={() => navigation.navigate("BinStock")}
-          >
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Enter MB Top Coal Stock
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{
-              height: 50,
-              width: "70%",
-              backgroundColor: "#50C4ED",
-              borderRadius: 25,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-            onPress={() => navigation.navigate("EnterCoalAnalysis")}
-          >
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Enter Coal Analysis
-            </Text>
-          </TouchableOpacity>
+          ></Button>
 
-          <TouchableOpacity
-            style={{
-              height: 50,
-              width: "70%",
-              backgroundColor: "#50C4ED",
-              borderRadius: 25,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+          <Button
+            title="Enter Coal-Tower Stock"
+            buttonStyle={{ width: 280, height: 50 }}
+            radius={50}
+            color="#50C4ED"
+            titleStyle={{ color: "black", fontSize: 18, fontWeight: "bold" }}
+            onPress={() => navigation.navigate("CoalTowerStock")}
+          ></Button>
+
+          <Button
+            title="Enter Coal Analysis"
+            buttonStyle={{ width: 250, height: 50 }}
+            radius={50}
+            color="#50C4ED"
+            titleStyle={{ color: "black", fontSize: 18, fontWeight: "bold" }}
+            onPress={() => navigation.navigate("EnterCoalAnalysis")}
+          ></Button>
+
+          <Button
+            title="Enter Pushing Schedule"
+            buttonStyle={{ width: 280, height: 50 }}
+            radius={50}
+            color="#50C4ED"
+            titleStyle={{ color: "black", fontSize: 18, fontWeight: "bold" }}
             onPress={() => navigation.navigate("PushingSchedule")}
-          >
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Enter Pushing Schedule
-            </Text>
-          </TouchableOpacity>
+          ></Button>
 
           <TouchableOpacity
             style={{
@@ -203,14 +165,14 @@ export default function ShiftReportEntry({ navigation }) {
             style={{
               height: 50,
               width: "70%",
-              backgroundColor: "orange",
+              backgroundColor: "red",
               borderRadius: 25,
               alignItems: "center",
               justifyContent: "center",
             }}
           >
             <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              Final Report
+              Send Final Report
             </Text>
           </TouchableOpacity>
         </View>

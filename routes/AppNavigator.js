@@ -14,6 +14,8 @@ import EnterDelays from "../screens/EnterDelays";
 import BinStock from "../screens/BinStock";
 import EnterCoalAnalysis from "../screens/EnterCoalAnalysis";
 import PushingSchedule from "../screens/PushingSchedule";
+import EnterCoalTowerStock from "../screens/EnterCoalTowerStock";
+import ViewReports from "../screens/ViewReports";
 
 const stack = createNativeStackNavigator();
 
@@ -35,6 +37,8 @@ function AppNavigator(props) {
       <stack.Screen name="Review" component={Review} />
       <stack.Screen name="AddBlend" component={AddBlend} />
       <stack.Screen name="BinStock" component={BinStock} />
+      <stack.Screen name="CoalTowerStock" component={EnterCoalTowerStock} />
+      <stack.Screen name="ViewReports" component={ViewReports} />
     </stack.Navigator>
   );
 }

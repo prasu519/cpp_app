@@ -113,14 +113,21 @@ export default function EnterDelays({ navigation }) {
         onDone={() => setDoneScreen(false)}
         visible={doneScreen}
       />
-      <View style={{ flex: 1, backgroundColor: "#FFCAD4", paddingBottom: 10 }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: "#FFCAD4",
+          gap: 10,
+          paddingBottom: 10,
+        }}
+      >
         <View
           style={{
-            paddingTop: 40,
+            paddingTop: 20,
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 80,
+            gap: 60,
           }}
         >
           <AntDesign
@@ -133,7 +140,7 @@ export default function EnterDelays({ navigation }) {
             style={{
               fontSize: 25,
               textDecorationLine: "underline",
-              color: "red",
+              color: "#000080",
               alignSelf: "center",
               fontWeight: "bold",
             }}
@@ -145,17 +152,16 @@ export default function EnterDelays({ navigation }) {
         <View
           style={{
             flexDirection: "row",
-            gap: 80,
-            paddingTop: 20,
+            gap: 40,
             alignItems: "center",
             justifyContent: "center",
             borderBottomWidth: 2,
           }}
         >
-          <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+          <Text style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}>
             DATE :{currentDate}
           </Text>
-          <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+          <Text style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}>
             SHIFT :{currentShift}
           </Text>
         </View>

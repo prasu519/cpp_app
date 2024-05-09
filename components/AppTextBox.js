@@ -34,7 +34,7 @@ const AppTextBox = ({
       >
         <Text
           style={{
-            fontSize: 30,
+            fontSize: 25,
             fontWeight: "bold",
             color: "black",
             textAlign: "left",

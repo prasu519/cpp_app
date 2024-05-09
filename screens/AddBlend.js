@@ -164,7 +164,7 @@ export default function AddBlend({ navigation }) {
           style={{
             fontSize: 30,
             textDecorationLine: "underline",
-            color: "red",
+            color: "#000080",
             alignSelf: "center",
             fontWeight: "bold",
             marginLeft: 25,
@@ -184,10 +184,10 @@ export default function AddBlend({ navigation }) {
           borderBottomWidth: 2,
         }}
       >
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
           DATE :{currentDate}
         </Text>
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
           SHIFT :{currentShift}
         </Text>
       </View>

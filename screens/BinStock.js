@@ -110,7 +110,7 @@ export default function BinStock({ navigation }) {
             style={{
               fontSize: 26,
               textDecorationLine: "underline",
-              color: "red",
+              color: "#000080",
               alignSelf: "center",
               fontWeight: "bold",
             }}
@@ -155,12 +155,12 @@ export default function BinStock({ navigation }) {
                 }}
               >
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "red" }}
+                  style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}
                 >
                   DATE :{currentDate}
                 </Text>
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "red" }}
+                  style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}
                 >
                   SHIFT :{currentShift}
                 </Text>

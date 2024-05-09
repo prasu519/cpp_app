@@ -1,11 +1,11 @@
 import {
   View,
-  Text,
   ScrollView,
   Button,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { Text } from "@rneui/themed";
 import React, { useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
@@ -27,6 +27,7 @@ export default function Review({ navigation }) {
   const [delayComponent, setDelayComponent] = useState({});
   const [coalNames, setCoalNames] = useState({});
   const [mbtopCoalData, setMbtopCoalData] = useState();
+  const [coalTowerStock, setCoalTowerStock] = useState();
   const [coalAnalysisData, setCoalAnalysisData] = useState();
   const [pushingSchedule, setPushingSchedule] = useState();
 
@@ -35,6 +36,7 @@ export default function Review({ navigation }) {
   const [editRunningHours, setEditRunningHours] = useState(false);
   const [editShiftDelays, setEditShiftDelays] = useState(false);
   const [editMbtopStock, setEditMbtopStock] = useState(false);
+  const [editCoalTowerStock, setEditCoalTowerStock] = useState(false);
   const [editCoalAnalysis, setEditCoalAnalysis] = useState(false);
   const [editPushingSchedule, setEditPushingSchedule] = useState(false);
 
@@ -50,6 +52,8 @@ export default function Review({ navigation }) {
   const [updateShiftDelayButtonVisible, setUpdateShiftDelayButtonVisible] =
     useState(true);
   const [updateMbtopStockButtVisible, setUpdateMbtopStockButtVisible] =
+    useState(false);
+  const [updateCoalTowerStockButtVisible, setUpdateCoalTowerStockButtVisible] =
     useState(false);
   const [updateCoalAnalysisButtVisible, setUpdateCoalAnalysisButtVisible] =
     useState(false);
@@ -76,6 +80,7 @@ export default function Review({ navigation }) {
       getTotalCoals();
       getCoalNames();
       getMbTopCoalData();
+      getCoalTowerStock();
       getCoalAnalysisData();
       getPushingScheduleData();
     }
@@ -200,6 +205,19 @@ export default function Review({ navigation }) {
     setIsLoaded(false);
   };
 
+  const getCoalTowerStock = async () => {
+    await axios
+      .get(BaseUrl + "/coaltowerstock", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
+      .then((responce) => setCoalTowerStock(responce.data.data[0]))
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
+  };
+
   const getCoalAnalysisData = async () => {
     await axios
       .get(BaseUrl + "/coalAnalysis", {
@@ -245,6 +263,7 @@ export default function Review({ navigation }) {
 
     setEditFeeding(false);
   };
+
   const onUpdateReclaiming = async () => {
     const streamtotal =
       parseInt(reclaiming.cc49recl) +
@@ -408,6 +427,24 @@ export default function Review({ navigation }) {
     setEditMbtopStock(false);
   };
 
+  const onUpdateCoalTowerStock = async () => {
+    const totalCoalTowerStock =
+      parseInt(coalTowerStock.ct1stock) +
+      parseInt(coalTowerStock.ct2stock) +
+      parseInt(coalTowerStock.ct3stock);
+
+    const updatedCoalTowerStock = {
+      ...coalTowerStock,
+      total_stock: totalCoalTowerStock,
+    };
+    await axios
+      .put(BaseUrl + "/coaltowerstock", updatedCoalTowerStock)
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+
+    setEditCoalTowerStock(false);
+  };
+
   const onUpdateCoalAnalysis = async () => {
     let totalofAVF =
       parseFloat(coalAnalysisData.ash) +
@@ -458,6 +495,9 @@ export default function Review({ navigation }) {
   const toggleSwitchMbtopStock = () => {
     setEditMbtopStock((previousState) => !previousState);
   };
+  const toggleSwitchCoalTowerStock = () => {
+    setEditCoalTowerStock((previousState) => !previousState);
+  };
   const toggleSwitchCoalAnalysis = () => {
     setEditCoalAnalysis((previousState) => !previousState);
   };
@@ -468,13 +508,14 @@ export default function Review({ navigation }) {
   if (
     isLoaded ||
     feeding == undefined ||
-    reclaiming == undefined ||
-    runningHours == undefined ||
-    shiftDelays == undefined ||
-    mbtopCoalData == undefined ||
-    coalNames == undefined ||
-    coalAnalysisData == undefined ||
-    pushingSchedule == undefined
+    reclaiming == undefined
+    // runningHours == undefined ||
+    // shiftDelays == undefined ||
+    //  mbtopCoalData == undefined ||
+    // coalTowerStock == undefined ||
+    // coalNames == undefined ||
+    //  coalAnalysisData == undefined ||
+    // pushingSchedule == undefined
   ) {
     return (
       <View style={{ flex: 1, backgroundColor: "#F1F5A8" }}>
@@ -551,7 +592,7 @@ export default function Review({ navigation }) {
           style={{
             fontSize: 35,
             textDecorationLine: "underline",
-            color: "red",
+            color: "#000080",
             fontWeight: "bold",
           }}
         >
@@ -569,16 +610,19 @@ export default function Review({ navigation }) {
           borderBottomWidth: 2,
         }}
       >
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
           DATE :{currentDate}
         </Text>
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
           SHIFT :{currentShift}
         </Text>
       </View>
       <ScrollView style={{ padding: 10 }}>
         <FieldSet label="Feeding Data">
           <>
+            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+              Feeding
+            </Text>
             {["ct1", "ct2", "ct3", "stream1", "stream1A"].map((item, index) => (
               <AppTextBox
                 key={index}
@@ -587,12 +631,10 @@ export default function Review({ navigation }) {
                 value={feeding[item].toString()}
                 onChangeText={(newValue) => {
                   if (newValue === "") {
-                    alert("Enter " + item + " Feeding..");
                     setUpdateFeedButtVisible(true);
                     setFeeding({ ...feeding, [item]: "" });
                     return;
                   }
-
                   if (!/^[0-9]*$/.test(newValue)) {
                     alert("Enter Numbers only...");
                     return;
@@ -605,7 +647,6 @@ export default function Review({ navigation }) {
                 maxLength={4}
               />
             ))}
-
             <View
               style={{
                 flexDirection: "row",
@@ -627,22 +668,21 @@ export default function Review({ navigation }) {
             )}
           </>
         </FieldSet>
+
         <FieldSet label="Reclaiming Data">
           <>
+            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+              Reclaiming
+            </Text>
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
               reclaiming["coal" + item + "name"] === null ? null : (
                 <AppTextBox
                   key={index}
                   label={reclaiming["coal" + item + "name"]}
                   labelcolor="#6a994e"
-                  value={reclaiming["coal" + item + "recl"]}
+                  value={reclaiming["coal" + item + "recl"].toString()}
                   onChangeText={(newValue) => {
                     if (newValue === "") {
-                      alert(
-                        "Enter " +
-                          reclaiming["coal" + item + "name"] +
-                          " Reclaiming.."
-                      );
                       setUpdateReclButtVisible(true);
                       setReclaiming({
                         ...reclaiming,
@@ -650,7 +690,6 @@ export default function Review({ navigation }) {
                       });
                       return;
                     }
-
                     if (!/^[0-9]*$/.test(newValue)) {
                       alert("Enter Numbers only...");
                       return;
@@ -666,16 +705,14 @@ export default function Review({ navigation }) {
                 />
               )
             )}
-
             {["cc49", "cc50", "cc126"].map((item, index) => (
               <AppTextBox
                 key={index}
                 label={item}
                 labelcolor="#e9c46a"
-                value={reclaiming[item + "recl"]}
+                value={reclaiming[item + "recl"].toString()}
                 onChangeText={(newValue) => {
                   if (newValue === "") {
-                    alert("Enter " + item + " Reclaiming..");
                     setUpdateReclButtVisible(true);
                     setReclaiming({
                       ...reclaiming,
@@ -683,7 +720,6 @@ export default function Review({ navigation }) {
                     });
                     return;
                   }
-
                   if (!/^[0-9]*$/.test(newValue)) {
                     alert("Enter Numbers only...");
                     return;
@@ -698,7 +734,6 @@ export default function Review({ navigation }) {
                 editable={editReclaiming}
               />
             ))}
-
             <View
               style={{
                 flexDirection: "row",
@@ -726,6 +761,9 @@ export default function Review({ navigation }) {
 
         <FieldSet label="Running Hours">
           <>
+            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+              Running Hours
+            </Text>
             {["2", "3", "4"].map((item, index) => (
               <View
                 style={{
@@ -826,12 +864,6 @@ export default function Review({ navigation }) {
                         ...runningHours,
                         ["cc" + item + "min"]: newValue,
                       });
-
-                      /* if (newValue === "") {
-                        alert("Make sure to enter all values..");
-                        setUpdateRunnhrsHButtVisible(true);
-                        return;
-                      } else checkIsRunningHoursNull();*/
                     }}
                     enabled={editRunningHours}
                   />
@@ -865,6 +897,9 @@ export default function Review({ navigation }) {
 
         <FieldSet label="Delays">
           <View style={{ flex: 1, alignItems: "center", gap: 20 }}>
+            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+              Delays
+            </Text>
             {shiftDelays.map((value, index) => (
               <DelayMessageComponent
                 key={index}
@@ -1027,6 +1062,9 @@ export default function Review({ navigation }) {
         </FieldSet>
         <FieldSet label="Bins Coal Stocks">
           <>
+            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+              Mb-Top Stock
+            </Text>
             {Array.from({ length: coalNameCount }, (_, index) => (
               <AppTextBox
                 label={coalNames["cn" + (index + 1)]}
@@ -1034,9 +1072,6 @@ export default function Review({ navigation }) {
                 key={index}
                 onChangeText={(value) => {
                   if (value === "") {
-                    alert(
-                      "Enter " + coalNames["cn" + (index + 1)] + " stock.."
-                    );
                     setUpdateMbtopStockButtVisible(true);
                     setMbtopCoalData({
                       ...mbtopCoalData,
@@ -1089,8 +1124,68 @@ export default function Review({ navigation }) {
             )}
           </>
         </FieldSet>
+        <FieldSet label="Coal-Tower Stock">
+          <>
+            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+              Coal-Tower Stock
+            </Text>
+            {["ct1stock", "ct2stock", "ct3stock"].map((item, index) => (
+              <AppTextBox
+                key={index}
+                label={item}
+                labelcolor="#6a994e"
+                value={coalTowerStock[item].toString()}
+                onChangeText={(newValue) => {
+                  if (newValue === "") {
+                    setUpdateCoalTowerStockButtVisible(true);
+                    setCoalTowerStock({ ...coalTowerStock, [item]: "" });
+                    return;
+                  }
+
+                  if (!/^[0-9]*$/.test(newValue)) {
+                    alert("Enter Numbers only...");
+                    return;
+                  } else {
+                    setUpdateCoalTowerStockButtVisible(false);
+                    setCoalTowerStock({ ...coalTowerStock, [item]: newValue });
+                  }
+                }}
+                editable={editCoalTowerStock}
+                maxLength={4}
+              />
+            ))}
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Switch
+                onValueChange={toggleSwitchCoalTowerStock}
+                value={editCoalTowerStock}
+              />
+            </View>
+            {editCoalTowerStock && (
+              <AppButton
+                buttonName="Update Coal-Tower Stock"
+                buttonColour={
+                  updateCoalTowerStockButtVisible ? "#C7B7A3" : "#fc5c65"
+                }
+                disabled={updateCoalTowerStockButtVisible}
+                onPress={onUpdateCoalTowerStock}
+              />
+            )}
+          </>
+        </FieldSet>
         <FieldSet label="coalAnalysis">
           <>
+            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+              Coal Analysis
+            </Text>
             {["ci", "ash", "vm", "fc", "tm"].map((item, index) => (
               <AppTextBox
                 key={index}
@@ -1139,6 +1234,9 @@ export default function Review({ navigation }) {
         </FieldSet>
         <FieldSet label="PushingSchedule">
           <>
+            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+              Pushing Schedule
+            </Text>
             {[1, 2, 3, 4, 5].map((batt, index) => (
               <AppTextBox
                 key={index}
