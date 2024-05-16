@@ -48,21 +48,20 @@ export default function EnterFeeding({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const currentDate =
+  const currentDate = new Date().toISOString().split("T")[0];
+  /*const currentDate =
     new Date().getDate() +
     "/" +
     (new Date().getMonth() + 1) +
     "/" +
-    new Date().getFullYear();
+    new Date().getFullYear();*/
 
   const currentShift = shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
     const totalFeeding =
       parseInt(values.ct1) + parseInt(values.ct2) + parseInt(values.ct3);
-
     const streamTotal = parseInt(values.stream1) + parseInt(values.stream1A);
-
     if (totalFeeding !== streamTotal) {
       alert("Coal Tower total and Stream total should be equal..");
       return;
@@ -97,14 +96,14 @@ export default function EnterFeeding({ navigation, route }) {
         visible={doneScreen}
       />
 
-      <View style={{ flex: 1, gap: 30 }}>
+      <View style={{ flex: 1, gap: 30, backgroundColor: "orange" }}>
         <View
           style={{
-            paddingTop: 20,
+            marginTop: 40,
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 30,
+            gap: 25,
           }}
         >
           <AntDesign
@@ -117,6 +116,7 @@ export default function EnterFeeding({ navigation, route }) {
             style={{
               fontSize: 30,
               textDecorationLine: "underline",
+
               color: "#000080",
               alignSelf: "center",
               fontWeight: "bold",

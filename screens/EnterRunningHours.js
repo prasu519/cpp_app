@@ -16,12 +16,13 @@ export default function EnterRunningHours({ navigation }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const date =
+  const date = new Date().toISOString().split("T")[0];
+  /* const date =
     new Date().getDate() +
     "/" +
     (new Date().getMonth() + 1) +
     "/" +
-    new Date().getFullYear();
+    new Date().getFullYear();*/
 
   const currentShift = shift(new Date().getHours());
 
@@ -64,7 +65,7 @@ export default function EnterRunningHours({ navigation }) {
     <View style={{ flex: 1, backgroundColor: "#C7B7A3" }}>
       <View
         style={{
-          paddingTop: 20,
+          marginTop: 40,
           paddingLeft: 20,
           flexDirection: "row",
           alignItems: "center",
@@ -110,7 +111,7 @@ export default function EnterRunningHours({ navigation }) {
           onSubmit={handleSubmit}
           //validationSchema={validationSchema}
         >
-          {({ handleChange, values, setFieldTouched, touched }) => (
+          {({ handleChange, values }) => (
             <>
               <DoneScreen
                 progress={progress}

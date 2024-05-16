@@ -17,26 +17,32 @@ export default function EnterReclaiming({ navigation }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const currentDate =
-    new Date().getDate() +
+  const currentDate = new Date().toISOString().split("T")[0];
+  /* new Date().getDate() +
     "/" +
     (new Date().getMonth() + 1) +
     "/" +
-    new Date().getFullYear();
+    new Date().getFullYear();*/
 
   const currentShift = shift(new Date().getHours());
 
   useEffect(() => {
     const getCoalNames = async () => {
       await axios
-        .get(BaseUrl + "/blend")
+        .get(BaseUrl + "/blend", {
+          params: {
+            date: currentDate,
+            shift: currentShift,
+          },
+        })
         .then((response) => {
-          setCoalNames(response.data.data);
-          setCount(response.data.data.total);
+          setCoalNames(response.data.data[0]);
+          setCount(response.data.data[0].total);
         })
         .catch((error) => console.log(error));
     };
     getCoalNames();
+    console.log(coalNames);
   }, []);
 
   const handleSubmit = async (values) => {
@@ -99,14 +105,14 @@ export default function EnterReclaiming({ navigation }) {
 
     let newValues = {
       ...values,
-      coal1name: coalNames.cn1,
-      coal2name: coalNames.cn2,
-      coal3name: coalNames.cn3,
-      coal4name: coalNames.cn4,
-      coal5name: coalNames.cn5,
-      coal6name: coalNames.cn6,
-      coal7name: coalNames.cn7,
-      coal8name: coalNames.cn8,
+      coal1name: coalNames.cn1 ? coalNames.cn1 : null,
+      coal2name: coalNames.cn2 ? coalNames.cn2 : null,
+      coal3name: coalNames.cn3 ? coalNames.cn3 : null,
+      coal4name: coalNames.cn4 ? coalNames.cn4 : null,
+      coal5name: coalNames.cn5 ? coalNames.cn5 : null,
+      coal6name: coalNames.cn6 ? coalNames.cn6 : null,
+      coal7name: coalNames.cn7 ? coalNames.cn7 : null,
+      coal8name: coalNames.cn8 ? coalNames.cn8 : null,
       total_reclaiming: streamtotal,
     };
 
@@ -144,11 +150,11 @@ export default function EnterReclaiming({ navigation }) {
       <View style={{ flex: 1, backgroundColor: "#89CFF0", gap: 30 }}>
         <View
           style={{
-            paddingTop: 20,
+            marginTop: 40,
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 25,
+            gap: 40,
           }}
         >
           <AntDesign
@@ -166,7 +172,7 @@ export default function EnterReclaiming({ navigation }) {
               fontWeight: "bold",
             }}
           >
-            Enter Enter Reclaiming
+            Enter Reclaiming
           </Text>
         </View>
 

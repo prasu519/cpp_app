@@ -62,12 +62,13 @@ export default function Review({ navigation }) {
     setUpdatePushingScheduleButtVisible,
   ] = useState(false);
 
-  const currentDate =
+  const currentDate = new Date().toISOString().split("T")[0];
+  /* const currentDate =
     new Date().getDate() +
     "/" +
     (new Date().getMonth() + 1) +
     "/" +
-    new Date().getFullYear();
+    new Date().getFullYear();*/
 
   const currentShift = shift(new Date().getHours());
 
@@ -97,9 +98,14 @@ export default function Review({ navigation }) {
 
   const getTotalCoals = async () => {
     await axios
-      .get(BaseUrl + "/blend")
+      .get(BaseUrl + "/blend", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
       .then((response) => {
-        setReclaimingCount(response.data.data.total);
+        setReclaimingCount(response.data.data[0].total);
       })
       .catch((error) => console.log(error));
   };
@@ -183,10 +189,15 @@ export default function Review({ navigation }) {
 
   const getCoalNames = async () => {
     await axios
-      .get(BaseUrl + "/blend")
+      .get(BaseUrl + "/blend", {
+        params: {
+          date: currentDate,
+          shift: currentShift,
+        },
+      })
       .then((response) => {
-        setCoalNames(response.data.data);
-        setCoalNameCount(response.data.data.total);
+        setCoalNames(response.data.data[0]);
+        setCoalNameCount(response.data.data[0].total);
       })
       .catch((error) => console.log(error));
     setIsLoaded(false);
@@ -366,23 +377,18 @@ export default function Review({ navigation }) {
             : delayComponent["desc" + i],
       };
     }
+    let deleteDelayNumber = delaynumber + 1;
+
     await axios
       .delete(BaseUrl + "/shiftDelay", {
         params: {
           date: currentDate,
           shift: currentShift,
+          delayNumber: deleteDelayNumber,
         },
       })
       .then((responce) => console.log(responce.data))
       .catch((error) => console.log(error));
-    for (let i = 0; i < count - 1; i++) {
-      await axios
-        .post(BaseUrl + "/shiftDelay", newshiftDelays[i])
-        .then((response) => console.log(response.data))
-        .catch((error) => {
-          alert("Could not updated after delete delay-" + delaynumber);
-        });
-    }
   };
 
   const onUpdateShiftDelays = async () => {
@@ -508,24 +514,24 @@ export default function Review({ navigation }) {
   if (
     isLoaded ||
     feeding == undefined ||
-    reclaiming == undefined
-    // runningHours == undefined ||
-    // shiftDelays == undefined ||
-    //  mbtopCoalData == undefined ||
-    // coalTowerStock == undefined ||
-    // coalNames == undefined ||
-    //  coalAnalysisData == undefined ||
-    // pushingSchedule == undefined
+    reclaiming == undefined ||
+    runningHours == undefined ||
+    shiftDelays == undefined ||
+    mbtopCoalData == undefined ||
+    coalTowerStock == undefined ||
+    coalNames == undefined ||
+    coalAnalysisData == undefined ||
+    pushingSchedule == undefined
   ) {
     return (
       <View style={{ flex: 1, backgroundColor: "#F1F5A8" }}>
         <View
           style={{
-            paddingTop: 40,
-            paddingLeft: 20,
+            marginTop: 30,
+            marginLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 90,
+            gap: 70,
           }}
         >
           <AntDesign
@@ -538,27 +544,28 @@ export default function Review({ navigation }) {
             style={{
               fontSize: 35,
               textDecorationLine: "underline",
-              color: "red",
+              color: "#000080",
               fontWeight: "bold",
             }}
           >
             Review
           </Text>
         </View>
+
         <View
           style={{
             flexDirection: "row",
-            gap: 80,
+            gap: 40,
             paddingTop: 20,
             alignItems: "center",
             justifyContent: "center",
             borderBottomWidth: 2,
           }}
         >
-          <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+          <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
             DATE :{currentDate}
           </Text>
-          <Text style={{ fontSize: 25, fontWeight: "bold", color: "red" }}>
+          <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
             SHIFT :{currentShift}
           </Text>
         </View>
@@ -572,14 +579,14 @@ export default function Review({ navigation }) {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#F1F5A8" }}>
+    <View style={{ flex: 1, paddingBottom: 10, backgroundColor: "#F1F5A8" }}>
       <View
         style={{
-          paddingTop: 40,
-          paddingLeft: 20,
+          marginTop: 30,
+          marginLeft: 20,
           flexDirection: "row",
           alignItems: "center",
-          gap: 90,
+          gap: 70,
         }}
       >
         <AntDesign
@@ -603,17 +610,17 @@ export default function Review({ navigation }) {
       <View
         style={{
           flexDirection: "row",
-          gap: 80,
+          gap: 40,
           paddingTop: 20,
           alignItems: "center",
           justifyContent: "center",
           borderBottomWidth: 2,
         }}
       >
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
+        <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
           DATE :{currentDate}
         </Text>
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
+        <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
           SHIFT :{currentShift}
         </Text>
       </View>
@@ -675,7 +682,8 @@ export default function Review({ navigation }) {
               Reclaiming
             </Text>
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
-              reclaiming["coal" + item + "name"] === null ? null : (
+              reclaiming["coal" + item + "name"] === null ||
+              reclaiming["coal" + item + "recl"] === null ? null : (
                 <AppTextBox
                   key={index}
                   label={reclaiming["coal" + item + "name"]}
@@ -770,7 +778,7 @@ export default function Review({ navigation }) {
                   flexDirection: "row",
                   alignItems: "center",
 
-                  padding: 20,
+                  marginTop: 20,
                   justifyContent: "space-between",
                 }}
                 key={index}
@@ -780,18 +788,20 @@ export default function Review({ navigation }) {
                 </Text>
                 <View
                   style={{
-                    width: 210,
+                    width: 190,
                     backgroundColor: "white",
                     flexDirection: "row",
                     alignItems: "center",
-                    borderRadius: 23,
+                    borderRadius: 10,
                     gap: 1,
                   }}
                 >
                   <AppDropdown
                     id={"str" + item + "hrs"}
                     items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                    selectedValue={runningHours["str" + item + "hrs"]}
+                    selectedValue={runningHours[
+                      "str" + item + "hrs"
+                    ].toString()}
                     onValueChange={(newValue) => {
                       setRunningHours({
                         ...runningHours,
@@ -805,7 +815,9 @@ export default function Review({ navigation }) {
                   <AppDropdown
                     id={"str" + item + "min"}
                     items={["", "00", "10", "20", "30", "40", "50"]}
-                    selectedValue={runningHours["str" + item + "min"]}
+                    selectedValue={runningHours[
+                      "str" + item + "min"
+                    ].toString()}
                     onValueChange={(newValue) => {
                       setRunningHours({
                         ...runningHours,
@@ -823,7 +835,7 @@ export default function Review({ navigation }) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  padding: 20,
+                  marginTop: 20,
                   justifyContent: "space-between",
                 }}
                 key={index}
@@ -833,18 +845,18 @@ export default function Review({ navigation }) {
                 </Text>
                 <View
                   style={{
-                    width: 210,
+                    width: 190,
                     backgroundColor: "white",
                     flexDirection: "row",
                     alignItems: "center",
-                    borderRadius: 23,
+                    borderRadius: 10,
                     gap: 1,
                   }}
                 >
                   <AppDropdown
                     id={"cc" + item + "hrs"}
                     items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                    selectedValue={runningHours["cc" + item + "hrs"]}
+                    selectedValue={runningHours["cc" + item + "hrs"].toString()}
                     onValueChange={(newValue) => {
                       setRunningHours({
                         ...runningHours,
@@ -858,7 +870,7 @@ export default function Review({ navigation }) {
                   <AppDropdown
                     id={"cc" + item + "min"}
                     items={["", "00", "10", "20", "30", "40", "50"]}
-                    selectedValue={runningHours["cc" + item + "min"]}
+                    selectedValue={runningHours["cc" + item + "min"].toString()}
                     onValueChange={(newValue) => {
                       setRunningHours({
                         ...runningHours,
@@ -1093,7 +1105,7 @@ export default function Review({ navigation }) {
                   }
                 }}
                 keyboardType="number-pad"
-                value={mbtopCoalData["coal" + (index + 1) + "stock"]}
+                value={mbtopCoalData["coal" + (index + 1) + "stock"].toString()}
                 editable={editMbtopStock}
                 maxLength={4}
               />
@@ -1258,7 +1270,7 @@ export default function Review({ navigation }) {
                   });
                   setUpdatePushingScheduleButtVisible(false);
                 }}
-                value={pushingSchedule["bat" + batt]}
+                value={pushingSchedule["bat" + batt].toString()}
                 maxLength={2}
                 editable={editPushingSchedule}
               />
@@ -1289,6 +1301,7 @@ export default function Review({ navigation }) {
             )}
           </>
         </FieldSet>
+
         <AppButton
           buttonName="Back"
           buttonColour="#fc5c65"

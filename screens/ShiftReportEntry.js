@@ -5,13 +5,7 @@ import shift from "../utils/Shift";
 import { Button } from "@rneui/base";
 
 export default function ShiftReportEntry({ navigation }) {
-  const currentDate =
-    new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();
-
+  const currentDate = new Date().toISOString().split("T")[0];
   const currentShift = shift(new Date().getHours());
 
   return (
@@ -47,7 +41,7 @@ export default function ShiftReportEntry({ navigation }) {
       <View
         style={{
           flexDirection: "row",
-          gap: 50,
+          gap: 30,
           paddingTop: 20,
           alignItems: "center",
           justifyContent: "center",

@@ -17,22 +17,29 @@ export default function BinStock({ navigation }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const currentDate =
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  /* const currentDate =
     new Date().getDate() +
     "/" +
     (new Date().getMonth() + 1) +
     "/" +
-    new Date().getFullYear();
+    new Date().getFullYear();*/
 
   const currentShift = shift(new Date().getHours());
 
   useEffect(() => {
     const getCoalNames = async () => {
       await axios
-        .get(BaseUrl + "/blend")
+        .get(BaseUrl + "/blend", {
+          params: {
+            date: currentDate,
+            shift: currentShift,
+          },
+        })
         .then((response) => {
-          setCoalNames(response.data.data);
-          setCount(response.data.data.total);
+          setCoalNames(response.data.data[0]);
+          setCount(response.data.data[0].total);
         })
         .catch((error) => console.log(error));
     };
@@ -97,7 +104,7 @@ export default function BinStock({ navigation }) {
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 35,
+            gap: 25,
           }}
         >
           <AntDesign
@@ -148,7 +155,7 @@ export default function BinStock({ navigation }) {
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 50,
+                  gap: 30,
                   alignItems: "center",
                   justifyContent: "center",
                   borderBottomWidth: 2,

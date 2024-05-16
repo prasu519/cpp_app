@@ -36,12 +36,14 @@ export default function EnterFeeding({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const currentDate =
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  /* const currentDate =
     new Date().getDate() +
     "/" +
     (new Date().getMonth() + 1) +
     "/" +
-    new Date().getFullYear();
+    new Date().getFullYear();*/
 
   const currentShift = shift(new Date().getHours());
 
@@ -89,7 +91,7 @@ export default function EnterFeeding({ navigation, route }) {
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",
-            gap: 20,
+            gap: 10,
           }}
         >
           <AntDesign
@@ -100,10 +102,11 @@ export default function EnterFeeding({ navigation, route }) {
           />
           <Text
             style={{
-              fontSize: 28,
+              fontSize: 25,
               color: "#000080",
               alignSelf: "center",
               fontWeight: "bold",
+              borderBottomWidth: 2,
             }}
           >
             Enter Coal-Tower Stocks
@@ -134,19 +137,19 @@ export default function EnterFeeding({ navigation, route }) {
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 50,
+                  gap: 30,
                   alignItems: "center",
                   justifyContent: "center",
                   borderBottomWidth: 2,
                 }}
               >
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}
+                  style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}
                 >
                   DATE :{currentDate}
                 </Text>
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}
+                  style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}
                 >
                   SHIFT :{currentShift}
                 </Text>

@@ -98,12 +98,15 @@ export default function EnterDelays({ navigation }) {
     setButtonVisible(true);
   };
 
-  const currentDate =
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  /* const currentDate =
     new Date().getDate() +
     "/" +
     (new Date().getMonth() + 1) +
     "/" +
-    new Date().getFullYear();
+    new Date().getFullYear();*/
+
   const currentShift = shift(new Date().getHours());
 
   return (
@@ -117,13 +120,13 @@ export default function EnterDelays({ navigation }) {
         style={{
           flex: 1,
           backgroundColor: "#FFCAD4",
-          gap: 10,
+          gap: 20,
           paddingBottom: 10,
         }}
       >
         <View
           style={{
-            paddingTop: 20,
+            marginTop: 40,
             paddingLeft: 20,
             flexDirection: "row",
             alignItems: "center",

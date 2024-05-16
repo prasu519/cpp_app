@@ -8,23 +8,28 @@ import { Formik } from "formik";
 import axios from "axios";
 import AppFormButton from "../components/AppFormButton";
 import BaseUrl from "../config/BaseUrl";
-
 import { Picker } from "@react-native-picker/picker";
+import DoneScreen from "./DoneScreen";
+import { date } from "yup";
 
 export default function AddBlend({ navigation }) {
   const [count, setCount] = useState(0);
+  const [doneScreen, setDoneScreen] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-  const currentDate =
-    new Date().getDate() +
+  const currentDate = new Date().toISOString().split("T")[0];
+
+  /* new Date().getDate() +
     "/" +
     (new Date().getMonth() + 1) +
     "/" +
-    new Date().getFullYear();
+    new Date().getFullYear();*/
 
   const currentShift = shift(new Date().getHours());
 
   const handleCount = (value) => {
     setCount(parseInt(value));
+    console.log(currentDate);
   };
 
   const DisplayBlendForm = (handleChange) => {
@@ -136,133 +141,147 @@ export default function AddBlend({ navigation }) {
       return alert("Total Percentage should be 100%.. ");
     }
     const finalValues = { ...values, total: count.toString() };
-    console.log(totalPercentage);
+    setProgress(0);
+    setDoneScreen(true);
     await axios
-      .post(BaseUrl + "/blend", finalValues)
+      .post(BaseUrl + "/blend", finalValues, {
+        onUploadProgress: (progress) =>
+          setProgress(progress.loaded / progress.total),
+      })
       .then((responce) => console.log(responce.data))
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        setDoneScreen(false);
+        alert("Could not save data..");
+      });
+    setCount(0);
   };
 
   return (
-    <View style={{ flex: 1, gap: 10 }}>
-      <View
-        style={{
-          paddingTop: 40,
-          paddingLeft: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 40,
-        }}
-      >
-        <AntDesign
-          name="leftcircle"
-          size={40}
-          color="black"
-          onPress={() => navigation.goBack()}
-        />
-        <Text
+    <>
+      <DoneScreen
+        progress={progress}
+        onDone={() => setDoneScreen(false)}
+        visible={doneScreen}
+      />
+      <View style={{ flex: 1, gap: 20 }}>
+        <View
           style={{
-            fontSize: 30,
-            textDecorationLine: "underline",
-            color: "#000080",
-            alignSelf: "center",
-            fontWeight: "bold",
-            marginLeft: 25,
+            paddingTop: 40,
+            paddingLeft: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 15,
           }}
         >
-          Add New Blend
-        </Text>
-      </View>
+          <AntDesign
+            name="leftcircle"
+            size={40}
+            color="black"
+            onPress={() => navigation.goBack()}
+          />
+          <Text
+            style={{
+              fontSize: 30,
+              textDecorationLine: "underline",
+              color: "#000080",
+              alignSelf: "center",
+              fontWeight: "bold",
+              marginLeft: 25,
+            }}
+          >
+            Add New Blend
+          </Text>
+        </View>
 
-      <View
-        style={{
-          flexDirection: "row",
-          gap: 50,
-
-          alignItems: "center",
-          justifyContent: "center",
-          borderBottomWidth: 2,
-        }}
-      >
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
-          DATE :{currentDate}
-        </Text>
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
-          SHIFT :{currentShift}
-        </Text>
-      </View>
-      <Formik
-        initialValues={{
-          date: currentDate,
-          shift: currentShift,
-          total: count,
-        }}
-        onSubmit={handleSubmit}
-      >
-        {({ handleChange }) => (
-          <ScrollView style={{ padding: 10 }}>
-            <View
-              style={{
-                flex: 1,
-              }}
-            >
+        <View
+          style={{
+            flexDirection: "row",
+            gap: 30,
+            alignItems: "center",
+            justifyContent: "center",
+            borderBottomWidth: 2,
+          }}
+        >
+          <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
+            DATE :{currentDate}
+          </Text>
+          <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
+            SHIFT :{currentShift}
+          </Text>
+        </View>
+        <Formik
+          initialValues={{
+            date: currentDate,
+            shift: currentShift,
+            total: count,
+          }}
+          onSubmit={handleSubmit}
+        >
+          {({ handleChange }) => (
+            <ScrollView style={{ padding: 10 }}>
               <View
                 style={{
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  padding: 5,
-                  gap: 20,
-                  height: 70,
-                  width: "100%",
-                  backgroundColor: "#4ecdc4",
-                  borderRadius: 25,
-                  alignItems: "center",
+                  flex: 1,
                 }}
               >
-                <Text
+                <View
                   style={{
-                    fontSize: 20,
-                    alignSelf: "center",
-                    fontWeight: "bold",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    padding: 5,
+                    gap: 20,
+                    height: 70,
+                    width: "100%",
+                    backgroundColor: "#4ecdc4",
+                    borderRadius: 25,
+                    alignItems: "center",
                   }}
                 >
-                  Number of Coals :
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: 20,
+                      alignSelf: "center",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Number of Coals :
+                  </Text>
 
-                <Picker
-                  id="coalCount"
-                  style={{
-                    width: 100,
-                    backgroundColor: "white",
-                  }}
-                  mode="dropdown"
-                  onValueChange={handleCount}
-                  selectedValue={count}
-                >
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((number) => (
-                    <Picker.Item
-                      key={number}
-                      label={number.toString()}
-                      value={number}
-                      style={{ fontSize: 18 }}
-                    />
-                  ))}
-                </Picker>
+                  <Picker
+                    id="coalCount"
+                    style={{
+                      width: 100,
+                      backgroundColor: "white",
+                    }}
+                    mode="dropdown"
+                    onValueChange={handleCount}
+                    selectedValue={count}
+                  >
+                    {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((number) => (
+                      <Picker.Item
+                        key={number}
+                        label={number.toString()}
+                        value={number}
+                        style={{ fontSize: 18 }}
+                      />
+                    ))}
+                  </Picker>
+                </View>
+                {count === 0 ? null : (
+                  <>
+                    <FieldSet label="New Blend">
+                      <>
+                        {DisplayBlendForm(handleChange)}
+                        <AppFormButton buttonText="Add New Blend" />
+                      </>
+                    </FieldSet>
+                  </>
+                )}
               </View>
-              {count === 0 ? null : (
-                <>
-                  <FieldSet label="New Blend">
-                    <>
-                      {DisplayBlendForm(handleChange)}
-                      <AppFormButton buttonText="Add New Blend" />
-                    </>
-                  </FieldSet>
-                </>
-              )}
-            </View>
-          </ScrollView>
-        )}
-      </Formik>
-    </View>
+            </ScrollView>
+          )}
+        </Formik>
+      </View>
+    </>
   );
 }

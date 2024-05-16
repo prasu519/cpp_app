@@ -78,7 +78,7 @@ export default function DelayMessageComponent({
         style={{
           flexDirection: "row",
           height: 60,
-          width: "85%",
+          width: "95%",
           backgroundColor: "white",
           borderRadius: 20,
           alignSelf: "center",
@@ -87,9 +87,9 @@ export default function DelayMessageComponent({
       >
         <Text
           style={{
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: "bold",
-            margin: 10,
+            margin: 5,
             alignSelf: "center",
           }}
         >
@@ -115,7 +115,7 @@ export default function DelayMessageComponent({
         style={{
           flexDirection: "row",
           height: 60,
-          width: "85%",
+          width: "95%",
           backgroundColor: "white",
           borderRadius: 20,
           alignSelf: "center",
@@ -124,9 +124,9 @@ export default function DelayMessageComponent({
       >
         <Text
           style={{
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: "bold",
-            marginLeft: 20,
+            marginLeft: 7,
             marginRight: 25,
             alignSelf: "center",
           }}
