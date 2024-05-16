@@ -1,29 +1,22 @@
 import { View, Text, ScrollView } from "react-native";
 import React, { useState } from "react";
-
 import { AntDesign } from "@expo/vector-icons";
 import { Formik } from "formik";
 import AppDropdown from "../components/AppDropdown";
 import AppFormButton from "../components/AppFormButton";
 import axios from "axios";
-
 import DoneScreen from "./DoneScreen";
-
 import shift from "../utils/Shift";
+import FieldSet from "react-native-fieldset";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function EnterRunningHours({ navigation }) {
-  //const [shift, setShift] = useState("X");
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
-
-  const date = new Date().toISOString().split("T")[0];
-  /* const date =
-    new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();*/
-
+  const currentDate = new Date().toISOString().split("T")[0];
   const currentShift = shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -44,10 +37,8 @@ export default function EnterRunningHours({ navigation }) {
       alert("Make sure to enter all values..");
       return;
     }
-
     setProgress(0);
     setDoneScreen(true);
-
     await axios
       .post(BaseUrl + "/runningHours", values, {
         onUploadProgress: (progress) =>
@@ -62,210 +53,278 @@ export default function EnterRunningHours({ navigation }) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#C7B7A3" }}>
-      <View
-        style={{
-          marginTop: 40,
-          paddingLeft: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 30,
-        }}
-      >
-        <AntDesign
-          name="leftcircle"
-          size={40}
-          color="black"
-          onPress={() => navigation.goBack()}
-        />
-        <Text
-          style={{
-            fontSize: 25,
-            textDecorationLine: "underline",
-            color: "#000080",
-            alignSelf: "center",
-            fontWeight: "bold",
-          }}
-        >
-          Enter Running Hours
-        </Text>
-      </View>
-      <ScrollView>
-        <Formik
-          initialValues={{
-            date: date,
-            shift: currentShift,
-            str2hrs: "",
-            str2min: "",
-            str3hrs: "",
-            str3min: "",
-            str4hrs: "",
-            str4min: "",
-            cc49hrs: "",
-            cc49min: "",
-            cc50hrs: "",
-            cc50min: "",
-            cc126hrs: "",
-            cc126min: "",
-          }}
-          onSubmit={handleSubmit}
-          //validationSchema={validationSchema}
-        >
-          {({ handleChange, values }) => (
-            <>
-              <DoneScreen
-                progress={progress}
-                onDone={() => setDoneScreen(false)}
-                visible={doneScreen}
-              />
+    <Formik
+      initialValues={{
+        date: currentDate,
+        shift: currentShift,
+        str2hrs: "",
+        str2min: "",
+        str3hrs: "",
+        str3min: "",
+        str4hrs: "",
+        str4min: "",
+        cc49hrs: "",
+        cc49min: "",
+        cc50hrs: "",
+        cc50min: "",
+        cc126hrs: "",
+        cc126min: "",
+      }}
+      onSubmit={handleSubmit}
+    >
+      {({ handleChange, values }) => (
+        <>
+          <DoneScreen
+            progress={progress}
+            onDone={() => setDoneScreen(false)}
+            visible={doneScreen}
+          />
+          <View style={{ flex: 1 }}>
+            <View
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                height: hp(20),
+                width: wp(100),
+                backgroundColor: "#2FF3E0",
+                borderBottomLeftRadius: hp(4),
+                borderBottomRightRadius: hp(4),
+              }}
+            >
+              <View
+                style={{
+                  paddingTop: hp(5),
+                  paddingLeft: hp(2),
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: wp(10),
+                }}
+              >
+                <AntDesign
+                  name="leftcircle"
+                  size={40}
+                  color="black"
+                  onPress={() => navigation.goBack()}
+                />
+                <Text
+                  style={{
+                    fontSize: hp(3),
+                    borderBottomWidth: 2,
+                    color: "black",
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Enter Running Hours
+                </Text>
+              </View>
 
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 40,
-                  paddingTop: 20,
+                  gap: hp(10),
+                  paddingTop: hp(3),
                   alignItems: "center",
                   justifyContent: "center",
-                  borderBottomWidth: 2,
-                }}
-              >
-                <Text
-                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
-                >
-                  DATE :{date}
-                </Text>
-                <Text
-                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
-                >
-                  SHIFT :{currentShift}
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  paddingTop: 50,
-                  flexDirection: "row",
-                  justifyContent: "center",
                 }}
               >
                 <Text
                   style={{
-                    fontSize: 22,
+                    fontSize: hp(2.5),
                     fontWeight: "bold",
-                    color: "green",
+                    color: "#DF362D",
                   }}
                 >
-                  Enter CPP Running Hours
+                  DATE : {currentDate}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
+                >
+                  SHIFT : {currentShift}
                 </Text>
               </View>
-              {["2", "3", "4"].map((item, index) => (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
+            </View>
 
-                    padding: 20,
-                    justifyContent: "space-between",
-                  }}
-                  key={index}
-                >
-                  <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-                    {"Stream-" + item}
-                  </Text>
-                  <View
+            <ScrollView
+              style={{
+                position: "relative",
+                zIndex: 1,
+                marginTop: hp(20),
+                padding: hp(2),
+              }}
+            >
+              <FieldSet>
+                <>
+                  <Text
                     style={{
-                      width: 210,
-                      backgroundColor: "white",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      borderRadius: 23,
-                      gap: 1,
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.5),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: 30,
                     }}
                   >
-                    <AppDropdown
-                      id={"str" + item + "hrs"}
-                      items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                      selectedValue={values["str" + item + "hrs"]}
-                      onValueChange={handleChange("str" + item + "hrs")}
-                      // onBlur={() => setFieldTouched("str"+item+"hrs")}
-                    />
-                    <Text style={{ fontWeight: "900" }}>:</Text>
-                    <AppDropdown
-                      id={"str" + item + "min"}
-                      items={["", "00", "10", "20", "30", "40", "50"]}
-                      selectedValue={values["str" + item + "min"]}
-                      onValueChange={handleChange("str" + item + "min")}
-                      //onBlur={() => setFieldTouched("str2min")}
-                    />
-                  </View>
-                </View>
-              ))}
-
-              <View
-                style={{
-                  paddingTop: 50,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 22,
-                    fontWeight: "bold",
-                    color: "green",
-                  }}
-                >
-                  Enter CHP Running Hours
-                </Text>
-              </View>
-
-              {["49", "50", "126"].map((item, index) => (
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    padding: 20,
-                    justifyContent: "space-between",
-                  }}
-                  key={index}
-                >
-                  <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-                    {"CC" + item}
+                    Enter CPP Running Hours
                   </Text>
-                  <View
+
+                  {["2", "3", "4"].map((item, index) => (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: hp(4),
+                        gap: hp(2),
+                      }}
+                      key={index}
+                    >
+                      <View
+                        style={{
+                          height: hp(6),
+                          width: wp(24),
+                          backgroundColor: "orange",
+                          borderRadius: hp(2),
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text style={{ fontSize: hp(3), fontWeight: "bold" }}>
+                          {"Strm-" + item}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          width: wp(55),
+                          backgroundColor: "white",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          borderRadius: 23,
+                        }}
+                      >
+                        <AppDropdown
+                          id={"str" + item + "hrs"}
+                          items={[
+                            "",
+                            "0",
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                          ]}
+                          selectedValue={values["str" + item + "hrs"]}
+                          onValueChange={handleChange("str" + item + "hrs")}
+                          // onBlur={() => setFieldTouched("str"+item+"hrs")}
+                        />
+                        <Text style={{ fontWeight: "900" }}>:</Text>
+                        <AppDropdown
+                          id={"str" + item + "min"}
+                          items={["", "00", "10", "20", "30", "40", "50"]}
+                          selectedValue={values["str" + item + "min"]}
+                          onValueChange={handleChange("str" + item + "min")}
+                          //onBlur={() => setFieldTouched("str2min")}
+                        />
+                      </View>
+                    </View>
+                  ))}
+                </>
+              </FieldSet>
+              <FieldSet>
+                <>
+                  <Text
                     style={{
-                      width: 210,
-                      backgroundColor: "white",
-                      flexDirection: "row",
-                      alignItems: "center",
-                      borderRadius: 23,
-                      gap: 1,
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.5),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: 30,
                     }}
                   >
-                    <AppDropdown
-                      id={"cc" + item + "hrs"}
-                      items={["", "0", "1", "2", "3", "4", "5", "6", "7", "8"]}
-                      selectedValue={values["cc" + item + "hrs"]}
-                      onValueChange={handleChange("cc" + item + "hrs")}
-                      // onBlur={() => setFieldTouched("str"+item+"hrs")}
-                    />
-                    <Text style={{ fontWeight: "900" }}>:</Text>
-                    <AppDropdown
-                      id={"cc" + item + "min"}
-                      items={["", "00", "10", "20", "30", "40", "50"]}
-                      selectedValue={values["cc" + item + "min"]}
-                      onValueChange={handleChange("cc" + item + "min")}
-                      //onBlur={() => setFieldTouched("str2min")}
-                    />
-                  </View>
-                </View>
-              ))}
+                    Enter CHP Running Hours
+                  </Text>
 
+                  {["49", "50", "126"].map((item, index) => (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginBottom: hp(4),
+                        gap: hp(3),
+                      }}
+                      key={index}
+                    >
+                      <View
+                        style={{
+                          height: hp(6),
+                          width: wp(22),
+                          backgroundColor: "#e9c46a",
+                          borderRadius: hp(2),
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: hp(3),
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {"CC" + item}
+                        </Text>
+                      </View>
+                      <View
+                        style={{
+                          width: wp(55),
+                          backgroundColor: "white",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          borderRadius: 23,
+                        }}
+                      >
+                        <AppDropdown
+                          id={"cc" + item + "hrs"}
+                          items={[
+                            "",
+                            "0",
+                            "1",
+                            "2",
+                            "3",
+                            "4",
+                            "5",
+                            "6",
+                            "7",
+                            "8",
+                          ]}
+                          selectedValue={values["cc" + item + "hrs"]}
+                          onValueChange={handleChange("cc" + item + "hrs")}
+                          // onBlur={() => setFieldTouched("str"+item+"hrs")}
+                        />
+                        <Text style={{ fontWeight: "900" }}>:</Text>
+                        <AppDropdown
+                          id={"cc" + item + "min"}
+                          items={["", "00", "10", "20", "30", "40", "50"]}
+                          selectedValue={values["cc" + item + "min"]}
+                          onValueChange={handleChange("cc" + item + "min")}
+                          //onBlur={() => setFieldTouched("str2min")}
+                        />
+                      </View>
+                    </View>
+                  ))}
+                </>
+              </FieldSet>
               <AppFormButton buttonText="Submit" />
-            </>
-          )}
-        </Formik>
-      </ScrollView>
-    </View>
+            </ScrollView>
+          </View>
+        </>
+      )}
+    </Formik>
   );
 }

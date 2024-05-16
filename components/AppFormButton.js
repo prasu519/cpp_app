@@ -1,6 +1,10 @@
 import { Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { useFormikContext } from "formik";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function AppFormButton({ buttonText }) {
   const { handleSubmit } = useFormikContext();
@@ -12,10 +16,10 @@ export default function AppFormButton({ buttonText }) {
         borderRadius: 25,
         justifyContent: "center",
         alignItems: "center",
-        padding: 15,
-        marginTop: 30,
-        width: "90%",
-        marginVertical: 10,
+        padding: hp(2),
+        marginTop: hp(4),
+        marginBottom: hp(4),
+        width: wp(80),
         alignSelf: "center",
       }}
       onPress={handleSubmit}
@@ -23,7 +27,7 @@ export default function AppFormButton({ buttonText }) {
       <Text
         style={{
           color: "white",
-          fontSize: 18,
+          fontSize: hp(2.5),
           textTransform: "uppercase",
           fontWeight: "bold",
         }}

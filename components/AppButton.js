@@ -1,23 +1,27 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function AppButton({
   buttonName,
   buttonColour = "#fc5c65",
-  width = "90%",
+  width = 80,
   ...otherProps
 }) {
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: buttonColour, //#fc5c65
+        backgroundColor: buttonColour,
         borderRadius: 25,
         justifyContent: "center",
         alignItems: "center",
-        padding: 15,
-        marginTop: 30,
-        width: width,
-        marginVertical: 10,
+        padding: hp(2),
+        marginTop: hp(4),
+        width: wp(width),
+        marginBottom: hp(4),
         alignSelf: "center",
       }}
       {...otherProps}
@@ -25,7 +29,7 @@ export default function AppButton({
       <Text
         style={{
           color: "white",
-          fontSize: 18,
+          fontSize: hp(2),
           textTransform: "uppercase",
           fontWeight: "bold",
         }}

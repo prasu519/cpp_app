@@ -10,6 +10,10 @@ import shift from "../utils/Shift";
 import BaseUrl from "../config/BaseUrl";
 import FieldSet from "react-native-fieldset";
 import DoneScreen from "./DoneScreen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function EnterReclaiming({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
@@ -42,7 +46,6 @@ export default function EnterReclaiming({ navigation }) {
         .catch((error) => console.log(error));
     };
     getCoalNames();
-    console.log(coalNames);
   }, []);
 
   const handleSubmit = async (values) => {
@@ -141,184 +144,215 @@ export default function EnterReclaiming({ navigation }) {
   };
 
   return (
-    <>
-      <DoneScreen
-        progress={progress}
-        onDone={() => setDoneScreen(false)}
-        visible={doneScreen}
-      />
-      <View style={{ flex: 1, backgroundColor: "#89CFF0", gap: 30 }}>
-        <View
-          style={{
-            marginTop: 40,
-            paddingLeft: 20,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 40,
-          }}
-        >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
+    <Formik
+      initialValues={{
+        date: currentDate,
+        shift: currentShift,
+        coal1name: "",
+        coal1recl: "",
+        coal2name: "",
+        coal2recl: "",
+        coal3name: "",
+        coal3recl: "",
+        coal4name: "",
+        coal4recl: "",
+        coal5name: "",
+        coal5recl: "",
+        coal6name: "",
+        coal6recl: "",
+        coal7name: "",
+        coal7recl: "",
+        coal8name: "",
+        coal8recl: "",
+        cc49recl: "",
+        cc50recl: "",
+        cc126recl: "",
+        total_reclaiming: 0,
+      }}
+      onSubmit={handleSubmit}
+    >
+      {({ setFieldValue, values }) => (
+        <>
+          <DoneScreen
+            progress={progress}
+            onDone={() => setDoneScreen(false)}
+            visible={doneScreen}
           />
-          <Text
-            style={{
-              fontSize: 26,
-              textDecorationLine: "underline",
-              color: "#000080",
-              alignSelf: "center",
-              fontWeight: "bold",
-            }}
-          >
-            Enter Reclaiming
-          </Text>
-        </View>
+          <View style={{ flex: 1 }}>
+            <View
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                height: hp(20),
+                width: wp(100),
+                backgroundColor: "#2FF3E0",
+                borderBottomLeftRadius: hp(4),
+                borderBottomRightRadius: hp(4),
+              }}
+            >
+              <View
+                style={{
+                  paddingTop: hp(5),
+                  paddingLeft: hp(2),
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: wp(15),
+                }}
+              >
+                <AntDesign
+                  name="leftcircle"
+                  size={40}
+                  color="black"
+                  onPress={() => navigation.goBack()}
+                />
+                <Text
+                  style={{
+                    fontSize: hp(3),
+                    borderBottomWidth: 2,
+                    color: "black",
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Enter Reclaiming
+                </Text>
+              </View>
 
-        <Formik
-          initialValues={{
-            date: currentDate,
-            shift: currentShift,
-            coal1name: "",
-            coal1recl: "",
-            coal2name: "",
-            coal2recl: "",
-            coal3name: "",
-            coal3recl: "",
-            coal4name: "",
-            coal4recl: "",
-            coal5name: "",
-            coal5recl: "",
-            coal6name: "",
-            coal6recl: "",
-            coal7name: "",
-            coal7recl: "",
-            coal8name: "",
-            coal8recl: "",
-            cc49recl: "",
-            cc50recl: "",
-            cc126recl: "",
-            total_reclaiming: 0,
-          }}
-          onSubmit={handleSubmit}
-        >
-          {({ setFieldValue, values }) => (
-            <>
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 40,
+                  gap: hp(10),
+                  paddingTop: hp(3),
                   alignItems: "center",
                   justifyContent: "center",
-                  borderBottomWidth: 2,
                 }}
               >
                 <Text
-                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  DATE :{currentDate}
+                  DATE : {currentDate}
                 </Text>
                 <Text
-                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  SHIFT :{currentShift}
+                  SHIFT : {currentShift}
                 </Text>
               </View>
-              <ScrollView style={{ padding: 10 }}>
-                <FieldSet label="New Blend">
-                  <>
-                    <Text
-                      style={{
-                        alignSelf: "center",
-                        fontSize: 25,
-                        fontWeight: "bold",
-                        color: "#416D19",
-                      }}
-                    >
-                      Enter Coal-wise
-                    </Text>
-                    {Array.from({ length: count }, (_, index) => (
-                      <AppTextBox
-                        label={coalNames["cn" + (index + 1)]}
-                        labelcolor="orange"
-                        key={index}
-                        onChangeText={(value) => {
-                          if (!/^[0-9]*$/.test(value)) {
-                            alert("Enter Numbers only...");
-                            return;
-                          } else {
-                            setFieldValue("coal" + (index + 1) + "recl", value);
-                          }
-                        }}
-                        keyboardType="number-pad"
-                        value={values["coal" + (index + 1) + "recl"].toString()}
-                        maxLength={4}
-                      />
-                    ))}
-                    <Text
-                      style={{
-                        alignSelf: "center",
-                        fontSize: 25,
-                        fontWeight: "bold",
-                        color: "#416D19",
-                        paddingTop: 20,
-                      }}
-                    >
-                      Enter Stream-wise
-                    </Text>
+            </View>
+            <ScrollView
+              style={{
+                position: "relative",
+                zIndex: 1,
+                marginTop: hp(20),
+                padding: hp(2),
+              }}
+            >
+              <FieldSet label="New Blend">
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: 20,
+                    }}
+                  >
+                    Enter Coal-wise
+                  </Text>
+                  {Array.from({ length: count }, (_, index) => (
                     <AppTextBox
-                      label={"CC49"}
-                      labelcolor={"#e9c46a"}
+                      label={coalNames["cn" + (index + 1)]}
+                      labelcolor="orange"
+                      key={index}
                       onChangeText={(value) => {
                         if (!/^[0-9]*$/.test(value)) {
                           alert("Enter Numbers only...");
                           return;
                         } else {
-                          setFieldValue("cc49recl", value);
+                          setFieldValue("coal" + (index + 1) + "recl", value);
                         }
                       }}
-                      value={values["cc49recl"].toString()}
+                      keyboardType="number-pad"
+                      value={values["coal" + (index + 1) + "recl"].toString()}
                       maxLength={4}
                     />
+                  ))}
+                </>
+              </FieldSet>
+              <FieldSet>
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: 20,
+                    }}
+                  >
+                    Enter Stream-wise
+                  </Text>
 
-                    <AppTextBox
-                      label={"CC50"}
-                      labelcolor={"#e9c46a"}
-                      onChangeText={(value) => {
-                        if (!/^[0-9]*$/.test(value)) {
-                          alert("Enter Numbers only...");
-                          return;
-                        } else {
-                          setFieldValue("cc50recl", value);
-                        }
-                      }}
-                      value={values["cc50recl"].toString()}
-                      maxLength={4}
-                    />
-
-                    <AppTextBox
-                      label={"CC126"}
-                      labelcolor={"#e9c46a"}
-                      onChangeText={(value) => {
-                        if (!/^[0-9]*$/.test(value)) {
-                          alert("Enter Numbers only...");
-                          return;
-                        } else {
-                          setFieldValue("cc126recl", value);
-                        }
-                      }}
-                      value={values["cc126recl"].toString()}
-                      maxLength={4}
-                    />
-                    <AppFormButton buttonText="Submit" />
-                  </>
-                </FieldSet>
-              </ScrollView>
-            </>
-          )}
-        </Formik>
-      </View>
-    </>
+                  <AppTextBox
+                    label={"CC49"}
+                    labelcolor={"#e9c46a"}
+                    onChangeText={(value) => {
+                      if (!/^[0-9]*$/.test(value)) {
+                        alert("Enter Numbers only...");
+                        return;
+                      } else {
+                        setFieldValue("cc49recl", value);
+                      }
+                    }}
+                    value={values["cc49recl"].toString()}
+                    maxLength={4}
+                  />
+                  <AppTextBox
+                    label={"CC50"}
+                    labelcolor={"#e9c46a"}
+                    onChangeText={(value) => {
+                      if (!/^[0-9]*$/.test(value)) {
+                        alert("Enter Numbers only...");
+                        return;
+                      } else {
+                        setFieldValue("cc50recl", value);
+                      }
+                    }}
+                    value={values["cc50recl"].toString()}
+                    maxLength={4}
+                  />
+                  <AppTextBox
+                    label={"CC126"}
+                    labelcolor={"#e9c46a"}
+                    onChangeText={(value) => {
+                      if (!/^[0-9]*$/.test(value)) {
+                        alert("Enter Numbers only...");
+                        return;
+                      } else {
+                        setFieldValue("cc126recl", value);
+                      }
+                    }}
+                    value={values["cc126recl"].toString()}
+                    maxLength={4}
+                  />
+                </>
+              </FieldSet>
+              <AppFormButton buttonText="Submit" />
+            </ScrollView>
+          </View>
+        </>
+      )}
+    </Formik>
   );
 }

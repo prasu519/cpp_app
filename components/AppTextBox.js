@@ -1,40 +1,42 @@
 import { View, Text, TextInput } from "react-native";
 import React from "react";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const AppTextBox = ({
   label,
-  labelcolor,
-  tbSize = "40%",
-  lbSize = "50%",
+  labelcolor = "white",
+  tbSize = 30,
+  lbSize = 40,
   ...otherProps
 }) => {
   return (
     <View
       style={{
         flexDirection: "row",
-        width: "98%",
-        height: 50,
-        gap: 5,
-        marginLeft: 5,
-        marginBottom: 10,
-        marginTop: 10,
+        width: wp(85),
+        height: hp(6),
+        gap: hp(3),
+        marginBottom: hp(1),
+        marginTop: hp(1),
         justifyContent: "center",
       }}
     >
       <View
         style={{
-          width: lbSize,
-
+          width: wp(lbSize),
           backgroundColor: labelcolor,
-          height: 50,
+          height: hp(6),
           justifyContent: "center",
           borderRadius: 25,
-          paddingLeft: 10,
+          paddingLeft: wp(3),
         }}
       >
         <Text
           style={{
-            fontSize: 25,
+            fontSize: hp(3),
             fontWeight: "bold",
             color: "black",
             textAlign: "left",
@@ -46,8 +48,8 @@ const AppTextBox = ({
       <View
         style={{
           borderRadius: 25,
-          width: tbSize,
-          height: 50,
+          width: wp(tbSize),
+          height: hp(6),
           alignItems: "center",
           justifyContent: "center",
           borderRadius: 20,
@@ -56,12 +58,12 @@ const AppTextBox = ({
         <TextInput
           selectionColor={"black"}
           style={{
-            height: 50,
-            width: "90%",
-            paddingLeft: 10,
-            fontSize: 30,
+            height: hp(6),
+            width: wp(30),
+            paddingLeft: wp(2),
+            fontSize: hp(3),
             fontFamily: "Roboto",
-            borderWidth: 1,
+            borderWidth: wp(0.3),
             borderRadius: 10,
             borderColor: "#0c0c0c",
             backgroundColor: "white",

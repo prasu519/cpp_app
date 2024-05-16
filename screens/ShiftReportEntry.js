@@ -3,71 +3,96 @@ import React from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
 import { Button } from "@rneui/base";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function ShiftReportEntry({ navigation }) {
   const currentDate = new Date().toISOString().split("T")[0];
   const currentShift = shift(new Date().getHours());
 
   return (
-    <View style={{ flex: 1, backgroundColor: "white" }}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
-          paddingTop: 40,
-          paddingLeft: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 40,
+          position: "absolute",
+          zIndex: 1,
+          height: hp(20),
+          width: wp(100),
+          backgroundColor: "#2FF3E0",
+          borderBottomLeftRadius: hp(4),
+          borderBottomRightRadius: hp(4),
         }}
       >
-        <AntDesign
-          name="leftcircle"
-          size={40}
-          color="black"
-          onPress={() => navigation.goBack()}
-        />
-        <Text
+        <View
           style={{
-            fontSize: 25,
-            textDecorationLine: "underline",
-            color: "#000080",
-            alignSelf: "center",
-            fontWeight: "bold",
+            paddingTop: hp(5),
+            paddingLeft: hp(2),
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 40,
           }}
         >
-          Enter Shift Report
-        </Text>
-      </View>
+          <AntDesign
+            name="leftcircle"
+            size={40}
+            color="black"
+            onPress={() => navigation.goBack()}
+          />
+          <Text
+            style={{
+              fontSize: hp(3),
+              borderBottomWidth: 2,
+              color: "black",
+              alignSelf: "center",
+              fontWeight: "bold",
+            }}
+          >
+            Enter Shift Report
+          </Text>
+        </View>
 
-      <View
-        style={{
-          flexDirection: "row",
-          gap: 30,
-          paddingTop: 20,
-          alignItems: "center",
-          justifyContent: "center",
-          borderBottomWidth: 2,
-        }}
-      >
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
-          DATE :{currentDate}
-        </Text>
-        <Text style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}>
-          SHIFT :{currentShift}
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            gap: hp(10),
+            paddingTop: hp(3),
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{ fontSize: hp(2.5), fontWeight: "bold", color: "#DF362D" }}
+          >
+            DATE : {currentDate}
+          </Text>
+          <Text
+            style={{ fontSize: hp(2.5), fontWeight: "bold", color: "#DF362D" }}
+          >
+            SHIFT : {currentShift}
+          </Text>
+        </View>
       </View>
       <ScrollView>
         <View
           style={{
-            flex: 1,
+            position: "relative",
+            zIndex: 1,
             alignItems: "center",
-            paddingTop: 50,
-            gap: 30,
+            marginTop: hp(25),
+            gap: hp(4),
+            marginBottom: hp(5),
           }}
         >
           <Button
             title={"Enter Reclaiming"}
-            buttonStyle={{ width: 200, height: 50 }}
-            titleStyle={{ fontSize: 20, color: "black", fontWeight: "bold" }}
+            buttonStyle={{ width: wp(50), height: hp(7) }}
+            titleStyle={{
+              fontSize: hp(2.5),
+              color: "black",
+              fontWeight: "bold",
+            }}
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("EnterReclaiming")}
@@ -75,8 +100,12 @@ export default function ShiftReportEntry({ navigation }) {
 
           <Button
             title={"Enter Feeding"}
-            buttonStyle={{ width: 200, height: 50 }}
-            titleStyle={{ fontSize: 20, color: "black", fontWeight: "bold" }}
+            buttonStyle={{ width: wp(40), height: hp(7) }}
+            titleStyle={{
+              fontSize: hp(2.5),
+              color: "black",
+              fontWeight: "bold",
+            }}
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("EnterFeeding")}
@@ -84,8 +113,12 @@ export default function ShiftReportEntry({ navigation }) {
 
           <Button
             title={" Enter Running Hours"}
-            buttonStyle={{ width: 250, height: 50 }}
-            titleStyle={{ fontSize: 20, color: "black", fontWeight: "bold" }}
+            buttonStyle={{ width: wp(60), height: hp(7) }}
+            titleStyle={{
+              fontSize: hp(2.5),
+              color: "black",
+              fontWeight: "bold",
+            }}
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("EnterRunningHours")}
@@ -93,17 +126,25 @@ export default function ShiftReportEntry({ navigation }) {
 
           <Button
             title={"Enter Delays"}
-            buttonStyle={{ width: 200, height: 50 }}
-            titleStyle={{ fontSize: 20, color: "black", fontWeight: "bold" }}
+            buttonStyle={{ width: wp(40), height: hp(7) }}
+            titleStyle={{
+              fontSize: hp(2.5),
+              color: "black",
+              fontWeight: "bold",
+            }}
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("EnterDelays")}
           ></Button>
 
           <Button
-            title={"Enter MB-TOP Coal Stock"}
-            buttonStyle={{ width: 300, height: 50 }}
-            titleStyle={{ fontSize: 18, color: "black", fontWeight: "bold" }}
+            title={"Enter MB-Top Stock"}
+            buttonStyle={{ width: wp(60), height: hp(7) }}
+            titleStyle={{
+              fontSize: hp(2.5),
+              color: "black",
+              fontWeight: "bold",
+            }}
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("BinStock")}
@@ -111,39 +152,52 @@ export default function ShiftReportEntry({ navigation }) {
 
           <Button
             title="Enter Coal-Tower Stock"
-            buttonStyle={{ width: 280, height: 50 }}
+            buttonStyle={{ width: wp(70), height: hp(7) }}
             radius={50}
             color="#50C4ED"
-            titleStyle={{ color: "black", fontSize: 18, fontWeight: "bold" }}
+            titleStyle={{
+              color: "black",
+              fontSize: hp(2.5),
+              fontWeight: "bold",
+            }}
             onPress={() => navigation.navigate("CoalTowerStock")}
           ></Button>
 
           <Button
             title="Enter Coal Analysis"
-            buttonStyle={{ width: 250, height: 50 }}
+            buttonStyle={{ width: wp(60), height: hp(7) }}
             radius={50}
             color="#50C4ED"
-            titleStyle={{ color: "black", fontSize: 18, fontWeight: "bold" }}
+            titleStyle={{
+              color: "black",
+              fontSize: hp(2.5),
+              fontWeight: "bold",
+            }}
             onPress={() => navigation.navigate("EnterCoalAnalysis")}
           ></Button>
 
           <Button
             title="Enter Pushing Schedule"
-            buttonStyle={{ width: 280, height: 50 }}
+            buttonStyle={{ width: wp(70), height: hp(7) }}
             radius={50}
             color="#50C4ED"
-            titleStyle={{ color: "black", fontSize: 18, fontWeight: "bold" }}
+            titleStyle={{
+              color: "black",
+              fontSize: hp(2.5),
+              fontWeight: "bold",
+            }}
             onPress={() => navigation.navigate("PushingSchedule")}
           ></Button>
 
           <TouchableOpacity
             style={{
-              height: 50,
-              width: "70%",
-              backgroundColor: "yellow",
+              height: hp(7),
+              width: wp(40),
+              backgroundColor: "#fcbf49",
               borderRadius: 25,
               alignItems: "center",
               justifyContent: "center",
+              marginTop: hp(5),
             }}
             onPress={() =>
               navigation.navigate("Review", {
@@ -152,20 +206,26 @@ export default function ShiftReportEntry({ navigation }) {
               })
             }
           >
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>Review</Text>
+            <Text
+              style={{ fontSize: hp(2.5), fontWeight: "bold", color: "white" }}
+            >
+              Review
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={{
-              height: 50,
-              width: "70%",
-              backgroundColor: "red",
+              height: hp(7),
+              width: wp(70),
+              backgroundColor: "#fc5c65",
               borderRadius: 25,
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+            <Text
+              style={{ fontSize: hp(2.5), fontWeight: "bold", color: "white" }}
+            >
               Send Final Report
             </Text>
           </TouchableOpacity>

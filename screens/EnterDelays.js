@@ -8,6 +8,10 @@ import FieldSet from "react-native-fieldset";
 import axios from "axios";
 import BaseUrl from "../config/BaseUrl";
 import DoneScreen from "./DoneScreen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function EnterDelays({ navigation }) {
   const [newDelayComponent, setNewDelayComponent] = useState([""]);
@@ -116,62 +120,86 @@ export default function EnterDelays({ navigation }) {
         onDone={() => setDoneScreen(false)}
         visible={doneScreen}
       />
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: "#FFCAD4",
-          gap: 20,
-          paddingBottom: 10,
-        }}
-      >
+      <View style={{ flex: 1 }}>
         <View
           style={{
-            marginTop: 40,
-            paddingLeft: 20,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 60,
+            position: "absolute",
+            zIndex: 1,
+            height: hp(20),
+            width: wp(100),
+            backgroundColor: "#2FF3E0",
+            borderBottomLeftRadius: hp(4),
+            borderBottomRightRadius: hp(4),
           }}
         >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
-          />
-          <Text
+          <View
             style={{
-              fontSize: 25,
-              textDecorationLine: "underline",
-              color: "#000080",
-              alignSelf: "center",
-              fontWeight: "bold",
+              paddingTop: hp(5),
+              paddingLeft: hp(2),
+              flexDirection: "row",
+              alignItems: "center",
+              gap: wp(12),
             }}
           >
-            Enter Delays
-          </Text>
+            <AntDesign
+              name="leftcircle"
+              size={40}
+              color="black"
+              onPress={() => navigation.goBack()}
+            />
+            <Text
+              style={{
+                fontSize: hp(3),
+                borderBottomWidth: 2,
+                color: "black",
+                alignSelf: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Enter Shift delays
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              gap: hp(10),
+              paddingTop: hp(3),
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "#DF362D",
+              }}
+            >
+              DATE : {currentDate}
+            </Text>
+            <Text
+              style={{
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "#DF362D",
+              }}
+            >
+              SHIFT : {currentShift}
+            </Text>
+          </View>
         </View>
 
-        <View
+        <ScrollView
           style={{
-            flexDirection: "row",
-            gap: 40,
-            alignItems: "center",
-            justifyContent: "center",
-            borderBottomWidth: 2,
+            position: "relative",
+            zIndex: 1,
+            marginTop: hp(20),
+            padding: hp(2),
           }}
         >
-          <Text style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}>
-            DATE :{currentDate}
-          </Text>
-          <Text style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}>
-            SHIFT :{currentShift}
-          </Text>
-        </View>
-
-        <ScrollView style={{ padding: 10 }}>
           <FieldSet>
-            <View style={{ flex: 1, alignItems: "center", gap: 20 }}>
+            <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
               {newDelayComponent.map((value, index) => (
                 <DelayMessageComponent
                   key={index}

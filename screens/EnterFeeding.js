@@ -10,6 +10,11 @@ import ErrorMessage from "../components/ErrorMessage";
 import shift from "../utils/Shift";
 import BaseUrl from "../config/BaseUrl";
 import DoneScreen from "./DoneScreen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import FieldSet from "react-native-fieldset";
 
 const validationSchema = Yup.object().shape({
   ct1: Yup.number()
@@ -89,167 +94,205 @@ export default function EnterFeeding({ navigation, route }) {
   };
 
   return (
-    <>
-      <DoneScreen
-        progress={progress}
-        onDone={() => setDoneScreen(false)}
-        visible={doneScreen}
-      />
-
-      <View style={{ flex: 1, gap: 30, backgroundColor: "orange" }}>
-        <View
-          style={{
-            marginTop: 40,
-            paddingLeft: 20,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 25,
-          }}
-        >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
+    <Formik
+      initialValues={{
+        date: currentDate,
+        shift: currentShift,
+        ct1: "",
+        ct2: "",
+        ct3: "",
+        stream1: "",
+        stream1A: "",
+        total_feeding: "",
+      }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {({
+        handleChange,
+        errors,
+        setFieldTouched,
+        setFieldValue,
+        touched,
+        values,
+      }) => (
+        <>
+          <DoneScreen
+            progress={progress}
+            onDone={() => setDoneScreen(false)}
+            visible={doneScreen}
           />
-          <Text
-            style={{
-              fontSize: 30,
-              textDecorationLine: "underline",
 
-              color: "#000080",
-              alignSelf: "center",
-              fontWeight: "bold",
-              marginLeft: 25,
-            }}
-          >
-            Enter Feeding
-          </Text>
-        </View>
+          <View style={{ flex: 1, gap: 30 }}>
+            <View
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                height: hp(20),
+                width: wp(100),
+                backgroundColor: "#2FF3E0",
+                borderBottomLeftRadius: hp(4),
+                borderBottomRightRadius: hp(4),
+              }}
+            >
+              <View
+                style={{
+                  paddingTop: hp(5),
+                  paddingLeft: hp(2),
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: wp(15),
+                }}
+              >
+                <AntDesign
+                  name="leftcircle"
+                  size={40}
+                  color="black"
+                  onPress={() => navigation.goBack()}
+                />
+                <Text
+                  style={{
+                    fontSize: hp(3),
+                    borderBottomWidth: 2,
+                    color: "black",
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Enter Feeding
+                </Text>
+              </View>
 
-        <Formik
-          initialValues={{
-            date: currentDate,
-            shift: currentShift,
-            ct1: "",
-            ct2: "",
-            ct3: "",
-            stream1: "",
-            stream1A: "",
-            total_feeding: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({
-            handleChange,
-            errors,
-            setFieldTouched,
-            setFieldValue,
-            touched,
-            values,
-          }) => (
-            <>
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 40,
+                  gap: hp(10),
+                  paddingTop: hp(3),
                   alignItems: "center",
                   justifyContent: "center",
-                  borderBottomWidth: 2,
                 }}
               >
                 <Text
-                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  DATE :{currentDate}
+                  DATE : {currentDate}
                 </Text>
                 <Text
-                  style={{ fontSize: 22, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  SHIFT :{currentShift}
+                  SHIFT : {currentShift}
                 </Text>
               </View>
-              <ScrollView>
-                <Text
-                  style={{
-                    alignSelf: "center",
-                    fontSize: 25,
-                    fontWeight: "bold",
-                    color: "red",
-                    paddingTop: 20,
-                  }}
-                >
-                  Enter CoalTower-wise
-                </Text>
-                <AppTextBox
-                  label="CT-1"
-                  labelcolor="#6a994e"
-                  onChangeText={handleChange("ct1")}
-                  onBlur={() => setFieldTouched("ct1")}
-                  value={values["ct1"].toString()}
-                  maxLength={4}
-                />
-                <ErrorMessage error={errors.ct1} visible={touched.ct1} />
-                <AppTextBox
-                  label="CT-2"
-                  labelcolor="#6a994e"
-                  onChangeText={handleChange("ct2")}
-                  onBlur={() => setFieldTouched("ct2")}
-                  value={values["ct2"].toString()}
-                  maxLength={4}
-                />
-                <ErrorMessage error={errors.ct2} visible={touched.ct2} />
-                <AppTextBox
-                  label="CT-3"
-                  labelcolor="#6a994e"
-                  onChangeText={handleChange("ct3")}
-                  onBlur={() => setFieldTouched("ct3")}
-                  value={values["ct3"].toString()}
-                  maxLength={4}
-                />
-                <ErrorMessage error={errors.ct3} visible={touched.ct3} />
-                <Text
-                  style={{
-                    alignSelf: "center",
-                    fontSize: 25,
-                    fontWeight: "bold",
-                    color: "red",
-                    paddingTop: 20,
-                  }}
-                >
-                  Enter Stream-wise
-                </Text>
-                <AppTextBox
-                  label="Stream-1"
-                  labelcolor="#e9c46a"
-                  onChangeText={handleChange("stream1")}
-                  onBlur={() => setFieldTouched("stream1")}
-                  value={values["stream1"].toString()}
-                  maxLength={4}
-                />
-                <ErrorMessage
-                  error={errors.stream1}
-                  visible={touched.stream1}
-                />
-                <AppTextBox
-                  label="Stream-1A"
-                  labelcolor="#e9c46a"
-                  onChangeText={handleChange("stream1A")}
-                  onBlur={() => setFieldTouched("stream1A")}
-                  value={values["stream1A"].toString()}
-                  maxLength={4}
-                />
-                <ErrorMessage
-                  error={errors.stream1A}
-                  visible={touched.stream1A}
-                />
-                <AppFormButton buttonText="Submit" />
-              </ScrollView>
-            </>
-          )}
-        </Formik>
-      </View>
-    </>
+            </View>
+            <ScrollView
+              style={{
+                position: "relative",
+                zIndex: 1,
+                marginTop: hp(20),
+                padding: hp(2),
+              }}
+            >
+              <FieldSet>
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: hp(3),
+                    }}
+                  >
+                    Enter CoalTower-wise
+                  </Text>
+                  <AppTextBox
+                    label="CT-1"
+                    labelcolor="orange"
+                    onChangeText={handleChange("ct1")}
+                    onBlur={() => setFieldTouched("ct1")}
+                    value={values["ct1"].toString()}
+                    maxLength={4}
+                    lbSize={30}
+                  />
+                  <ErrorMessage error={errors.ct1} visible={touched.ct1} />
+                  <AppTextBox
+                    label="CT-2"
+                    labelcolor="orange"
+                    onChangeText={handleChange("ct2")}
+                    onBlur={() => setFieldTouched("ct2")}
+                    value={values["ct2"].toString()}
+                    maxLength={4}
+                    lbSize={30}
+                  />
+                  <ErrorMessage error={errors.ct2} visible={touched.ct2} />
+                  <AppTextBox
+                    label="CT-3"
+                    labelcolor="orange"
+                    onChangeText={handleChange("ct3")}
+                    onBlur={() => setFieldTouched("ct3")}
+                    value={values["ct3"].toString()}
+                    maxLength={4}
+                    lbSize={30}
+                  />
+                  <ErrorMessage error={errors.ct3} visible={touched.ct3} />
+                </>
+              </FieldSet>
+              <FieldSet>
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: hp(3),
+                    }}
+                  >
+                    Enter Stream-wise
+                  </Text>
+                  <AppTextBox
+                    label="Stream-1"
+                    labelcolor="#e9c46a"
+                    onChangeText={handleChange("stream1")}
+                    onBlur={() => setFieldTouched("stream1")}
+                    value={values["stream1"].toString()}
+                    maxLength={4}
+                    lbSize={45}
+                  />
+                  <ErrorMessage
+                    error={errors.stream1}
+                    visible={touched.stream1}
+                  />
+                  <AppTextBox
+                    label="Stream-1A"
+                    labelcolor="#e9c46a"
+                    onChangeText={handleChange("stream1A")}
+                    onBlur={() => setFieldTouched("stream1A")}
+                    value={values["stream1A"].toString()}
+                    maxLength={4}
+                    lbSize={45}
+                  />
+                  <ErrorMessage
+                    error={errors.stream1A}
+                    visible={touched.stream1A}
+                  />
+                </>
+              </FieldSet>
+              <AppFormButton buttonText="Submit" />
+            </ScrollView>
+          </View>
+        </>
+      )}
+    </Formik>
   );
 }
