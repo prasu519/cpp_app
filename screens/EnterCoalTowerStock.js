@@ -9,7 +9,12 @@ import axios from "axios";
 import ErrorMessage from "../components/ErrorMessage";
 import shift from "../utils/Shift";
 import BaseUrl from "../config/BaseUrl";
+import FieldSet from "react-native-fieldset";
 import DoneScreen from "./DoneScreen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const validationSchema = Yup.object().shape({
   ct1stock: Yup.number()
@@ -37,30 +42,18 @@ export default function EnterFeeding({ navigation, route }) {
   const [progress, setProgress] = useState(0);
 
   const currentDate = new Date().toISOString().split("T")[0];
-
-  /* const currentDate =
-    new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();*/
-
   const currentShift = shift(new Date().getHours());
-
   const handleSubmit = async (values, { resetForm }) => {
     const totalStock =
       parseInt(values.ct1stock) +
       parseInt(values.ct2stock) +
       parseInt(values.ct3stock);
-
     const newValues = {
       ...values,
       total_stock: totalStock,
     };
-
     setProgress(0);
     setDoneScreen(true);
-
     await axios
       .post(BaseUrl + "/coaltowerstock", newValues, {
         onUploadProgress: (progress) =>
@@ -72,143 +65,151 @@ export default function EnterFeeding({ navigation, route }) {
         alert("Could not save data..");
         console.log(error);
       });
-
     resetForm();
   };
 
   return (
-    <>
-      <DoneScreen
-        progress={progress}
-        onDone={() => setDoneScreen(false)}
-        visible={doneScreen}
-      />
-
-      <View style={{ flex: 1, gap: 30 }}>
-        <View
-          style={{
-            paddingTop: 40,
-            paddingLeft: 20,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
+    <Formik
+      initialValues={{
+        date: currentDate,
+        shift: currentShift,
+        ct1stock: "",
+        ct2stock: "",
+        ct3stock: "",
+        total_stock: "",
+      }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {({
+        handleChange,
+        errors,
+        setFieldTouched,
+        setFieldValue,
+        touched,
+        values,
+      }) => (
+        <>
+          <DoneScreen
+            progress={progress}
+            onDone={() => setDoneScreen(false)}
+            visible={doneScreen}
           />
-          <Text
-            style={{
-              fontSize: 25,
-              color: "#000080",
-              alignSelf: "center",
-              fontWeight: "bold",
-              borderBottomWidth: 2,
-            }}
-          >
-            Enter Coal-Tower Stocks
-          </Text>
-        </View>
-
-        <Formik
-          initialValues={{
-            date: currentDate,
-            shift: currentShift,
-            ct1stock: "",
-            ct2stock: "",
-            ct3stock: "",
-            total_stock: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({
-            handleChange,
-            errors,
-            setFieldTouched,
-            setFieldValue,
-            touched,
-            values,
-          }) => (
-            <>
+          <View style={{ flex: 1, gap: 30 }}>
+            <View
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                height: hp(20),
+                width: wp(100),
+                backgroundColor: "#2FF3E0",
+                borderBottomLeftRadius: hp(8),
+                borderBottomRightRadius: hp(8),
+              }}
+            >
               <View
                 style={{
+                  paddingTop: hp(5),
+                  paddingLeft: hp(2),
                   flexDirection: "row",
-                  gap: 30,
                   alignItems: "center",
-                  justifyContent: "center",
-                  borderBottomWidth: 2,
+                  gap: wp(5),
                 }}
               >
-                <Text
-                  style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}
-                >
-                  DATE :{currentDate}
-                </Text>
-                <Text
-                  style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}
-                >
-                  SHIFT :{currentShift}
-                </Text>
-              </View>
-              <ScrollView>
+                <AntDesign
+                  name="leftcircle"
+                  size={40}
+                  color="black"
+                  onPress={() => navigation.goBack()}
+                />
                 <Text
                   style={{
+                    fontSize: hp(3),
+                    borderBottomWidth: 2,
+                    color: "black",
                     alignSelf: "center",
-                    fontSize: 25,
                     fontWeight: "bold",
-                    color: "red",
-                    paddingTop: 20,
-                    paddingBottom: 20,
                   }}
                 >
                   Enter Coal-Tower Stock
                 </Text>
-                <AppTextBox
-                  label="CT-1 Stock"
-                  labelcolor="#6a994e"
-                  onChangeText={handleChange("ct1stock")}
-                  onBlur={() => setFieldTouched("ct1stock")}
-                  value={values["ct1stock"].toString()}
-                  maxLength={4}
-                />
-                <ErrorMessage
-                  error={errors.ct1stock}
-                  visible={touched.ct1stock}
-                />
-                <AppTextBox
-                  label="CT-2 Stock"
-                  labelcolor="#6a994e"
-                  onChangeText={handleChange("ct2stock")}
-                  onBlur={() => setFieldTouched("ct2stock")}
-                  value={values["ct2stock"].toString()}
-                  maxLength={4}
-                />
-                <ErrorMessage
-                  error={errors.ct2stock}
-                  visible={touched.ct2stock}
-                />
-                <AppTextBox
-                  label="CT-3 Stock"
-                  labelcolor="#6a994e"
-                  onChangeText={handleChange("ct3stock")}
-                  onBlur={() => setFieldTouched("ct3stock")}
-                  value={values["ct3stock"].toString()}
-                  maxLength={4}
-                />
-                <ErrorMessage
-                  error={errors.ct3stock}
-                  visible={touched.ct3stock}
-                />
-                <AppFormButton buttonText="Submit" />
-              </ScrollView>
-            </>
-          )}
-        </Formik>
-      </View>
-    </>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: hp(10),
+                  paddingTop: hp(3),
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
+                >
+                  DATE : {currentDate}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
+                >
+                  SHIFT : {currentShift}
+                </Text>
+              </View>
+            </View>
+            <ScrollView
+              style={{
+                position: "relative",
+                zIndex: 1,
+                marginTop: hp(20),
+                padding: hp(2),
+              }}
+            >
+              <FieldSet label="New Blend">
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: hp(3),
+                    }}
+                  >
+                    Coal-Tower Stock
+                  </Text>
+                  {[1, 2, 3].map((item, index) => (
+                    <View key={index}>
+                      <AppTextBox
+                        label={"CT - " + item}
+                        labelcolor="orange"
+                        onChangeText={handleChange("ct" + item + "stock")}
+                        onBlur={() => setFieldTouched("ct" + item + "stock")}
+                        value={values["ct" + item + "stock"].toString()}
+                        maxLength={4}
+                      />
+                      <ErrorMessage
+                        error={errors["ct" + item + "stock"]}
+                        visible={touched["ct" + item + "stock"]}
+                      />
+                    </View>
+                  ))}
+
+                  <AppFormButton buttonText="Submit" />
+                </>
+              </FieldSet>
+            </ScrollView>
+          </View>
+        </>
+      )}
+    </Formik>
   );
 }

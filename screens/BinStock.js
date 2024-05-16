@@ -1,7 +1,6 @@
 import { View, Text, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
-
 import AppTextBox from "../components/AppTextBox";
 import axios from "axios";
 import AppFormButton from "../components/AppFormButton";
@@ -10,24 +9,19 @@ import shift from "../utils/Shift";
 import BaseUrl from "../config/BaseUrl";
 import FieldSet from "react-native-fieldset";
 import DoneScreen from "./DoneScreen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function BinStock({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
   const [count, setCount] = useState();
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
-
   const currentDate = new Date().toISOString().split("T")[0];
 
-  /* const currentDate =
-    new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();*/
-
   const currentShift = shift(new Date().getHours());
-
   useEffect(() => {
     const getCoalNames = async () => {
       await axios
@@ -55,7 +49,6 @@ export default function BinStock({ navigation }) {
         return;
       } else TotalStock = TotalStock + parseInt(values["coal" + i + "stock"]);
     }
-
     let newValues = {
       ...values,
       coal1name: coalNames.cn1,
@@ -68,10 +61,8 @@ export default function BinStock({ navigation }) {
       coal8name: coalNames.cn8,
       total_stock: TotalStock,
     };
-
     setProgress(0);
     setDoneScreen(true);
-
     await axios
       .post(BaseUrl + "/mbtopStock", newValues, {
         onUploadProgress: (progress) =>
@@ -91,129 +82,153 @@ export default function BinStock({ navigation }) {
   };
 
   return (
-    <>
-      <DoneScreen
-        progress={progress}
-        onDone={() => setDoneScreen(false)}
-        visible={doneScreen}
-      />
-      <View style={{ flex: 1, backgroundColor: "#89CFF0", gap: 30 }}>
-        <View
-          style={{
-            paddingTop: 40,
-            paddingLeft: 20,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 25,
-          }}
-        >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
+    <Formik
+      initialValues={{
+        date: currentDate,
+        shift: currentShift,
+        coal1name: "",
+        coal1stock: "",
+        coal2name: "",
+        coal2stock: "",
+        coal3name: "",
+        coal3stock: "",
+        coal4name: "",
+        coal4stock: "",
+        coal5name: "",
+        coal5stock: "",
+        coal6name: "",
+        coal6stock: "",
+        coal7name: "",
+        coal7stock: "",
+        coal8name: "",
+        coal8stock: "",
+        total_stock: 0,
+      }}
+      onSubmit={handleSubmit}
+    >
+      {({ setFieldValue, values }) => (
+        <>
+          <DoneScreen
+            progress={progress}
+            onDone={() => setDoneScreen(false)}
+            visible={doneScreen}
           />
-          <Text
-            style={{
-              fontSize: 26,
-              textDecorationLine: "underline",
-              color: "#000080",
-              alignSelf: "center",
-              fontWeight: "bold",
-            }}
-          >
-            Enter MB-Top Stocks
-          </Text>
-        </View>
+          <View style={{ flex: 1, gap: 30 }}>
+            <View
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                height: hp(20),
+                width: wp(100),
+                backgroundColor: "#2FF3E0",
+                borderBottomLeftRadius: hp(8),
+                borderBottomRightRadius: hp(8),
+              }}
+            >
+              <View
+                style={{
+                  paddingTop: hp(5),
+                  paddingLeft: hp(2),
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: wp(8),
+                }}
+              >
+                <AntDesign
+                  name="leftcircle"
+                  size={40}
+                  color="black"
+                  onPress={() => navigation.goBack()}
+                />
+                <Text
+                  style={{
+                    fontSize: hp(3),
+                    borderBottomWidth: 2,
+                    color: "black",
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Enter MB-Top Stock
+                </Text>
+              </View>
 
-        <Formik
-          initialValues={{
-            date: currentDate,
-            shift: currentShift,
-            coal1name: "",
-            coal1stock: "",
-            coal2name: "",
-            coal2stock: "",
-            coal3name: "",
-            coal3stock: "",
-            coal4name: "",
-            coal4stock: "",
-            coal5name: "",
-            coal5stock: "",
-            coal6name: "",
-            coal6stock: "",
-            coal7name: "",
-            coal7stock: "",
-            coal8name: "",
-            coal8stock: "",
-            total_stock: 0,
-          }}
-          onSubmit={handleSubmit}
-        >
-          {({ setFieldValue, values }) => (
-            <>
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 30,
+                  gap: hp(10),
+                  paddingTop: hp(3),
                   alignItems: "center",
                   justifyContent: "center",
-                  borderBottomWidth: 2,
                 }}
               >
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  DATE :{currentDate}
+                  DATE : {currentDate}
                 </Text>
                 <Text
-                  style={{ fontSize: 25, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  SHIFT :{currentShift}
+                  SHIFT : {currentShift}
                 </Text>
               </View>
-              <ScrollView style={{ padding: 10 }}>
-                <FieldSet label="New Blend">
-                  <>
-                    <Text
-                      style={{
-                        alignSelf: "center",
-                        fontSize: 25,
-                        fontWeight: "bold",
-                        color: "#416D19",
+            </View>
+            <ScrollView
+              style={{
+                position: "relative",
+                zIndex: 1,
+                marginTop: hp(20),
+                padding: hp(2),
+              }}
+            >
+              <FieldSet label="New Blend">
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: hp(3),
+                    }}
+                  >
+                    Enter Coal-Wise
+                  </Text>
+                  {Array.from({ length: count }, (_, index) => (
+                    <AppTextBox
+                      label={coalNames["cn" + (index + 1)]}
+                      labelcolor="orange"
+                      key={index}
+                      onChangeText={(value) => {
+                        if (!/^[0-9]*$/.test(value)) {
+                          alert("Enter Numbers only...");
+                          return;
+                        } else {
+                          setFieldValue("coal" + (index + 1) + "stock", value);
+                        }
                       }}
-                    >
-                      Enter Coal-wise
-                    </Text>
-                    {Array.from({ length: count }, (_, index) => (
-                      <AppTextBox
-                        label={coalNames["cn" + (index + 1)]}
-                        labelcolor="orange"
-                        key={index}
-                        onChangeText={(value) => {
-                          if (!/^[0-9]*$/.test(value)) {
-                            alert("Enter Numbers only...");
-                            return;
-                          } else {
-                            setFieldValue(
-                              "coal" + (index + 1) + "stock",
-                              value
-                            );
-                          }
-                        }}
-                        keyboardType="number-pad"
-                        value={values["coal" + (index + 1) + "stock"]}
-                        maxLength={4}
-                      />
-                    ))}
-                    <AppFormButton buttonText="Submit" />
-                  </>
-                </FieldSet>
-              </ScrollView>
-            </>
-          )}
-        </Formik>
-      </View>
-    </>
+                      keyboardType="number-pad"
+                      value={values["coal" + (index + 1) + "stock"]}
+                      maxLength={4}
+                    />
+                  ))}
+                  <AppFormButton buttonText="Submit" />
+                </>
+              </FieldSet>
+            </ScrollView>
+          </View>
+        </>
+      )}
+    </Formik>
   );
 }

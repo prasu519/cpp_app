@@ -87,8 +87,8 @@ export default function EnterRunningHours({ navigation }) {
                 height: hp(20),
                 width: wp(100),
                 backgroundColor: "#2FF3E0",
-                borderBottomLeftRadius: hp(4),
-                borderBottomRightRadius: hp(4),
+                borderBottomLeftRadius: hp(8),
+                borderBottomRightRadius: hp(8),
               }}
             >
               <View

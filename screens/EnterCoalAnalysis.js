@@ -10,6 +10,11 @@ import ErrorMessage from "../components/ErrorMessage";
 import shift from "../utils/Shift";
 import BaseUrl from "../config/BaseUrl";
 import DoneScreen from "./DoneScreen";
+import FieldSet from "react-native-fieldset";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const validationSchema = Yup.object().shape({
   ci: Yup.number()
@@ -45,14 +50,6 @@ export default function EnterCoalAnalysis({ navigation, route }) {
   const [progress, setProgress] = useState(0);
 
   const currentDate = new Date().toISOString().split("T")[0];
-
-  /* const currentDate =
-    new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();*/
-
   const currentShift = shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -63,10 +60,8 @@ export default function EnterCoalAnalysis({ navigation, route }) {
       alert("Total of Ash,Vm,Fc should be 100..");
       return;
     }
-
     setProgress(0);
     setDoneScreen(true);
-
     await axios
       .post(BaseUrl + "/coalAnalysis", values, {
         onUploadProgress: (progress) =>
@@ -77,153 +72,154 @@ export default function EnterCoalAnalysis({ navigation, route }) {
         setDoneScreen(false);
         alert("Could not save data..");
       });
-
     resetForm();
   };
 
   return (
-    <>
-      <DoneScreen
-        progress={progress}
-        onDone={() => setDoneScreen(false)}
-        visible={doneScreen}
-      />
-
-      <View style={{ flex: 1, gap: 30 }}>
-        <View
-          style={{
-            paddingTop: 40,
-            paddingLeft: 10,
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
+    <Formik
+      initialValues={{
+        date: currentDate,
+        shift: currentShift,
+        ci: "",
+        ash: "",
+        vm: "",
+        fc: "",
+        tm: "",
+      }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {({
+        handleChange,
+        errors,
+        setFieldTouched,
+        setFieldValue,
+        touched,
+        values,
+      }) => (
+        <>
+          <DoneScreen
+            progress={progress}
+            onDone={() => setDoneScreen(false)}
+            visible={doneScreen}
           />
-          <Text
-            style={{
-              fontSize: 30,
-              textDecorationLine: "underline",
-              color: "#000080",
-              alignSelf: "center",
-              fontWeight: "bold",
-              marginLeft: 25,
-            }}
-          >
-            Enter Coal Analysis
-          </Text>
-        </View>
+          <View style={{ flex: 1, gap: 30 }}>
+            <View
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                height: hp(20),
+                width: wp(100),
+                backgroundColor: "#2FF3E0",
+                borderBottomLeftRadius: hp(8),
+                borderBottomRightRadius: hp(8),
+              }}
+            >
+              <View
+                style={{
+                  paddingTop: hp(5),
+                  paddingLeft: hp(2),
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: wp(5),
+                }}
+              >
+                <AntDesign
+                  name="leftcircle"
+                  size={40}
+                  color="black"
+                  onPress={() => navigation.goBack()}
+                />
+                <Text
+                  style={{
+                    fontSize: hp(3),
+                    borderBottomWidth: 2,
+                    color: "black",
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Enter Coal Analysis
+                </Text>
+              </View>
 
-        <Formik
-          initialValues={{
-            date: currentDate,
-            shift: currentShift,
-            ci: "",
-            ash: "",
-            vm: "",
-            fc: "",
-            tm: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({
-            handleChange,
-            errors,
-            setFieldTouched,
-            setFieldValue,
-            touched,
-            values,
-          }) => (
-            <>
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 30,
+                  gap: hp(10),
+                  paddingTop: hp(3),
                   alignItems: "center",
                   justifyContent: "center",
-                  borderBottomWidth: 2,
                 }}
               >
                 <Text
-                  style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  DATE :{currentDate}
+                  DATE : {currentDate}
                 </Text>
                 <Text
-                  style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  SHIFT :{currentShift}
+                  SHIFT : {currentShift}
                 </Text>
               </View>
-              <ScrollView>
-                <AppTextBox
-                  label="C.I"
-                  labelcolor="#6a994e"
-                  tbSize="30%"
-                  lbSize="30%"
-                  onChangeText={handleChange("ci")}
-                  onBlur={() => setFieldTouched("ci")}
-                  value={values["ci"]}
-                  maxLength={2}
-                  placeholder="%"
-                />
-                <ErrorMessage error={errors.ci} visible={touched.ci} />
-                <AppTextBox
-                  label="ASH"
-                  labelcolor="#6a994e"
-                  tbSize="30%"
-                  lbSize="30%"
-                  onChangeText={handleChange("ash")}
-                  onBlur={() => setFieldTouched("ash")}
-                  value={values["ash"]}
-                  maxLength={5}
-                />
-                <ErrorMessage error={errors.ash} visible={touched.ash} />
-                <AppTextBox
-                  label="V.M"
-                  labelcolor="#6a994e"
-                  tbSize="30%"
-                  lbSize="30%"
-                  onChangeText={handleChange("vm")}
-                  onBlur={() => setFieldTouched("vm")}
-                  value={values["vm"]}
-                  maxLength={5}
-                />
-                <ErrorMessage error={errors.vm} visible={touched.vm} />
-                <AppTextBox
-                  label="F.C"
-                  labelcolor="#6a994e"
-                  tbSize="30%"
-                  lbSize="30%"
-                  onChangeText={handleChange("fc")}
-                  onBlur={() => setFieldTouched("fc")}
-                  value={values["fc"]}
-                  maxLength={5}
-                />
-                <ErrorMessage error={errors.fc} visible={touched.fc} />
-                <AppTextBox
-                  label="T.M"
-                  labelcolor="#6a994e"
-                  tbSize="30%"
-                  lbSize="30%"
-                  onChangeText={handleChange("tm")}
-                  onBlur={() => setFieldTouched("tm")}
-                  value={values["tm"]}
-                  maxLength={5}
-                />
-                <ErrorMessage error={errors.tm} visible={touched.tm} />
-
-                <AppFormButton buttonText="Submit" />
-              </ScrollView>
-            </>
-          )}
-        </Formik>
-      </View>
-    </>
+            </View>
+            <ScrollView
+              style={{
+                position: "relative",
+                zIndex: 1,
+                marginTop: hp(20),
+                padding: hp(2),
+              }}
+            >
+              <FieldSet label="New Blend">
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: hp(3),
+                    }}
+                  >
+                    Enter Coal Analysis
+                  </Text>
+                  {["ci", "ash", "fc", "vm", "tm"].map((item, index) => (
+                    <View key={index}>
+                      <AppTextBox
+                        label={item}
+                        labelcolor="orange"
+                        tbSize="30%"
+                        lbSize="30%"
+                        onChangeText={handleChange(item)}
+                        onBlur={() => setFieldTouched(item)}
+                        value={values[item]}
+                        maxLength={2}
+                        placeholder={item === "ci" ? "%" : ""}
+                      />
+                      <ErrorMessage
+                        error={errors[item]}
+                        visible={touched[item]}
+                      />
+                    </View>
+                  ))}
+                  <AppFormButton buttonText="Submit" />
+                </>
+              </FieldSet>
+            </ScrollView>
+          </View>
+        </>
+      )}
+    </Formik>
   );
 }

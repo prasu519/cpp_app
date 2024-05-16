@@ -11,6 +11,10 @@ import shift from "../utils/Shift";
 import BaseUrl from "../config/BaseUrl";
 import DoneScreen from "./DoneScreen";
 import FieldSet from "react-native-fieldset";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 const validationSchema = Yup.object().shape({
   bat1: Yup.number()
@@ -87,93 +91,131 @@ export default function PushingSchedule({ navigation, route }) {
   };
 
   return (
-    <>
-      <DoneScreen
-        progress={progress}
-        onDone={() => setDoneScreen(false)}
-        visible={doneScreen}
-      />
-
-      <View style={{ flex: 1, gap: 30 }}>
-        <View
-          style={{
-            paddingTop: 40,
-            paddingLeft: 10,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
+    <Formik
+      initialValues={{
+        date: currentDate,
+        shift: currentShift,
+        bat1: "",
+        bat2: "",
+        bat3: "",
+        bat4: "",
+        bat5: "",
+      }}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {({
+        handleChange,
+        errors,
+        setFieldTouched,
+        setFieldValue,
+        touched,
+        values,
+      }) => (
+        <>
+          <DoneScreen
+            progress={progress}
+            onDone={() => setDoneScreen(false)}
+            visible={doneScreen}
           />
-          <Text
-            style={{
-              fontSize: 25,
-              textDecorationLine: "underline",
-              color: "#000080",
-              alignSelf: "center",
-              fontWeight: "bold",
-              marginLeft: 10,
-            }}
-          >
-            Enter Pushing Schedule
-          </Text>
-        </View>
 
-        <Formik
-          initialValues={{
-            date: currentDate,
-            shift: currentShift,
-            bat1: "",
-            bat2: "",
-            bat3: "",
-            bat4: "",
-            bat5: "",
-          }}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({
-            handleChange,
-            errors,
-            setFieldTouched,
-            setFieldValue,
-            touched,
-            values,
-          }) => (
-            <>
+          <View style={{ flex: 1, gap: 30 }}>
+            <View
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                height: hp(20),
+                width: wp(100),
+                backgroundColor: "#2FF3E0",
+                borderBottomLeftRadius: hp(8),
+                borderBottomRightRadius: hp(8),
+              }}
+            >
+              <View
+                style={{
+                  paddingTop: hp(5),
+                  paddingLeft: hp(2),
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: wp(5),
+                }}
+              >
+                <AntDesign
+                  name="leftcircle"
+                  size={40}
+                  color="black"
+                  onPress={() => navigation.goBack()}
+                />
+                <Text
+                  style={{
+                    fontSize: hp(3),
+                    borderBottomWidth: 2,
+                    color: "black",
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Enter Pushing Schedule
+                </Text>
+              </View>
+
               <View
                 style={{
                   flexDirection: "row",
-                  gap: 30,
+                  gap: hp(10),
+                  paddingTop: hp(3),
                   alignItems: "center",
                   justifyContent: "center",
-                  borderBottomWidth: 2,
                 }}
               >
                 <Text
-                  style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  DATE :{currentDate}
+                  DATE : {currentDate}
                 </Text>
                 <Text
-                  style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
                 >
-                  SHIFT :{currentShift}
+                  SHIFT : {currentShift}
                 </Text>
               </View>
-              <ScrollView style={{ padding: 10 }}>
-                <FieldSet label="New Blend">
+            </View>
+            <ScrollView
+              style={{
+                position: "relative",
+                zIndex: 1,
+                marginTop: hp(20),
+                padding: hp(2),
+              }}
+            >
+              <FieldSet label="New Blend">
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: hp(3),
+                    }}
+                  >
+                    Pushing Schedule
+                  </Text>
                   <View style={{ flex: 1, gap: 10 }}>
                     {[1, 2, 3, 4, 5].map((batt, index) => (
                       <View key={index}>
                         <AppTextBox
                           label={"Batt-" + batt}
-                          labelcolor="#6a994e"
+                          labelcolor="orange"
                           tbSize="20%"
                           onChangeText={handleChange("bat" + batt)}
                           onBlur={() => setFieldTouched("bat" + batt)}
@@ -190,12 +232,12 @@ export default function PushingSchedule({ navigation, route }) {
 
                     <AppFormButton buttonText="Submit" />
                   </View>
-                </FieldSet>
-              </ScrollView>
-            </>
-          )}
-        </Formik>
-      </View>
-    </>
+                </>
+              </FieldSet>
+            </ScrollView>
+          </View>
+        </>
+      )}
+    </Formik>
   );
 }
