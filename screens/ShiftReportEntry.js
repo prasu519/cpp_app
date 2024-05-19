@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
 import { Button } from "@rneui/base";
@@ -7,10 +7,21 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 export default function ShiftReportEntry({ navigation }) {
   const currentDate = new Date().toISOString().split("T")[0];
   const currentShift = shift(new Date().getHours());
+  const {
+    reclaimingData,
+    feedingData,
+    runningHoursData,
+    shiftDelaysData,
+    mbTopStockData,
+    coalTowerStockData,
+    coalAnalysisData,
+    pushingScheduleData,
+  } = useContext(GlobalContext);
 
   return (
     <View style={{ flex: 1 }}>
@@ -96,6 +107,7 @@ export default function ShiftReportEntry({ navigation }) {
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("EnterReclaiming")}
+            disabled={reclaimingData}
           ></Button>
 
           <Button
@@ -109,6 +121,7 @@ export default function ShiftReportEntry({ navigation }) {
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("EnterFeeding")}
+            disabled={feedingData}
           ></Button>
 
           <Button
@@ -122,6 +135,7 @@ export default function ShiftReportEntry({ navigation }) {
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("EnterRunningHours")}
+            disabled={runningHoursData}
           ></Button>
 
           <Button
@@ -135,6 +149,7 @@ export default function ShiftReportEntry({ navigation }) {
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("EnterDelays")}
+            disabled={shiftDelaysData}
           ></Button>
 
           <Button
@@ -148,6 +163,7 @@ export default function ShiftReportEntry({ navigation }) {
             radius={25}
             color="#50C4ED"
             onPress={() => navigation.navigate("BinStock")}
+            disabled={mbTopStockData}
           ></Button>
 
           <Button
@@ -161,6 +177,7 @@ export default function ShiftReportEntry({ navigation }) {
               fontWeight: "bold",
             }}
             onPress={() => navigation.navigate("CoalTowerStock")}
+            disabled={coalTowerStockData}
           ></Button>
 
           <Button
@@ -174,6 +191,7 @@ export default function ShiftReportEntry({ navigation }) {
               fontWeight: "bold",
             }}
             onPress={() => navigation.navigate("EnterCoalAnalysis")}
+            disabled={coalAnalysisData}
           ></Button>
 
           <Button
@@ -187,6 +205,7 @@ export default function ShiftReportEntry({ navigation }) {
               fontWeight: "bold",
             }}
             onPress={() => navigation.navigate("PushingSchedule")}
+            disabled={pushingScheduleData}
           ></Button>
 
           <TouchableOpacity

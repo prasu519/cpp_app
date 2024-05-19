@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Formik } from "formik";
 import AppTextBox from "../components/AppTextBox";
 import axios from "axios";
@@ -13,6 +13,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 export default function BinStock({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
@@ -20,6 +21,7 @@ export default function BinStock({ navigation }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
   const currentDate = new Date().toISOString().split("T")[0];
+  const { mbTopStockData, setMbTopStockData } = useContext(GlobalContext);
 
   const currentShift = shift(new Date().getHours());
   useEffect(() => {
@@ -61,7 +63,8 @@ export default function BinStock({ navigation }) {
       coal8name: coalNames.cn8,
       total_stock: TotalStock,
     };
-    setProgress(0);
+    setMbTopStockData(newValues);
+    /* setProgress(0);
     setDoneScreen(true);
     await axios
       .post(BaseUrl + "/mbtopStock", newValues, {
@@ -74,7 +77,7 @@ export default function BinStock({ navigation }) {
       .catch(function (error) {
         setDoneScreen(false);
         alert("Could not save data..");
-      });
+      });*/
 
     for (let i = 1; i <= count; i++) {
       values["coal" + i + "stock"] = "";

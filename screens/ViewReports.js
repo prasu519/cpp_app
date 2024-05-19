@@ -8,6 +8,10 @@ import axios from "axios";
 import AppTextBox from "../components/AppTextBox";
 import FieldSet from "react-native-fieldset";
 import { Text, Divider, ListItem } from "@rneui/themed";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function ViewReports({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -186,50 +190,70 @@ export default function ViewReports({ navigation }) {
     <View style={{ flex: 1 }}>
       <View
         style={{
-          paddingTop: 40,
-          paddingLeft: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 20,
+          position: "absolute",
+          zIndex: 1,
+          height: hp(20),
+          width: wp(100),
+          backgroundColor: "#2FF3E0",
+          borderBottomLeftRadius: hp(8),
+          borderBottomRightRadius: hp(8),
         }}
       >
-        <AntDesign
-          name="leftcircle"
-          size={40}
-          color="black"
-          onPress={() => navigation.goBack()}
-        />
-        <Text
+        <View
           style={{
-            fontSize: 30,
-            textDecorationLine: "underline",
-            color: "red",
-            alignSelf: "center",
-            fontWeight: "bold",
-            marginLeft: 25,
+            paddingTop: hp(5),
+            paddingLeft: hp(2),
+            flexDirection: "row",
+            alignItems: "center",
+            gap: wp(15),
           }}
         >
-          View Reports
-        </Text>
+          <AntDesign
+            name="leftcircle"
+            size={40}
+            color="black"
+            onPress={() => navigation.goBack()}
+          />
+          <Text
+            style={{
+              fontSize: hp(3),
+              borderBottomWidth: 2,
+              color: "black",
+              alignSelf: "center",
+              fontWeight: "bold",
+            }}
+          >
+            View Reports
+          </Text>
+        </View>
       </View>
-      <View style={{ marginTop: 30, gap: 10, marginLeft: 10 }}>
+      <View
+        style={{
+          position: "relative",
+          zIndex: 1,
+          marginTop: hp(22),
+          padding: hp(2),
+          gap: wp(2),
+        }}
+      >
         <View
           style={{
             flexDirection: "row",
-            gap: 10,
+            gap: wp(5),
             alignItems: "center",
             justifyContent: "space-between",
-            height: 60,
-            width: "90%",
+            height: hp(10),
+            width: wp(90),
           }}
         >
           <Button
             title="Select date"
-            buttonStyle={{ width: 150, height: 50 }}
+            buttonStyle={{ width: wp(40), height: hp(7) }}
             titleStyle={{
-              fontSize: 20,
+              fontSize: hp(2.6),
               color: "white",
-              textDecorationLine: "underline",
+              borderBottomWidth: 2,
+              borderBottomColor: "white",
             }}
             radius={25}
             onPress={() => setShowDatePicker(true)}
@@ -242,24 +266,24 @@ export default function ViewReports({ navigation }) {
               onChange={handleDateChange}
             />
           )}
-          <Text style={{ fontSize: 30 }}>
+          <Text style={{ fontSize: hp(4), color: "red" }}>
             {selectedDate.toISOString().split("T")[0]}
           </Text>
         </View>
         <View
           style={{
             flexDirection: "row",
-            gap: 10,
+            gap: wp(5),
             alignItems: "center",
             justifyContent: "space-between",
-            height: 60,
-            width: "90%",
+            height: hp(7),
+            width: wp(90),
           }}
         >
           <View
             style={{
-              height: 50,
-              width: 150,
+              height: hp(7),
+              width: wp(40),
               alignItems: "center",
               justifyContent: "center",
               backgroundColor: "#6495ED",
@@ -268,8 +292,8 @@ export default function ViewReports({ navigation }) {
           >
             <Text
               style={{
-                fontSize: 21,
-                marginLeft: 5,
+                fontSize: hp(2.5),
+                alignSelf: "center",
                 fontWeight: "500",
                 color: "white",
               }}
@@ -280,7 +304,7 @@ export default function ViewReports({ navigation }) {
           <Picker
             id="Shift"
             style={{
-              width: 150,
+              width: wp(47),
             }}
             mode="dropdown"
             enabled={true}
@@ -292,7 +316,7 @@ export default function ViewReports({ navigation }) {
                 key={shift}
                 label={shift.toString()}
                 value={shift}
-                style={{ fontSize: 25 }}
+                style={{ fontSize: hp(3) }}
               />
             ))}
           </Picker>
@@ -301,15 +325,15 @@ export default function ViewReports({ navigation }) {
           title={"Submit"}
           color={"#000080"}
           buttonStyle={{
-            height: 50,
-            width: 300,
-            marginLeft: 20,
-            marginTop: 30,
+            height: hp(7),
+            width: wp(60),
+            marginTop: hp(4),
+            alignSelf: "center",
           }}
           radius={20}
           titleStyle={{
             textDecorationLine: "underline",
-            fontSize: 25,
+            fontSize: hp(3),
             fontWeight: "600",
           }}
           onPress={handleSubmit}
@@ -317,7 +341,7 @@ export default function ViewReports({ navigation }) {
       </View>
       <ScrollView>
         {loadCard && (
-          <View style={{ marginTop: 20, marginBottom: 20 }}>
+          <View style={{ marginTop: hp(3), marginBottom: hp(2) }}>
             <Card>
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>
                 Reclaiming

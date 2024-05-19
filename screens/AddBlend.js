@@ -11,6 +11,10 @@ import BaseUrl from "../config/BaseUrl";
 import { Picker } from "@react-native-picker/picker";
 import DoneScreen from "./DoneScreen";
 import { date } from "yup";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function AddBlend({ navigation }) {
   const [count, setCount] = useState(0);
@@ -18,13 +22,6 @@ export default function AddBlend({ navigation }) {
   const [progress, setProgress] = useState(0);
 
   const currentDate = new Date().toISOString().split("T")[0];
-
-  /* new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();*/
-
   const currentShift = shift(new Date().getHours());
 
   const handleCount = (value) => {
@@ -40,47 +37,46 @@ export default function AddBlend({ navigation }) {
           <View
             style={{
               flexDirection: "row",
-              width: "100%",
-              height: 70,
+              width: wp(85),
+              height: hp(9),
               borderRadius: 25,
               alignItems: "center",
             }}
           >
             <Text
               style={{
-                height: 60,
-                width: "35%",
+                height: hp(7),
+                width: wp(30),
                 borderRadius: 10,
                 textAlign: "center",
                 textAlignVertical: "center",
-                fontSize: 35,
+                fontSize: hp(4),
                 fontWeight: "bold",
+                backgroundColor: "orange",
               }}
             >
               Coal-{i}
             </Text>
-
             <View
               style={{
                 flex: 1,
                 flexDirection: "row",
-                height: 70,
+                height: hp(8),
                 borderRadius: 25,
                 alignItems: "center",
                 justifyContent: "flex-end",
-                paddingRight: 10,
-                gap: 10,
+                gap: wp(4),
               }}
             >
               <TextInput
                 style={{
                   backgroundColor: "white",
                   height: 60,
-                  width: "55%",
+                  width: wp(35),
                   borderRadius: 10,
                   textAlign: "center",
                   textAlignVertical: "center",
-                  fontSize: 35,
+                  fontSize: hp(4),
                   borderWidth: 1,
                 }}
                 placeholder="Name"
@@ -90,11 +86,11 @@ export default function AddBlend({ navigation }) {
                 style={{
                   backgroundColor: "white",
                   height: 60,
-                  width: "25%",
+                  width: wp(15),
                   borderRadius: 10,
                   textAlign: "center",
                   textAlignVertical: "center",
-                  fontSize: 40,
+                  fontSize: hp(4),
                   borderWidth: 1,
                 }}
                 placeholder="%"
@@ -157,68 +153,98 @@ export default function AddBlend({ navigation }) {
   };
 
   return (
-    <>
-      <DoneScreen
-        progress={progress}
-        onDone={() => setDoneScreen(false)}
-        visible={doneScreen}
-      />
-      <View style={{ flex: 1, gap: 20 }}>
-        <View
-          style={{
-            paddingTop: 40,
-            paddingLeft: 20,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 15,
-          }}
-        >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
+    <Formik
+      initialValues={{
+        date: currentDate,
+        shift: currentShift,
+        total: count,
+      }}
+      onSubmit={handleSubmit}
+    >
+      {({ handleChange }) => (
+        <>
+          <DoneScreen
+            progress={progress}
+            onDone={() => setDoneScreen(false)}
+            visible={doneScreen}
           />
-          <Text
-            style={{
-              fontSize: 30,
-              textDecorationLine: "underline",
-              color: "#000080",
-              alignSelf: "center",
-              fontWeight: "bold",
-              marginLeft: 25,
-            }}
-          >
-            Add New Blend
-          </Text>
-        </View>
+          <View style={{ flex: 1 }}>
+            <View
+              style={{
+                position: "absolute",
+                zIndex: 1,
+                height: hp(20),
+                width: wp(100),
+                backgroundColor: "#2FF3E0",
+                borderBottomLeftRadius: hp(8),
+                borderBottomRightRadius: hp(8),
+              }}
+            >
+              <View
+                style={{
+                  paddingTop: hp(5),
+                  paddingLeft: hp(2),
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: wp(20),
+                }}
+              >
+                <AntDesign
+                  name="leftcircle"
+                  size={40}
+                  color="black"
+                  onPress={() => navigation.goBack()}
+                />
+                <Text
+                  style={{
+                    fontSize: hp(3),
+                    borderBottomWidth: 2,
+                    color: "black",
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Add Blend
+                </Text>
+              </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 30,
-            alignItems: "center",
-            justifyContent: "center",
-            borderBottomWidth: 2,
-          }}
-        >
-          <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
-            DATE :{currentDate}
-          </Text>
-          <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
-            SHIFT :{currentShift}
-          </Text>
-        </View>
-        <Formik
-          initialValues={{
-            date: currentDate,
-            shift: currentShift,
-            total: count,
-          }}
-          onSubmit={handleSubmit}
-        >
-          {({ handleChange }) => (
-            <ScrollView style={{ padding: 10 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: hp(10),
+                  paddingTop: hp(3),
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
+                >
+                  DATE : {currentDate}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
+                >
+                  SHIFT : {currentShift}
+                </Text>
+              </View>
+            </View>
+            <ScrollView
+              style={{
+                position: "relative",
+                zIndex: 1,
+                marginTop: hp(20),
+                padding: hp(2),
+              }}
+            >
               <View
                 style={{
                   flex: 1,
@@ -279,9 +305,9 @@ export default function AddBlend({ navigation }) {
                 )}
               </View>
             </ScrollView>
-          )}
-        </Formik>
-      </View>
-    </>
+          </View>
+        </>
+      )}
+    </Formik>
   );
 }

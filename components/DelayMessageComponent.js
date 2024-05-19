@@ -1,6 +1,10 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import React from "react";
 import AppDropdown from "../components/AppDropdown";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function DelayMessageComponent({
   slno,
@@ -23,18 +27,18 @@ export default function DelayMessageComponent({
   return (
     <View
       style={{
-        height: 320,
-        width: "90%",
+        height: hp(50),
+        width: wp(85),
         backgroundColor: "#e9c46a",
         borderRadius: 25,
-        gap: 10,
+        gap: hp(1),
       }}
     >
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <View
           style={{
-            height: 50,
-            width: 50,
+            height: hp(7),
+            width: wp(14),
             backgroundColor: "orange",
             borderRadius: 50,
             justifyContent: "center",
@@ -44,7 +48,7 @@ export default function DelayMessageComponent({
         >
           <Text
             style={{
-              fontSize: 30,
+              fontSize: hp(4),
               fontWeight: "bold",
             }}
           >
@@ -53,8 +57,8 @@ export default function DelayMessageComponent({
         </View>
         <TouchableOpacity
           style={{
-            height: 50,
-            width: 50,
+            height: hp(7),
+            width: wp(14),
             backgroundColor: xbuttoncolor,
             borderRadius: 50,
             justifyContent: "center",
@@ -66,7 +70,7 @@ export default function DelayMessageComponent({
         >
           <Text
             style={{
-              fontSize: 25,
+              fontSize: hp(4),
             }}
           >
             X
@@ -77,19 +81,19 @@ export default function DelayMessageComponent({
       <View
         style={{
           flexDirection: "row",
-          height: 60,
-          width: "95%",
+          height: hp(8),
+          width: wp(82),
           backgroundColor: "white",
           borderRadius: 20,
           alignSelf: "center",
-          gap: 5,
+          gap: wp(2),
         }}
       >
         <Text
           style={{
-            fontSize: 18,
+            fontSize: hp(2.5),
             fontWeight: "bold",
-            margin: 5,
+            marginLeft: hp(2),
             alignSelf: "center",
           }}
         >
@@ -114,21 +118,21 @@ export default function DelayMessageComponent({
       <View
         style={{
           flexDirection: "row",
-          height: 60,
-          width: "95%",
+          height: hp(8),
+          width: wp(82),
           backgroundColor: "white",
           borderRadius: 20,
           alignSelf: "center",
-          gap: 5,
+          gap: wp(2),
         }}
       >
         <Text
           style={{
-            fontSize: 18,
+            fontSize: hp(2.5),
             fontWeight: "bold",
-            marginLeft: 7,
-            marginRight: 25,
+            marginLeft: hp(2),
             alignSelf: "center",
+            marginRight: hp(3),
           }}
         >
           To
@@ -153,12 +157,12 @@ export default function DelayMessageComponent({
       </View>
       <View
         style={{
-          height: "30%",
-          width: "95%",
+          height: hp(20),
+          width: wp(80),
           alignSelf: "center",
           backgroundColor: "white",
           borderRadius: 10,
-          marginTop: 10,
+          marginTop: hp(2),
         }}
       >
         <TextInput

@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Formik } from "formik";
 
 import AppTextBox from "../components/AppTextBox";
@@ -14,6 +14,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 export default function EnterReclaiming({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
@@ -22,13 +23,9 @@ export default function EnterReclaiming({ navigation }) {
   const [progress, setProgress] = useState(0);
 
   const currentDate = new Date().toISOString().split("T")[0];
-  /* new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();*/
-
   const currentShift = shift(new Date().getHours());
+
+  const { reclaimingData, setReclaimingData } = useContext(GlobalContext);
 
   useEffect(() => {
     const getCoalNames = async () => {
@@ -118,11 +115,10 @@ export default function EnterReclaiming({ navigation }) {
       coal8name: coalNames.cn8 ? coalNames.cn8 : null,
       total_reclaiming: streamtotal,
     };
-
-    setProgress(0);
+    setReclaimingData(newValues);
+    /*   setProgress(0);
     setDoneScreen(true);
-
-    await axios
+ await axios
       .post(BaseUrl + "/reclaiming", newValues, {
         onUploadProgress: (progress) =>
           setProgress(progress.loaded / progress.total),
@@ -132,9 +128,10 @@ export default function EnterReclaiming({ navigation }) {
       })
       .catch(function (error) {
         setDoneScreen(false);
+        console.log(error);
         alert("Could not save data..");
       });
-
+*/
     for (let i = 1; i <= count; i++) {
       values["coal" + i + "recl"] = "";
     }

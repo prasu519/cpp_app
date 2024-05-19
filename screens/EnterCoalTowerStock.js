@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import AppTextBox from "../components/AppTextBox";
 import { AntDesign } from "@expo/vector-icons";
 import AppFormButton from "../components/AppFormButton";
@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 const validationSchema = Yup.object().shape({
   ct1stock: Yup.number()
@@ -37,12 +38,15 @@ const validationSchema = Yup.object().shape({
     .label("Ct-3"),
 });
 
-export default function EnterFeeding({ navigation, route }) {
+export default function EnterCoalTowerStock({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { coalTowerStockData, setCoalTowerStockData } =
+    useContext(GlobalContext);
 
   const currentDate = new Date().toISOString().split("T")[0];
   const currentShift = shift(new Date().getHours());
+
   const handleSubmit = async (values, { resetForm }) => {
     const totalStock =
       parseInt(values.ct1stock) +
@@ -52,7 +56,8 @@ export default function EnterFeeding({ navigation, route }) {
       ...values,
       total_stock: totalStock,
     };
-    setProgress(0);
+    setCoalTowerStockData(newValues);
+    /* setProgress(0);
     setDoneScreen(true);
     await axios
       .post(BaseUrl + "/coaltowerstock", newValues, {
@@ -64,7 +69,7 @@ export default function EnterFeeding({ navigation, route }) {
         setDoneScreen(false);
         alert("Could not save data..");
         console.log(error);
-      });
+      });*/
     resetForm();
   };
 

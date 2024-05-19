@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
 import DelayMessageComponent from "../components/DelayMessageComponent";
@@ -12,6 +12,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 export default function EnterDelays({ navigation }) {
   const [newDelayComponent, setNewDelayComponent] = useState([""]);
@@ -23,6 +24,7 @@ export default function EnterDelays({ navigation }) {
   const [progress, setProgress] = useState(0);
   const [allEntrys, setAllEntrys] = useState(false);
   const [oldDelays, setOldDelays] = useState([]);
+  const { shiftDelaysData, setShiftDelaysData } = useContext(GlobalContext);
 
   useEffect(() => {
     getShiftDelayData();
@@ -83,7 +85,8 @@ export default function EnterDelays({ navigation }) {
         reason: delayComponent["desc" + i],
       };
     }
-    setProgress(0);
+    setShiftDelaysData(delays);
+    /* setProgress(0);
     setDoneScreen(true);
     for (let i = 0; i < count; i++) {
       await axios
@@ -96,7 +99,7 @@ export default function EnterDelays({ navigation }) {
           setDoneScreen(false);
           alert("Could not save data..");
         });
-    }
+    }*/
     setDelayComponent({});
     setNewDelayComponent([""]);
     setButtonVisible(true);

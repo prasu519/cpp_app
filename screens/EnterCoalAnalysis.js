@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import AppTextBox from "../components/AppTextBox";
 import { AntDesign } from "@expo/vector-icons";
 import AppFormButton from "../components/AppFormButton";
@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 const validationSchema = Yup.object().shape({
   ci: Yup.number()
@@ -48,6 +49,7 @@ const validationSchema = Yup.object().shape({
 export default function EnterCoalAnalysis({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { coalAnalysisData, setCoalAnalysisData } = useContext(GlobalContext);
 
   const currentDate = new Date().toISOString().split("T")[0];
   const currentShift = shift(new Date().getHours());
@@ -55,12 +57,12 @@ export default function EnterCoalAnalysis({ navigation, route }) {
   const handleSubmit = async (values, { resetForm }) => {
     let totalOfAVF =
       parseFloat(values.ash) + parseFloat(values.vm) + parseFloat(values.fc);
-    console.log(totalOfAVF);
     if (totalOfAVF != 100) {
       alert("Total of Ash,Vm,Fc should be 100..");
       return;
     }
-    setProgress(0);
+    setCoalAnalysisData(values);
+    /*  setProgress(0);
     setDoneScreen(true);
     await axios
       .post(BaseUrl + "/coalAnalysis", values, {
@@ -71,7 +73,7 @@ export default function EnterCoalAnalysis({ navigation, route }) {
       .catch((error) => {
         setDoneScreen(false);
         alert("Could not save data..");
-      });
+      });*/
     resetForm();
   };
 

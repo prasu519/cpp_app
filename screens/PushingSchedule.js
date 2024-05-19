@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import AppTextBox from "../components/AppTextBox";
 import { AntDesign } from "@expo/vector-icons";
 import AppFormButton from "../components/AppFormButton";
@@ -15,6 +15,7 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 const validationSchema = Yup.object().shape({
   bat1: Yup.number()
@@ -52,15 +53,10 @@ const validationSchema = Yup.object().shape({
 export default function PushingSchedule({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { pushingScheduleData, setPushingScheduleData } =
+    useContext(GlobalContext);
 
   const currentDate = new Date().toISOString().split("T")[0];
-  /* const currentDate =
-    new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();*/
-
   const currentShift = shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -70,12 +66,10 @@ export default function PushingSchedule({ navigation, route }) {
       parseInt(values["bat3"]) +
       parseInt(values["bat4"]) +
       parseInt(values["bat5"]);
-    console.log(ptotal);
     let newValues = { ...values, totalPushings: ptotal };
-
-    setProgress(0);
+    setPushingScheduleData(newValues);
+    /* setProgress(0);
     setDoneScreen(true);
-
     await axios
       .post(BaseUrl + "/pushings", newValues, {
         onUploadProgress: (progress) =>
@@ -85,7 +79,7 @@ export default function PushingSchedule({ navigation, route }) {
       .catch((error) => {
         setDoneScreen(false);
         alert("Could not save data..");
-      });
+      });*/
 
     resetForm();
   };

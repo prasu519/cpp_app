@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import { Formik } from "formik";
 import AppDropdown from "../components/AppDropdown";
@@ -12,12 +12,14 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 export default function EnterRunningHours({ navigation }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
   const currentDate = new Date().toISOString().split("T")[0];
   const currentShift = shift(new Date().getHours());
+  const { runningHoursData, setRunningHoursData } = useContext(GlobalContext);
 
   const handleSubmit = async (values, { resetForm }) => {
     if (
@@ -37,7 +39,8 @@ export default function EnterRunningHours({ navigation }) {
       alert("Make sure to enter all values..");
       return;
     }
-    setProgress(0);
+    setRunningHoursData(values);
+    /* setProgress(0);
     setDoneScreen(true);
     await axios
       .post(BaseUrl + "/runningHours", values, {
@@ -48,7 +51,7 @@ export default function EnterRunningHours({ navigation }) {
       .catch((error) => {
         setDoneScreen(false);
         alert("Could not save data..");
-      });
+      });*/
     resetForm();
   };
 

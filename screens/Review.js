@@ -1,12 +1,13 @@
 import {
   View,
   ScrollView,
+  FlatList,
   Button,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import { Text } from "@rneui/themed";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
 import AppTextBox from "../components/AppTextBox";
@@ -17,6 +18,11 @@ import AppButton from "../components/AppButton";
 import BaseUrl from "../config/BaseUrl";
 import AppDropdown from "../components/AppDropdown";
 import DelayMessageComponent from "../components/DelayMessageComponent";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 export default function Review({ navigation }) {
   const [feeding, setFeeding] = useState();
@@ -28,7 +34,7 @@ export default function Review({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
   const [mbtopCoalData, setMbtopCoalData] = useState();
   const [coalTowerStock, setCoalTowerStock] = useState();
-  const [coalAnalysisData, setCoalAnalysisData] = useState();
+  const [coalAnalysis, setCoalAnalysis] = useState();
   const [pushingSchedule, setPushingSchedule] = useState();
 
   const [editFeeding, setEditFeeding] = useState(false);
@@ -61,25 +67,36 @@ export default function Review({ navigation }) {
     updatePushingScheduleButtVisible,
     setUpdatePushingScheduleButtVisible,
   ] = useState(false);
+  const {
+    reclaimingData,
+    setReclaimingData,
+    feedingData,
+    setFeedingData,
+    runningHoursData,
+    setRunningHoursData,
+    shiftDelaysData,
+    setShiftDelaysData,
+    mbTopStockData,
+    setMbTopStockData,
+    coalTowerStockData,
+    setCoalTowerStockData,
+    coalAnalysisData,
+    setCoalAnalysisData,
+    pushingScheduleData,
+    setPushingScheduleData,
+  } = useContext(GlobalContext);
 
   const currentDate = new Date().toISOString().split("T")[0];
-  /* const currentDate =
-    new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();*/
-
   const currentShift = shift(new Date().getHours());
 
   useEffect(() => {
     if (isLoaded) {
+      getCoalNames();
+      getTotalCoals();
       getfeedingdata();
       getReclaimingData();
       getRunningHoursdata();
       getShiftDelayData();
-      getTotalCoals();
-      getCoalNames();
       getMbTopCoalData();
       getCoalTowerStock();
       getCoalAnalysisData();
@@ -93,6 +110,7 @@ export default function Review({ navigation }) {
   }, [runningHours]);
 
   useEffect(() => {
+    if (shiftDelays == undefined) return;
     copyShiftDelayData();
   }, [shiftDelays]);
 
@@ -111,7 +129,7 @@ export default function Review({ navigation }) {
   };
 
   const getfeedingdata = async () => {
-    await axios
+    /* await axios
       .get(BaseUrl + "/feeding", {
         params: {
           date: currentDate,
@@ -119,12 +137,13 @@ export default function Review({ navigation }) {
         },
       })
       .then((responce) => setFeeding(responce.data.data[0]))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
+    setFeeding(feedingData);
     setIsLoaded(false);
   };
 
   const getReclaimingData = async () => {
-    await axios
+    /* await axios
       .get(BaseUrl + "/reclaiming", {
         params: {
           date: currentDate,
@@ -132,13 +151,13 @@ export default function Review({ navigation }) {
         },
       })
       .then((responce) => setReclaiming(responce.data.data[0]))
-      .catch((error) => console.log(error));
-
+      .catch((error) => console.log(error));*/
+    setReclaiming(reclaimingData);
     setIsLoaded(false);
   };
 
   const getRunningHoursdata = async () => {
-    await axios
+    /* await axios
       .get(BaseUrl + "/runningHours", {
         params: {
           date: currentDate,
@@ -146,12 +165,13 @@ export default function Review({ navigation }) {
         },
       })
       .then((responce) => setRunningHours(responce.data.data[0]))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
+    setRunningHours(runningHoursData);
     setIsLoaded(false);
   };
 
   const getShiftDelayData = async () => {
-    await axios
+    /*  await axios
       .get(BaseUrl + "/shiftDelay", {
         params: {
           date: currentDate,
@@ -159,7 +179,8 @@ export default function Review({ navigation }) {
         },
       })
       .then((responce) => setShiftDelays(responce.data.data))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
+    setShiftDelays(shiftDelaysData);
     setIsLoaded(false);
   };
 
@@ -204,7 +225,7 @@ export default function Review({ navigation }) {
   };
 
   const getMbTopCoalData = async () => {
-    await axios
+    /* await axios
       .get(BaseUrl + "/mbtopStock", {
         params: {
           date: currentDate,
@@ -212,12 +233,13 @@ export default function Review({ navigation }) {
         },
       })
       .then((responce) => setMbtopCoalData(responce.data.data[0]))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
+    setMbtopCoalData(mbTopStockData);
     setIsLoaded(false);
   };
 
   const getCoalTowerStock = async () => {
-    await axios
+    /*await axios
       .get(BaseUrl + "/coaltowerstock", {
         params: {
           date: currentDate,
@@ -225,25 +247,28 @@ export default function Review({ navigation }) {
         },
       })
       .then((responce) => setCoalTowerStock(responce.data.data[0]))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
+    setCoalTowerStock(coalTowerStockData);
+
     setIsLoaded(false);
   };
 
   const getCoalAnalysisData = async () => {
-    await axios
+    /* await axios
       .get(BaseUrl + "/coalAnalysis", {
         params: {
           date: currentDate,
           shift: currentShift,
         },
       })
-      .then((responce) => setCoalAnalysisData(responce.data.data[0]))
-      .catch((error) => console.log(error));
+      .then((responce) => setCoalAnalysis(responce.data.data[0]))
+      .catch((error) => console.log(error));*/
+    setCoalAnalysis(coalAnalysisData);
     setIsLoaded(false);
   };
 
   const getPushingScheduleData = async () => {
-    await axios
+    /* await axios
       .get(BaseUrl + "/pushings", {
         params: {
           date: currentDate,
@@ -251,7 +276,8 @@ export default function Review({ navigation }) {
         },
       })
       .then((responce) => setPushingSchedule(responce.data.data[0]))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
+    setPushingSchedule(pushingScheduleData);
     setIsLoaded(false);
   };
 
@@ -267,10 +293,11 @@ export default function Review({ navigation }) {
       ...feeding,
       total_feeding: totalFeeding,
     };
-    await axios
+    /* await axios
       .put(BaseUrl + "/feeding", updatedFeeding)
       .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
+    setFeedingData(updatedFeeding);
 
     setEditFeeding(false);
   };
@@ -292,22 +319,24 @@ export default function Review({ navigation }) {
       ...reclaiming,
       total_reclaiming: streamtotal,
     };
-    await axios
+    /*  await axios
       .put(BaseUrl + "/reclaiming", updatedReclaiming)
       .then(function (response) {
         console.log(response.data);
       })
       .catch(function (error) {
         console.log(error);
-      });
+      });*/
+    setReclaimingData(updatedReclaiming);
     setEditReclaiming(false);
   };
 
   const onUpdateRunningHours = async () => {
-    await axios
+    /* await axios
       .put(BaseUrl + "/runningHours", runningHours)
       .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
+    setRunningHoursData(runningHours);
     setEditRunningHours(false);
   };
 
@@ -378,8 +407,11 @@ export default function Review({ navigation }) {
       };
     }
     let deleteDelayNumber = delaynumber + 1;
-
-    await axios
+    let shiftDelaysNew = shiftDelays.filter(
+      (sd) => sd.delayNumber != deleteDelayNumber
+    );
+    setShiftDelaysData(shiftDelaysNew);
+    /* await axios
       .delete(BaseUrl + "/shiftDelay", {
         params: {
           date: currentDate,
@@ -388,7 +420,7 @@ export default function Review({ navigation }) {
         },
       })
       .then((responce) => console.log(responce.data))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
   };
 
   const onUpdateShiftDelays = async () => {
@@ -404,7 +436,7 @@ export default function Review({ navigation }) {
         reason: delayComponent["desc" + i],
       };
     }
-    for (let i = 0; i < count; i++) {
+    /* for (let i = 0; i < count; i++) {
       await axios
         .put(BaseUrl + "/shiftDelay", shiftDelays[i])
         .then((response) => console.log(response.data))
@@ -412,7 +444,8 @@ export default function Review({ navigation }) {
           setDoneScreen(false);
           alert("Could not save data..");
         });
-    }
+    }*/
+    setShiftDelaysData(shiftDelays);
     setEditShiftDelays(false);
   };
 
@@ -423,13 +456,14 @@ export default function Review({ navigation }) {
         totalMbtopStock + parseInt(mbtopCoalData["coal" + (i + 1) + "stock"]);
     }
     const newMbtopData = { ...mbtopCoalData, total_stock: totalMbtopStock };
-    await axios
+    /*  await axios
       .put(BaseUrl + "/mbtopStock", newMbtopData)
       .then((response) => console.log(response.data))
       .catch((error) => {
         setDoneScreen(false);
         alert("Could not update data..");
-      });
+      });*/
+    setMbTopStockData(newMbtopData);
     setEditMbtopStock(false);
   };
 
@@ -443,27 +477,29 @@ export default function Review({ navigation }) {
       ...coalTowerStock,
       total_stock: totalCoalTowerStock,
     };
-    await axios
+    /* await axios
       .put(BaseUrl + "/coaltowerstock", updatedCoalTowerStock)
       .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));
+      .catch((error) => console.log(error));*/
+    setCoalTowerStockData(updatedCoalTowerStock);
 
     setEditCoalTowerStock(false);
   };
 
   const onUpdateCoalAnalysis = async () => {
     let totalofAVF =
-      parseFloat(coalAnalysisData.ash) +
-      parseFloat(coalAnalysisData.vm) +
-      parseFloat(coalAnalysisData.fc);
+      parseFloat(coalAnalysis.ash) +
+      parseFloat(coalAnalysis.vm) +
+      parseFloat(coalAnalysis.fc);
     if (totalofAVF != 100) {
       alert("Total of Ash,Vm,Fc should be 100..");
       return;
     }
-    await axios
-      .put(BaseUrl + "/coalAnalysis", coalAnalysisData)
+    /* await axios
+      .put(BaseUrl + "/coalAnalysis", coalAnalysis)
       .then((response) => console.log(response.data))
-      .catch((error) => alert("Could not save data.."));
+      .catch((error) => alert("Could not save data.."));*/
+    setCoalAnalysisData(coalAnalysis);
     setEditCoalAnalysis(false);
   };
 
@@ -476,13 +512,13 @@ export default function Review({ navigation }) {
       parseInt(pushingSchedule.bat4) +
       parseInt(pushingSchedule.bat5);
     let newValues = { ...pushingSchedule, total_pushings: ptotal.toString() };
-    console.log(newValues);
-    await axios
+    /*  await axios
       .put(BaseUrl + "/pushings", newValues)
       .then((response) => console.log(response.data))
       .catch((error) => {
         alert("Could not save data..");
-      });
+      });*/
+    setPushingScheduleData(newValues);
     setEditPushingSchedule(false);
   };
 
@@ -520,18 +556,169 @@ export default function Review({ navigation }) {
     mbtopCoalData == undefined ||
     coalTowerStock == undefined ||
     coalNames == undefined ||
-    coalAnalysisData == undefined ||
+    coalAnalysis == undefined ||
     pushingSchedule == undefined
   ) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#F1F5A8" }}>
+      <View style={{ flex: 1 }}>
         <View
           style={{
-            marginTop: 30,
-            marginLeft: 20,
+            position: "absolute",
+            zIndex: 1,
+            height: hp(20),
+            width: wp(100),
+            backgroundColor: "#2FF3E0",
+            borderBottomLeftRadius: hp(8),
+            borderBottomRightRadius: hp(8),
+          }}
+        >
+          <View
+            style={{
+              paddingTop: hp(5),
+              paddingLeft: hp(2),
+              flexDirection: "row",
+              alignItems: "center",
+              gap: hp(12),
+            }}
+          >
+            <AntDesign
+              name="leftcircle"
+              size={40}
+              color="black"
+              onPress={() => navigation.goBack()}
+            />
+            <Text
+              style={{
+                fontSize: hp(3),
+                borderBottomWidth: 2,
+                color: "black",
+                alignSelf: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Review
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              gap: hp(10),
+              paddingTop: hp(3),
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "#DF362D",
+              }}
+            >
+              DATE : {currentDate}
+            </Text>
+            <Text
+              style={{
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "#DF362D",
+              }}
+            >
+              SHIFT : {currentShift}
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            position: "relative",
+            zIndex: 1,
+            marginTop: hp(20),
+            paddingTop: hp(2),
+            gap: hp(2),
+          }}
+        >
+          {!reclaiming && (
+            <Text
+              style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
+            >
+              reclaiming Report not entered
+            </Text>
+          )}
+          {!feeding && (
+            <Text
+              style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
+            >
+              feeding Report not entered
+            </Text>
+          )}
+          {!runningHours && (
+            <Text
+              style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
+            >
+              runningHours Report not entered
+            </Text>
+          )}
+          {!shiftDelays && (
+            <Text
+              style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
+            >
+              shiftDelays Report not entered
+            </Text>
+          )}
+          {!mbtopCoalData && (
+            <Text
+              style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
+            >
+              mbtopCoalData Report not entered
+            </Text>
+          )}
+          {!coalTowerStock && (
+            <Text
+              style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
+            >
+              coalTowerStock Report not entered
+            </Text>
+          )}
+          {!coalAnalysis && (
+            <Text
+              style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
+            >
+              coalAnalysis Report not entered
+            </Text>
+          )}
+          {!pushingSchedule && (
+            <Text
+              style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
+            >
+              pushingSchedule Report not entered
+            </Text>
+          )}
+        </View>
+      </View>
+    );
+  }
+
+  return (
+    <View style={{ flex: 1, gap: 30 }}>
+      <View
+        style={{
+          position: "absolute",
+          zIndex: 1,
+          height: hp(20),
+          width: wp(100),
+          backgroundColor: "#2FF3E0",
+          borderBottomLeftRadius: hp(8),
+          borderBottomRightRadius: hp(8),
+        }}
+      >
+        <View
+          style={{
+            paddingTop: hp(5),
+            paddingLeft: hp(2),
             flexDirection: "row",
             alignItems: "center",
-            gap: 70,
+            gap: hp(10),
           }}
         >
           <AntDesign
@@ -542,9 +729,10 @@ export default function Review({ navigation }) {
           />
           <Text
             style={{
-              fontSize: 35,
-              textDecorationLine: "underline",
-              color: "#000080",
+              fontSize: hp(3),
+              borderBottomWidth: 2,
+              color: "black",
+              alignSelf: "center",
               fontWeight: "bold",
             }}
           >
@@ -555,86 +743,64 @@ export default function Review({ navigation }) {
         <View
           style={{
             flexDirection: "row",
-            gap: 40,
-            paddingTop: 20,
+            gap: hp(10),
+            paddingTop: hp(3),
             alignItems: "center",
             justifyContent: "center",
-            borderBottomWidth: 2,
           }}
         >
-          <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
-            DATE :{currentDate}
+          <Text
+            style={{
+              fontSize: hp(2.5),
+              fontWeight: "bold",
+              color: "#DF362D",
+            }}
+          >
+            DATE : {currentDate}
           </Text>
-          <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
-            SHIFT :{currentShift}
+          <Text
+            style={{
+              fontSize: hp(2.5),
+              fontWeight: "bold",
+              color: "#DF362D",
+            }}
+          >
+            SHIFT : {currentShift}
           </Text>
         </View>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
       </View>
-    );
-  }
-
-  return (
-    <View style={{ flex: 1, paddingBottom: 10, backgroundColor: "#F1F5A8" }}>
-      <View
+      <ScrollView
         style={{
-          marginTop: 30,
-          marginLeft: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 70,
+          position: "relative",
+          zIndex: 1,
+          marginTop: hp(20),
+          padding: hp(2),
         }}
       >
-        <AntDesign
-          name="leftcircle"
-          size={40}
-          color="black"
-          onPress={() => navigation.goBack()}
-        />
-        <Text
-          style={{
-            fontSize: 35,
-            textDecorationLine: "underline",
-            color: "#000080",
-            fontWeight: "bold",
-          }}
-        >
-          Review
-        </Text>
-      </View>
-
-      <View
-        style={{
-          flexDirection: "row",
-          gap: 40,
-          paddingTop: 20,
-          alignItems: "center",
-          justifyContent: "center",
-          borderBottomWidth: 2,
-        }}
-      >
-        <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
-          DATE :{currentDate}
-        </Text>
-        <Text style={{ fontSize: 23, fontWeight: "bold", color: "#000080" }}>
-          SHIFT :{currentShift}
-        </Text>
-      </View>
-      <ScrollView style={{ padding: 10 }}>
         <FieldSet label="Feeding Data">
           <>
-            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(3.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+              }}
+            >
               Feeding
             </Text>
+
             {["ct1", "ct2", "ct3", "stream1", "stream1A"].map((item, index) => (
               <AppTextBox
                 key={index}
                 label={item}
-                labelcolor="#6a994e"
+                labelcolor={
+                  item === "stream1" || item === "stream1A"
+                    ? "#e9c46a"
+                    : "orange"
+                }
                 value={feeding[item].toString()}
                 onChangeText={(newValue) => {
                   if (newValue === "") {
@@ -662,7 +828,7 @@ export default function Review({ navigation }) {
                 gap: 10,
               }}
             >
-              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Text style={{ fontSize: hp(4) }}>Edit</Text>
               <Switch onValueChange={toggleSwitchFeeding} value={editFeeding} />
             </View>
             {editFeeding && (
@@ -678,7 +844,16 @@ export default function Review({ navigation }) {
 
         <FieldSet label="Reclaiming Data">
           <>
-            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(3.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+              }}
+            >
               Reclaiming
             </Text>
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
@@ -687,7 +862,7 @@ export default function Review({ navigation }) {
                 <AppTextBox
                   key={index}
                   label={reclaiming["coal" + item + "name"]}
-                  labelcolor="#6a994e"
+                  labelcolor="orange"
                   value={reclaiming["coal" + item + "recl"].toString()}
                   onChangeText={(newValue) => {
                     if (newValue === "") {
@@ -750,7 +925,7 @@ export default function Review({ navigation }) {
                 gap: 10,
               }}
             >
-              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Text style={{ fontSize: hp(4) }}>Edit</Text>
               <Switch
                 onValueChange={toggleSwitchReclaiming}
                 value={editReclaiming}
@@ -769,7 +944,16 @@ export default function Review({ navigation }) {
 
         <FieldSet label="Running Hours">
           <>
-            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(3.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+              }}
+            >
               Running Hours
             </Text>
             {["2", "3", "4"].map((item, index) => (
@@ -777,23 +961,32 @@ export default function Review({ navigation }) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-
-                  marginTop: 20,
-                  justifyContent: "space-between",
+                  marginBottom: hp(4),
+                  gap: hp(2),
                 }}
                 key={index}
               >
-                <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-                  {"Stream-" + item}
-                </Text>
                 <View
                   style={{
-                    width: 190,
+                    height: hp(6),
+                    width: wp(24),
+                    backgroundColor: "orange",
+                    borderRadius: hp(2),
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text style={{ fontSize: hp(3), fontWeight: "bold" }}>
+                    {"Strm-" + item}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: wp(55),
                     backgroundColor: "white",
                     flexDirection: "row",
                     alignItems: "center",
-                    borderRadius: 10,
-                    gap: 1,
+                    borderRadius: 23,
                   }}
                 >
                   <AppDropdown
@@ -835,22 +1028,37 @@ export default function Review({ navigation }) {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  marginTop: 20,
-                  justifyContent: "space-between",
+                  marginBottom: hp(4),
+                  gap: hp(3),
                 }}
                 key={index}
               >
-                <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-                  {"CC-" + item}
-                </Text>
                 <View
                   style={{
-                    width: 190,
+                    height: hp(6),
+                    width: wp(22),
+                    backgroundColor: "#e9c46a",
+                    borderRadius: hp(2),
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: hp(3),
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {"CC" + item}
+                  </Text>
+                </View>
+                <View
+                  style={{
+                    width: wp(55),
                     backgroundColor: "white",
                     flexDirection: "row",
                     alignItems: "center",
-                    borderRadius: 10,
-                    gap: 1,
+                    borderRadius: 23,
                   }}
                 >
                   <AppDropdown
@@ -862,7 +1070,6 @@ export default function Review({ navigation }) {
                         ...runningHours,
                         ["cc" + item + "hrs"]: newValue,
                       });
-                      // checkIsRunningHoursNull();
                     }}
                     enabled={editRunningHours}
                   />
@@ -890,7 +1097,7 @@ export default function Review({ navigation }) {
                 gap: 10,
               }}
             >
-              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Text style={{ fontSize: hp(4) }}>Edit</Text>
               <Switch
                 onValueChange={toggleSwitchRunningHours}
                 value={editRunningHours}
@@ -909,8 +1116,17 @@ export default function Review({ navigation }) {
 
         <FieldSet label="Delays">
           <View style={{ flex: 1, alignItems: "center", gap: 20 }}>
-            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
-              Delays
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(3.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+              }}
+            >
+              Shift Delays
             </Text>
             {shiftDelays.map((value, index) => (
               <DelayMessageComponent
@@ -1053,7 +1269,7 @@ export default function Review({ navigation }) {
                 gap: 10,
               }}
             >
-              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Text style={{ fontSize: hp(4) }}>Edit</Text>
               <Switch
                 onValueChange={toggleSwitchShiftDelays}
                 value={editShiftDelays}
@@ -1074,8 +1290,17 @@ export default function Review({ navigation }) {
         </FieldSet>
         <FieldSet label="Bins Coal Stocks">
           <>
-            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
-              Mb-Top Stock
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(3.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+              }}
+            >
+              MB Top Stock
             </Text>
             {Array.from({ length: coalNameCount }, (_, index) => (
               <AppTextBox
@@ -1118,7 +1343,7 @@ export default function Review({ navigation }) {
                 gap: 10,
               }}
             >
-              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Text style={{ fontSize: hp(4) }}>Edit</Text>
               <Switch
                 onValueChange={toggleSwitchMbtopStock}
                 value={editMbtopStock}
@@ -1138,14 +1363,23 @@ export default function Review({ navigation }) {
         </FieldSet>
         <FieldSet label="Coal-Tower Stock">
           <>
-            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
-              Coal-Tower Stock
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(3.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+              }}
+            >
+              Coal Tower Stock
             </Text>
             {["ct1stock", "ct2stock", "ct3stock"].map((item, index) => (
               <AppTextBox
                 key={index}
-                label={item}
-                labelcolor="#6a994e"
+                label={item.split("s")[0]}
+                labelcolor="orange"
                 value={coalTowerStock[item].toString()}
                 onChangeText={(newValue) => {
                   if (newValue === "") {
@@ -1175,7 +1409,7 @@ export default function Review({ navigation }) {
                 gap: 10,
               }}
             >
-              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Text style={{ fontSize: hp(4) }}>Edit</Text>
               <Switch
                 onValueChange={toggleSwitchCoalTowerStock}
                 value={editCoalTowerStock}
@@ -1195,26 +1429,35 @@ export default function Review({ navigation }) {
         </FieldSet>
         <FieldSet label="coalAnalysis">
           <>
-            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(3.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+              }}
+            >
               Coal Analysis
             </Text>
             {["ci", "ash", "vm", "fc", "tm"].map((item, index) => (
               <AppTextBox
                 key={index}
                 label={item}
-                labelcolor="#6a994e"
+                labelcolor="orange"
                 tbSize="30%"
                 lbSize="30%"
                 onChangeText={(value) => {
                   if (value === "") {
-                    setCoalAnalysisData({ ...coalAnalysisData, [item]: "" });
+                    setCoalAnalysis({ ...coalAnalysis, [item]: "" });
                     setUpdateCoalAnalysisButtVisible(true);
                     return;
                   }
-                  setCoalAnalysisData({ ...coalAnalysisData, [item]: value });
+                  setCoalAnalysis({ ...coalAnalysis, [item]: value });
                   setUpdateCoalAnalysisButtVisible(false);
                 }}
-                value={coalAnalysisData[item]}
+                value={coalAnalysis[item]}
                 editable={editCoalAnalysis}
               />
             ))}
@@ -1226,7 +1469,7 @@ export default function Review({ navigation }) {
                 gap: 10,
               }}
             >
-              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Text style={{ fontSize: hp(4) }}>Edit</Text>
               <Switch
                 onValueChange={toggleSwitchCoalAnalysis}
                 value={editCoalAnalysis}
@@ -1246,14 +1489,23 @@ export default function Review({ navigation }) {
         </FieldSet>
         <FieldSet label="PushingSchedule">
           <>
-            <Text h3 h3Style={{ color: "red", alignSelf: "center" }}>
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(3.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+              }}
+            >
               Pushing Schedule
             </Text>
             {[1, 2, 3, 4, 5].map((batt, index) => (
               <AppTextBox
                 key={index}
                 label={"Batt-" + batt}
-                labelcolor="#6a994e"
+                labelcolor="orange"
                 tbSize="20%"
                 onChangeText={(value) => {
                   if (value === "") {
@@ -1283,7 +1535,7 @@ export default function Review({ navigation }) {
                 gap: 10,
               }}
             >
-              <Text style={{ fontSize: 30 }}>Edit</Text>
+              <Text style={{ fontSize: hp(4) }}>Edit</Text>
               <Switch
                 onValueChange={toggleSwitchPushingSchedule}
                 value={editPushingSchedule}

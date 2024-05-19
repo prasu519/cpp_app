@@ -16,8 +16,8 @@ export default function Home({ navigation }) {
           height: hp(35),
           width: wp(100),
           backgroundColor: "#2FF3E0",
-          borderBottomLeftRadius: 20,
-          borderBottomRightRadius: 20,
+          borderBottomLeftRadius: hp(8),
+          borderBottomRightRadius: hp(8),
         }}
       >
         <View style={{ alignItems: "center", marginVertical: 80 }}>

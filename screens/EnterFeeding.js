@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import AppTextBox from "../components/AppTextBox";
 import { AntDesign } from "@expo/vector-icons";
 import AppFormButton from "../components/AppFormButton";
@@ -15,6 +15,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import FieldSet from "react-native-fieldset";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 const validationSchema = Yup.object().shape({
   ct1: Yup.number()
@@ -52,15 +53,9 @@ const validationSchema = Yup.object().shape({
 export default function EnterFeeding({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { feedingData, setFeedingData } = useContext(GlobalContext);
 
   const currentDate = new Date().toISOString().split("T")[0];
-  /*const currentDate =
-    new Date().getDate() +
-    "/" +
-    (new Date().getMonth() + 1) +
-    "/" +
-    new Date().getFullYear();*/
-
   const currentShift = shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
@@ -75,11 +70,11 @@ export default function EnterFeeding({ navigation, route }) {
       ...values,
       total_feeding: totalFeeding,
     };
-
-    setProgress(0);
+    setFeedingData(newValues);
+    /*   setProgress(0);
     setDoneScreen(true);
 
-    await axios
+   await axios
       .post(BaseUrl + "/feeding", newValues, {
         onUploadProgress: (progress) =>
           setProgress(progress.loaded / progress.total),
@@ -89,7 +84,7 @@ export default function EnterFeeding({ navigation, route }) {
         setDoneScreen(false);
         alert("Could not save data..");
       });
-
+*/
     resetForm();
   };
 
