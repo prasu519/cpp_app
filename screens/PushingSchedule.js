@@ -67,7 +67,10 @@ export default function PushingSchedule({ navigation, route }) {
       parseInt(values["bat4"]) +
       parseInt(values["bat5"]);
     let newValues = { ...values, totalPushings: ptotal };
+    setProgress(0);
+    setDoneScreen(true);
     setPushingScheduleData(newValues);
+    setProgress(1);
     /* setProgress(0);
     setDoneScreen(true);
     await axios
@@ -82,6 +85,7 @@ export default function PushingSchedule({ navigation, route }) {
       });*/
 
     resetForm();
+    setTimeout(() => navigation.goBack(), 1000);
   };
 
   return (

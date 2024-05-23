@@ -64,6 +64,9 @@ export default function BinStock({ navigation }) {
       total_stock: TotalStock,
     };
     setMbTopStockData(newValues);
+    setProgress(0);
+    setDoneScreen(true);
+    setProgress(1);
     /* setProgress(0);
     setDoneScreen(true);
     await axios
@@ -82,6 +85,7 @@ export default function BinStock({ navigation }) {
     for (let i = 1; i <= count; i++) {
       values["coal" + i + "stock"] = "";
     }
+    setTimeout(() => navigation.goBack(), 1000);
   };
 
   return (

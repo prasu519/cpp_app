@@ -86,6 +86,9 @@ export default function EnterDelays({ navigation }) {
       };
     }
     setShiftDelaysData(delays);
+    setProgress(0);
+    setDoneScreen(true);
+    setProgress(1);
     /* setProgress(0);
     setDoneScreen(true);
     for (let i = 0; i < count; i++) {
@@ -103,6 +106,7 @@ export default function EnterDelays({ navigation }) {
     setDelayComponent({});
     setNewDelayComponent([""]);
     setButtonVisible(true);
+    setTimeout(() => navigation.goBack(), 1000);
   };
 
   const currentDate = new Date().toISOString().split("T")[0];

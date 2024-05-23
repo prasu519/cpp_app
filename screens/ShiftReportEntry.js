@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
 import { Button } from "@rneui/base";
@@ -8,8 +8,13 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
+import DoneScreen from "./DoneScreen";
+import axios from "axios";
 
 export default function ShiftReportEntry({ navigation }) {
+  const [doneScreen, setDoneScreen] = useState(false);
+  const [progress, setProgress] = useState(0);
+
   const currentDate = new Date().toISOString().split("T")[0];
   const currentShift = shift(new Date().getHours());
   const {
@@ -23,233 +28,372 @@ export default function ShiftReportEntry({ navigation }) {
     pushingScheduleData,
   } = useContext(GlobalContext);
 
+  let reclaimingStatus = false;
+  let feedingStatus = false;
+  let runningHoursStatus = false;
+  let shiftDelaysStatus = false;
+  let mbTopStockStatus = false;
+  let coalTowerStockStatus = false;
+  let coalAnalysisStatus = false;
+  let pushingScheduleStatus = false;
+
+  const handleFinalReport = async () => {
+    setProgress(0);
+    setDoneScreen(true);
+
+    await axios
+      .post(BaseUrl + "/reclaiming", reclaimingData)
+      .then(function (response) {
+        reclaimingStatus = true;
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        reclaimingStatus = false;
+        console.log(error);
+        alert("Could not save reclaiming data..");
+      });
+
+    await axios
+      .post(BaseUrl + "/feeding", feedingData)
+      .then((response) => {
+        feedingStatus = true;
+        console.log(response.data);
+      })
+      .catch((error) => {
+        feedingStatus = false;
+        console.log(error);
+        alert("Could not save Feeding data..");
+      });
+
+    await axios
+      .post(BaseUrl + "/runningHours", runningHoursData)
+      .then((responce) => {
+        runningHoursStatus = true;
+        console.log(responce.data);
+      })
+      .catch((error) => {
+        runningHoursStatus = false;
+        console.log(error);
+        alert("Could not save running hours data..");
+      });
+
+    let count = shiftDelaysData.length;
+    for (let i = 0; i < count; i++) {
+      await axios
+        .post(BaseUrl + "/shiftDelay", shiftDelaysData[i])
+        .then((response) => {
+          shiftDelaysStatus = true;
+          console.log(response.data);
+        })
+        .catch((error) => {
+          shiftDelaysStatus = false;
+          console.log(error);
+          alert("Could not save shiftDelays data..");
+        });
+    }
+
+    await axios
+      .post(BaseUrl + "/mbtopStock", mbTopStockData)
+      .then(function (response) {
+        mbTopStockStatus = true;
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        mbTopStockStatus = false;
+        console.log(error);
+        alert("Could not save MbTop Stock data..");
+      });
+
+    await axios
+      .post(BaseUrl + "/coaltowerstock", coalTowerStockData)
+      .then((response) => {
+        coalTowerStockStatus = true;
+        console.log(response.data);
+      })
+      .catch((error) => {
+        coalTowerStockStatus = false;
+        console.log(error);
+        alert("Could not save Coal Tower Stock data..");
+      });
+
+    await axios
+      .post(BaseUrl + "/coalAnalysis", coalAnalysisData)
+      .then((response) => {
+        coalAnalysisStatus = true;
+        console.log(response.data);
+      })
+      .catch((error) => {
+        coalAnalysisStatus = false;
+        console.log(error);
+        alert("Could not save Coal Analysis data..");
+      });
+
+    await axios
+      .post(BaseUrl + "/pushings", pushingScheduleData)
+      .then((response) => {
+        pushingScheduleStatus = true;
+        console.log(response.data);
+      })
+      .catch((error) => {
+        pushingScheduleStatus = false;
+        console.log(error);
+        alert("Could not save Pushing schedule data..");
+      });
+    setProgress(1);
+  };
+
   return (
-    <View style={{ flex: 1 }}>
-      <View
-        style={{
-          position: "absolute",
-          zIndex: 1,
-          height: hp(20),
-          width: wp(100),
-          backgroundColor: "#2FF3E0",
-          borderBottomLeftRadius: hp(8),
-          borderBottomRightRadius: hp(8),
-        }}
-      >
-        <View
-          style={{
-            paddingTop: hp(5),
-            paddingLeft: hp(2),
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 40,
-          }}
-        >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
-          />
-          <Text
-            style={{
-              fontSize: hp(3),
-              borderBottomWidth: 2,
-              color: "black",
-              alignSelf: "center",
-              fontWeight: "bold",
-            }}
-          >
-            Enter Shift Report
-          </Text>
-        </View>
+    <>
+      <DoneScreen
+        progress={progress}
+        onDone={() => setDoneScreen(false)}
+        visible={doneScreen}
+      />
 
+      <View style={{ flex: 1 }}>
         <View
           style={{
-            flexDirection: "row",
-            gap: hp(10),
-            paddingTop: hp(3),
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text
-            style={{ fontSize: hp(2.5), fontWeight: "bold", color: "#DF362D" }}
-          >
-            DATE : {currentDate}
-          </Text>
-          <Text
-            style={{ fontSize: hp(2.5), fontWeight: "bold", color: "#DF362D" }}
-          >
-            SHIFT : {currentShift}
-          </Text>
-        </View>
-      </View>
-      <ScrollView>
-        <View
-          style={{
-            position: "relative",
+            position: "absolute",
             zIndex: 1,
-            alignItems: "center",
-            marginTop: hp(25),
-            gap: hp(4),
-            marginBottom: hp(5),
+            height: hp(20),
+            width: wp(100),
+            backgroundColor: "#2FF3E0",
+            borderBottomLeftRadius: hp(8),
+            borderBottomRightRadius: hp(8),
           }}
         >
-          <Button
-            title={"Enter Reclaiming"}
-            buttonStyle={{ width: wp(50), height: hp(7) }}
-            titleStyle={{
-              fontSize: hp(2.5),
-              color: "black",
-              fontWeight: "bold",
-            }}
-            radius={25}
-            color="#50C4ED"
-            onPress={() => navigation.navigate("EnterReclaiming")}
-            disabled={reclaimingData}
-          ></Button>
-
-          <Button
-            title={"Enter Feeding"}
-            buttonStyle={{ width: wp(40), height: hp(7) }}
-            titleStyle={{
-              fontSize: hp(2.5),
-              color: "black",
-              fontWeight: "bold",
-            }}
-            radius={25}
-            color="#50C4ED"
-            onPress={() => navigation.navigate("EnterFeeding")}
-            disabled={feedingData}
-          ></Button>
-
-          <Button
-            title={" Enter Running Hours"}
-            buttonStyle={{ width: wp(60), height: hp(7) }}
-            titleStyle={{
-              fontSize: hp(2.5),
-              color: "black",
-              fontWeight: "bold",
-            }}
-            radius={25}
-            color="#50C4ED"
-            onPress={() => navigation.navigate("EnterRunningHours")}
-            disabled={runningHoursData}
-          ></Button>
-
-          <Button
-            title={"Enter Delays"}
-            buttonStyle={{ width: wp(40), height: hp(7) }}
-            titleStyle={{
-              fontSize: hp(2.5),
-              color: "black",
-              fontWeight: "bold",
-            }}
-            radius={25}
-            color="#50C4ED"
-            onPress={() => navigation.navigate("EnterDelays")}
-            disabled={shiftDelaysData}
-          ></Button>
-
-          <Button
-            title={"Enter MB-Top Stock"}
-            buttonStyle={{ width: wp(60), height: hp(7) }}
-            titleStyle={{
-              fontSize: hp(2.5),
-              color: "black",
-              fontWeight: "bold",
-            }}
-            radius={25}
-            color="#50C4ED"
-            onPress={() => navigation.navigate("BinStock")}
-            disabled={mbTopStockData}
-          ></Button>
-
-          <Button
-            title="Enter Coal-Tower Stock"
-            buttonStyle={{ width: wp(70), height: hp(7) }}
-            radius={50}
-            color="#50C4ED"
-            titleStyle={{
-              color: "black",
-              fontSize: hp(2.5),
-              fontWeight: "bold",
-            }}
-            onPress={() => navigation.navigate("CoalTowerStock")}
-            disabled={coalTowerStockData}
-          ></Button>
-
-          <Button
-            title="Enter Coal Analysis"
-            buttonStyle={{ width: wp(60), height: hp(7) }}
-            radius={50}
-            color="#50C4ED"
-            titleStyle={{
-              color: "black",
-              fontSize: hp(2.5),
-              fontWeight: "bold",
-            }}
-            onPress={() => navigation.navigate("EnterCoalAnalysis")}
-            disabled={coalAnalysisData}
-          ></Button>
-
-          <Button
-            title="Enter Pushing Schedule"
-            buttonStyle={{ width: wp(70), height: hp(7) }}
-            radius={50}
-            color="#50C4ED"
-            titleStyle={{
-              color: "black",
-              fontSize: hp(2.5),
-              fontWeight: "bold",
-            }}
-            onPress={() => navigation.navigate("PushingSchedule")}
-            disabled={pushingScheduleData}
-          ></Button>
-
-          <TouchableOpacity
+          <View
             style={{
-              height: hp(7),
-              width: wp(40),
-              backgroundColor: "#fcbf49",
-              borderRadius: 25,
+              paddingTop: hp(5),
+              paddingLeft: hp(2),
+              flexDirection: "row",
               alignItems: "center",
-              justifyContent: "center",
-              marginTop: hp(5),
+              gap: 40,
             }}
-            onPress={() =>
-              navigation.navigate("Review", {
-                date: currentDate,
-                shift: currentShift,
-              })
-            }
           >
+            <AntDesign
+              name="leftcircle"
+              size={40}
+              color="black"
+              onPress={() => navigation.goBack()}
+            />
             <Text
-              style={{ fontSize: hp(2.5), fontWeight: "bold", color: "white" }}
+              style={{
+                fontSize: hp(3),
+                borderBottomWidth: 2,
+                color: "black",
+                alignSelf: "center",
+                fontWeight: "bold",
+              }}
             >
-              Review
+              Enter Shift Report
             </Text>
-          </TouchableOpacity>
+          </View>
 
-          <TouchableOpacity
+          <View
             style={{
-              height: hp(7),
-              width: wp(70),
-              backgroundColor: "#fc5c65",
-              borderRadius: 25,
+              flexDirection: "row",
+              gap: hp(10),
+              paddingTop: hp(3),
               alignItems: "center",
               justifyContent: "center",
             }}
           >
             <Text
-              style={{ fontSize: hp(2.5), fontWeight: "bold", color: "white" }}
+              style={{
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "#DF362D",
+              }}
             >
-              Send Final Report
+              DATE : {currentDate}
             </Text>
-          </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "#DF362D",
+              }}
+            >
+              SHIFT : {currentShift}
+            </Text>
+          </View>
         </View>
-      </ScrollView>
-    </View>
+        <ScrollView>
+          <View
+            style={{
+              position: "relative",
+              zIndex: 1,
+              alignItems: "center",
+              marginTop: hp(25),
+              gap: hp(4),
+              marginBottom: hp(5),
+            }}
+          >
+            <Button
+              title={"Enter Reclaiming"}
+              buttonStyle={{ width: wp(50), height: hp(7) }}
+              titleStyle={{
+                fontSize: hp(2.5),
+                color: "black",
+                fontWeight: "bold",
+              }}
+              radius={25}
+              color="#50C4ED"
+              onPress={() => navigation.navigate("EnterReclaiming")}
+              disabled={reclaimingData === undefined ? false : true}
+            ></Button>
+
+            <Button
+              title={"Enter Feeding"}
+              buttonStyle={{ width: wp(40), height: hp(7) }}
+              titleStyle={{
+                fontSize: hp(2.5),
+                color: "black",
+                fontWeight: "bold",
+              }}
+              radius={25}
+              color="#50C4ED"
+              onPress={() => navigation.navigate("EnterFeeding")}
+              disabled={feedingData === undefined ? false : true}
+            ></Button>
+
+            <Button
+              title={" Enter Running Hours"}
+              buttonStyle={{ width: wp(60), height: hp(7) }}
+              titleStyle={{
+                fontSize: hp(2.5),
+                color: "black",
+                fontWeight: "bold",
+              }}
+              radius={25}
+              color="#50C4ED"
+              onPress={() => navigation.navigate("EnterRunningHours")}
+              disabled={runningHoursData === undefined ? false : true}
+            ></Button>
+
+            <Button
+              title={"Enter Delays"}
+              buttonStyle={{ width: wp(40), height: hp(7) }}
+              titleStyle={{
+                fontSize: hp(2.5),
+                color: "black",
+                fontWeight: "bold",
+              }}
+              radius={25}
+              color="#50C4ED"
+              onPress={() => navigation.navigate("EnterDelays")}
+              disabled={shiftDelaysData === undefined ? false : true}
+            ></Button>
+
+            <Button
+              title={"Enter MB-Top Stock"}
+              buttonStyle={{ width: wp(60), height: hp(7) }}
+              titleStyle={{
+                fontSize: hp(2.5),
+                color: "black",
+                fontWeight: "bold",
+              }}
+              radius={25}
+              color="#50C4ED"
+              onPress={() => navigation.navigate("BinStock")}
+              disabled={mbTopStockData === undefined ? false : true}
+            ></Button>
+
+            <Button
+              title="Enter Coal-Tower Stock"
+              buttonStyle={{ width: wp(70), height: hp(7) }}
+              radius={50}
+              color="#50C4ED"
+              titleStyle={{
+                color: "black",
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+              }}
+              onPress={() => navigation.navigate("CoalTowerStock")}
+              disabled={coalTowerStockData === undefined ? false : true}
+            ></Button>
+
+            <Button
+              title="Enter Coal Analysis"
+              buttonStyle={{ width: wp(60), height: hp(7) }}
+              radius={50}
+              color="#50C4ED"
+              titleStyle={{
+                color: "black",
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+              }}
+              onPress={() => navigation.navigate("EnterCoalAnalysis")}
+              disabled={coalAnalysisData === undefined ? false : true}
+            ></Button>
+
+            <Button
+              title="Enter Pushing Schedule"
+              buttonStyle={{ width: wp(70), height: hp(7) }}
+              radius={50}
+              color="#50C4ED"
+              titleStyle={{
+                color: "black",
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+              }}
+              onPress={() => navigation.navigate("PushingSchedule")}
+              disabled={pushingScheduleData === undefined ? false : true}
+            ></Button>
+
+            <TouchableOpacity
+              style={{
+                height: hp(7),
+                width: wp(40),
+                backgroundColor: "#fcbf49",
+                borderRadius: 25,
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: hp(5),
+              }}
+              onPress={() =>
+                navigation.navigate("Review", {
+                  date: currentDate,
+                  shift: currentShift,
+                })
+              }
+            >
+              <Text
+                style={{
+                  fontSize: hp(2.5),
+                  fontWeight: "bold",
+                  color: "white",
+                }}
+              >
+                Review
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={{
+                height: hp(7),
+                width: wp(70),
+                backgroundColor: "#fc5c65",
+                borderRadius: 25,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={handleFinalReport}
+            >
+              <Text
+                style={{
+                  fontSize: hp(2.5),
+                  fontWeight: "bold",
+                  color: "white",
+                }}
+              >
+                Send Final Report
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </View>
+    </>
   );
 }

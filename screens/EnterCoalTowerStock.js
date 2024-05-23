@@ -57,6 +57,9 @@ export default function EnterCoalTowerStock({ navigation, route }) {
       total_stock: totalStock,
     };
     setCoalTowerStockData(newValues);
+    setProgress(0);
+    setDoneScreen(true);
+    setProgress(1);
     /* setProgress(0);
     setDoneScreen(true);
     await axios
@@ -71,6 +74,7 @@ export default function EnterCoalTowerStock({ navigation, route }) {
         console.log(error);
       });*/
     resetForm();
+    setTimeout(() => navigation.goBack(), 1000);
   };
 
   return (

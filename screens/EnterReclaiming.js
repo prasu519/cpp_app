@@ -45,7 +45,7 @@ export default function EnterReclaiming({ navigation }) {
     getCoalNames();
   }, []);
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = (values) => {
     const reclaimRegex = /^[0-9]*$/;
     let coaltotal = 0;
 
@@ -115,7 +115,10 @@ export default function EnterReclaiming({ navigation }) {
       coal8name: coalNames.cn8 ? coalNames.cn8 : null,
       total_reclaiming: streamtotal,
     };
+    setProgress(0);
+    setDoneScreen(true);
     setReclaimingData(newValues);
+    setProgress(1);
     /*   setProgress(0);
     setDoneScreen(true);
  await axios
@@ -138,6 +141,7 @@ export default function EnterReclaiming({ navigation }) {
     values["cc49recl"] = "";
     values["cc50recl"] = "";
     values["cc126recl"] = "";
+    setTimeout(() => navigation.goBack(), 1000);
   };
 
   return (

@@ -1454,6 +1454,36 @@ export default function Review({ navigation }) {
                     setUpdateCoalAnalysisButtVisible(true);
                     return;
                   }
+                  if (item === "ci" && value > 80) {
+                    setCoalAnalysis({ ...coalAnalysis, [item]: value });
+                    alert("Crushing Index not more than 80%..");
+                    setUpdateCoalAnalysisButtVisible(true);
+                    return;
+                  }
+                  if (item === "ash" && value > 12) {
+                    setCoalAnalysis({ ...coalAnalysis, [item]: value });
+                    alert("Ash Index not more than 12..");
+                    setUpdateCoalAnalysisButtVisible(true);
+                    return;
+                  }
+                  if (item === "vm" && value > 30) {
+                    setCoalAnalysis({ ...coalAnalysis, [item]: value });
+                    alert("VM not more than 30..");
+                    setUpdateCoalAnalysisButtVisible(true);
+                    return;
+                  }
+                  if (item === "fc" && value > 70) {
+                    setCoalAnalysis({ ...coalAnalysis, [item]: value });
+                    alert("FC not more than 70..");
+                    setUpdateCoalAnalysisButtVisible(true);
+                    return;
+                  }
+                  if (item === "tm" && value > 12) {
+                    setCoalAnalysis({ ...coalAnalysis, [item]: value });
+                    alert("TM not more than 12..");
+                    setUpdateCoalAnalysisButtVisible(true);
+                    return;
+                  }
                   setCoalAnalysis({ ...coalAnalysis, [item]: value });
                   setUpdateCoalAnalysisButtVisible(false);
                 }}

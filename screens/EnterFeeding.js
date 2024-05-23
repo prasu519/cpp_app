@@ -70,7 +70,11 @@ export default function EnterFeeding({ navigation, route }) {
       ...values,
       total_feeding: totalFeeding,
     };
+
+    setProgress(0);
+    setDoneScreen(true);
     setFeedingData(newValues);
+    setProgress(1);
     /*   setProgress(0);
     setDoneScreen(true);
 
@@ -86,6 +90,7 @@ export default function EnterFeeding({ navigation, route }) {
       });
 */
     resetForm();
+    setTimeout(() => navigation.goBack(), 1000);
   };
 
   return (

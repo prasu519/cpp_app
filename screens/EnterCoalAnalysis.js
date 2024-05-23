@@ -27,7 +27,7 @@ const validationSchema = Yup.object().shape({
   ash: Yup.number()
     .typeError("Ash must be number")
     .required()
-    .max(13)
+    .max(12)
     .label("Ash"),
   vm: Yup.number()
     .typeError("Volatile Matter must be number")
@@ -42,7 +42,7 @@ const validationSchema = Yup.object().shape({
   tm: Yup.number()
     .typeError("Total moisture must be number")
     .required()
-    .max(13)
+    .max(12)
     .label("Total moisture"),
 });
 
@@ -61,7 +61,10 @@ export default function EnterCoalAnalysis({ navigation, route }) {
       alert("Total of Ash,Vm,Fc should be 100..");
       return;
     }
+    setProgress(0);
+    setDoneScreen(true);
     setCoalAnalysisData(values);
+    setProgress(0);
     /*  setProgress(0);
     setDoneScreen(true);
     await axios
@@ -75,6 +78,7 @@ export default function EnterCoalAnalysis({ navigation, route }) {
         alert("Could not save data..");
       });*/
     resetForm();
+    setTimeout(() => navigation.goBack(), 1000);
   };
 
   return (

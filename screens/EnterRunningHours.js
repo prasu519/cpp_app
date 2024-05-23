@@ -39,7 +39,10 @@ export default function EnterRunningHours({ navigation }) {
       alert("Make sure to enter all values..");
       return;
     }
+    setProgress(0);
+    setDoneScreen(true);
     setRunningHoursData(values);
+    setProgress(1);
     /* setProgress(0);
     setDoneScreen(true);
     await axios
@@ -53,6 +56,7 @@ export default function EnterRunningHours({ navigation }) {
         alert("Could not save data..");
       });*/
     resetForm();
+    setTimeout(() => navigation.goBack(), 1000);
   };
 
   return (
@@ -195,7 +199,7 @@ export default function EnterRunningHours({ navigation }) {
                           justifyContent: "center",
                         }}
                       >
-                        <Text style={{ fontSize: hp(3), fontWeight: "bold" }}>
+                        <Text style={{ fontSize: hp(2.5), fontWeight: "bold" }}>
                           {"Strm-" + item}
                         </Text>
                       </View>
@@ -276,7 +280,7 @@ export default function EnterRunningHours({ navigation }) {
                       >
                         <Text
                           style={{
-                            fontSize: hp(3),
+                            fontSize: hp(2.5),
                             fontWeight: "bold",
                           }}
                         >
