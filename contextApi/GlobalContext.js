@@ -5,6 +5,7 @@ export const GlobalContext = createContext();
 
 // Create the provider component
 export const GlobalProvider = ({ children }) => {
+  const [credentials, setCredentials] = useState({ name: "", empnum: "" });
   const [reclaimingData, setReclaimingData] = useState();
   const [feedingData, setFeedingData] = useState();
   const [runningHoursData, setRunningHoursData] = useState();
@@ -17,6 +18,8 @@ export const GlobalProvider = ({ children }) => {
   return (
     <GlobalContext.Provider
       value={{
+        credentials,
+        setCredentials,
         reclaimingData,
         setReclaimingData,
         feedingData,

@@ -18,6 +18,7 @@ export default function ShiftReportEntry({ navigation }) {
   const currentDate = new Date().toISOString().split("T")[0];
   const currentShift = shift(new Date().getHours());
   const {
+    credentials,
     reclaimingData,
     feedingData,
     runningHoursData,
@@ -36,6 +37,17 @@ export default function ShiftReportEntry({ navigation }) {
   let coalTowerStockStatus = false;
   let coalAnalysisStatus = false;
   let pushingScheduleStatus = false;
+  let credentialsStatus = false;
+
+  let name = credentials.name;
+  let empnum = credentials.empnum;
+  let shiftReportEnteredBy = {
+    date: currentDate,
+    shift: currentShift,
+    name: name,
+    empnum: empnum,
+    reportStatus: 1,
+  };
 
   const handleFinalReport = async () => {
     setProgress(0);
@@ -46,6 +58,7 @@ export default function ShiftReportEntry({ navigation }) {
       .then(function (response) {
         reclaimingStatus = true;
         console.log(response.data);
+        setProgress(0.1);
       })
       .catch(function (error) {
         reclaimingStatus = false;
@@ -58,6 +71,7 @@ export default function ShiftReportEntry({ navigation }) {
       .then((response) => {
         feedingStatus = true;
         console.log(response.data);
+        setProgress(0.2);
       })
       .catch((error) => {
         feedingStatus = false;
@@ -70,6 +84,7 @@ export default function ShiftReportEntry({ navigation }) {
       .then((responce) => {
         runningHoursStatus = true;
         console.log(responce.data);
+        setProgress(0.3);
       })
       .catch((error) => {
         runningHoursStatus = false;
@@ -84,6 +99,7 @@ export default function ShiftReportEntry({ navigation }) {
         .then((response) => {
           shiftDelaysStatus = true;
           console.log(response.data);
+          setProgress(0.4);
         })
         .catch((error) => {
           shiftDelaysStatus = false;
@@ -97,6 +113,7 @@ export default function ShiftReportEntry({ navigation }) {
       .then(function (response) {
         mbTopStockStatus = true;
         console.log(response.data);
+        setProgress(0.5);
       })
       .catch(function (error) {
         mbTopStockStatus = false;
@@ -109,6 +126,7 @@ export default function ShiftReportEntry({ navigation }) {
       .then((response) => {
         coalTowerStockStatus = true;
         console.log(response.data);
+        setProgress(0.6);
       })
       .catch((error) => {
         coalTowerStockStatus = false;
@@ -121,6 +139,7 @@ export default function ShiftReportEntry({ navigation }) {
       .then((response) => {
         coalAnalysisStatus = true;
         console.log(response.data);
+        setProgress(0.7);
       })
       .catch((error) => {
         coalAnalysisStatus = false;
@@ -133,13 +152,41 @@ export default function ShiftReportEntry({ navigation }) {
       .then((response) => {
         pushingScheduleStatus = true;
         console.log(response.data);
+        setProgress(0.8);
       })
       .catch((error) => {
         pushingScheduleStatus = false;
         console.log(error);
         alert("Could not save Pushing schedule data..");
       });
+
+    if (
+      reclaimingStatus &&
+      feedingStatus &&
+      runningHoursStatus &&
+      shiftDelaysStatus &&
+      mbTopStockStatus &&
+      coalTowerStockStatus &&
+      coalAnalysisStatus &&
+      pushingScheduleStatus
+    ) {
+      await axios
+        .post(BaseUrl + "/shiftreportenteredby", shiftReportEnteredBy)
+        .then(function (response) {
+          credentialsStatus = true;
+          console.log(response.data);
+          setProgress(0.9);
+        })
+        .catch(function (error) {
+          credentialsStatus = false;
+          console.log(error);
+          alert("Could not save Shift report entered by data..");
+        });
+    }
     setProgress(1);
+    setTimeout(() => {
+      navigation.navigate("Home");
+    }, 2000);
   };
 
   return (
@@ -155,7 +202,7 @@ export default function ShiftReportEntry({ navigation }) {
           style={{
             position: "absolute",
             zIndex: 1,
-            height: hp(20),
+            height: hp(25),
             width: wp(100),
             backgroundColor: "#2FF3E0",
             borderBottomLeftRadius: hp(8),
@@ -218,6 +265,34 @@ export default function ShiftReportEntry({ navigation }) {
               SHIFT : {currentShift}
             </Text>
           </View>
+          <View
+            style={{
+              flexDirection: "row",
+              gap: hp(10),
+              paddingTop: hp(3),
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "#DF362D",
+              }}
+            >
+              {name}
+            </Text>
+            <Text
+              style={{
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "#DF362D",
+              }}
+            >
+              {empnum}
+            </Text>
+          </View>
         </View>
         <ScrollView>
           <View
@@ -225,7 +300,7 @@ export default function ShiftReportEntry({ navigation }) {
               position: "relative",
               zIndex: 1,
               alignItems: "center",
-              marginTop: hp(25),
+              marginTop: hp(30),
               gap: hp(4),
               marginBottom: hp(5),
             }}
@@ -358,6 +433,7 @@ export default function ShiftReportEntry({ navigation }) {
                   shift: currentShift,
                 })
               }
+              disabled={credentialsStatus}
             >
               <Text
                 style={{
@@ -380,6 +456,7 @@ export default function ShiftReportEntry({ navigation }) {
                 justifyContent: "center",
               }}
               onPress={handleFinalReport}
+              disabled={credentialsStatus}
             >
               <Text
                 style={{

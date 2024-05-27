@@ -16,6 +16,7 @@ import EnterCoalAnalysis from "../screens/EnterCoalAnalysis";
 import PushingSchedule from "../screens/PushingSchedule";
 import EnterCoalTowerStock from "../screens/EnterCoalTowerStock";
 import ViewReports from "../screens/ViewReports";
+import ShiftReportAuthentication from "../screens/ShiftReportAuthentication";
 
 const stack = createNativeStackNavigator();
 
@@ -27,6 +28,10 @@ function AppNavigator(props) {
     >
       <stack.Screen name="Home" component={Home} />
       <stack.Screen name="DoneScreen" component={DoneScreen} />
+      <stack.Screen
+        name="ShiftReportAuthentication"
+        component={ShiftReportAuthentication}
+      />
       <stack.Screen name="ShiftReportEntry" component={ShiftReportEntry} />
       <stack.Screen name="EnterReclaiming" component={EnterReclaiming} />
       <stack.Screen name="EnterFeeding" component={EnterFeeding} />

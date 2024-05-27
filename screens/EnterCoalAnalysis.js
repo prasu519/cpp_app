@@ -64,7 +64,7 @@ export default function EnterCoalAnalysis({ navigation, route }) {
     setProgress(0);
     setDoneScreen(true);
     setCoalAnalysisData(values);
-    setProgress(0);
+    setProgress(1);
     /*  setProgress(0);
     setDoneScreen(true);
     await axios

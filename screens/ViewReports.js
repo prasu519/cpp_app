@@ -1,4 +1,10 @@
-import { View, ScrollView } from "react-native";
+import {
+  View,
+  ScrollView,
+  PermissionsAndroid,
+  Platform,
+  Alert,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState, useEffect } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -12,6 +18,11 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import RNHTMLtoPDF from "react-native-html-to-pdf";
+import * as MediaLibrary from "expo-media-library";
+import * as Print from "expo-print";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 export default function ViewReports({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -43,6 +54,170 @@ export default function ViewReports({ navigation }) {
       setCoalCount(count);
     }
   }, [reclaiming]);
+
+  const generatePDF = async () => {
+    try {
+      const htmlContent = `
+        <html>
+          <body>
+          <div style="text-align:center; width: 300px;margin: 0 auto; border- style: dotted;">
+            <h1 style="text-decoration: underline;">Shift Report</h1>
+            <div style="display: flex; justify-content: space-between; margin: 0 10px; flex-direction: row;">
+              <span style="font-size: 20px; font-weight:bold; text-align:left; margin-left:10px">
+                  Date : ${selectedDate.toISOString().split("T")[0]}
+              </span>
+              <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
+                  Shift : ${selectedShift}
+              </span>
+            </div>
+          </div>
+          <hr>
+          <div style="text-align:center; width: 300px;margin: 0 auto; border- style: dotted;">
+            <h2 style="text-decoration: underline;">Reclaiming Data</h2>
+            ${Array.from(
+              { length: coalCount },
+              (_, index) => `
+              <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                  ${reclaiming["coal" + (index + 1) + "name"].toUpperCase()}
+                </span>
+                <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                  ${
+                    reclaiming["coal" + (index + 1) + "recl"] === "0"
+                      ? "000"
+                      : reclaiming["coal" + (index + 1) + "recl"]
+                  }
+                </span>
+              </div>
+            `
+            ).join("")}
+            <h3 style="text-decoration: underline;">Stream-wise Reclaiming</h3>
+            ${["cc49", "cc50", "cc126"]
+              .map(
+                (item, index) =>
+                  `
+              <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">${item.toUpperCase()}</span>
+                <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                  ${
+                    reclaiming[item + "recl"] === 0
+                      ? "000"
+                      : reclaiming[item + "recl"]
+                  }
+                </span> 
+              </div>
+            `
+              )
+              .join("")}
+              <h3 style="text-decoration: underline;">Total Reclaiming</h3>
+              <span style="font-size: 20px; font-weight:bold">${
+                reclaiming.total_reclaiming
+              }</span>
+              <h2 style="text-decoration: underline;">Total MB Top Stock</h3>
+              <span style="font-size: 30px; font-weight:bold">${
+                mbTopStock.total_stock
+              }</span>
+          </div>  
+          <hr>
+
+          <div style="text-align:center; width: 300px;margin: 0 auto; border- style: dotted;">
+            <h2 style="text-decoration: underline;">Feeding Data</h2>
+            ${["ct1", "ct2", "ct3"]
+              .map(
+                (item, index) =>
+                  `
+              <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                  ${item.toUpperCase()}
+                </span>
+                <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                  ${feeding[item] === 0 ? "000" : feeding[item]}
+                </span>
+              </div>
+            `
+              )
+              .join("")}
+            <h3 style="text-decoration: underline;">Stream-wise Feeding</h3>
+            ${["stream1", "stream1A"]
+              .map(
+                (item, index) =>
+                  `
+              <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">${item.toUpperCase()}</span>
+                <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                  ${feeding[item] === 0 ? "0000" : feeding[item]}
+                </span> 
+              </div>
+            `
+              )
+              .join("")}
+              <h3 style="text-decoration: underline;">Total Feeding</h3>
+              <span style="font-size: 20px; font-weight:bold">${
+                feeding.total_feeding
+              }</span>
+              <h2 style="text-decoration: underline;">Total Coal-Tower Stock</h3>
+              <span style="font-size: 30px; font-weight:bold">${
+                coalTowerStock.total_stock
+              }</span>
+          </div>  
+         <hr>
+        
+        </body>
+        </html>
+      `;
+
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      console.log("PDF generated at:", uri);
+
+      // Save the PDF to the file system
+      const fileUri = `${FileSystem.documentDirectory}sample.pdf`;
+      await FileSystem.moveAsync({
+        from: uri,
+        to: fileUri,
+      });
+      console.log("PDF saved at:", fileUri);
+
+      // Share the PDF
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri);
+      } else {
+        Alert.alert("PDF Generated", `PDF has been saved to: ${fileUri}`);
+      }
+    } catch (error) {
+      console.error("Error generating PDF", error);
+      Alert.alert("Error", "An error occurred while generating the PDF.");
+    }
+  };
+
+  const requestStoragePermission = async () => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      console.log("Permission status:", status);
+
+      if (status === "granted") {
+        console.log("Permission granted");
+        Alert.alert("Permission granted");
+        return true;
+      } else {
+        console.log("Permission denied");
+        Alert.alert(
+          "Permission Denied!",
+          "You need to give storage permission to download the file"
+        );
+        return false;
+      }
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  };
+
+  const handleGeneratePdf = async () => {
+    const permissionGranted = await requestStoragePermission();
+    if (permissionGranted) {
+      generatePDF();
+    }
+  };
 
   const handleDateChange = (event, date) => {
     setShowDatePicker(false);
@@ -684,6 +859,19 @@ export default function ViewReports({ navigation }) {
                 </View>
               )}
             </Card>
+            <View>
+              <Button
+                title="Generate PDF"
+                buttonStyle={{
+                  width: wp(50),
+                  borderRadius: 25,
+                  alignSelf: "center",
+                  margin: 10,
+                }}
+                onPress={handleGeneratePdf}
+              />
+              {/*data ? <Text>Data loaded</Text> : <Text>Loading data...</Text>*/}
+            </View>
           </View>
         )}
       </ScrollView>

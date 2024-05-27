@@ -56,9 +56,10 @@ export default function EnterCoalTowerStock({ navigation, route }) {
       ...values,
       total_stock: totalStock,
     };
-    setCoalTowerStockData(newValues);
+
     setProgress(0);
     setDoneScreen(true);
+    setCoalTowerStockData(newValues);
     setProgress(1);
     /* setProgress(0);
     setDoneScreen(true);
