@@ -1,11 +1,4 @@
-import {
-  View,
-  ScrollView,
-  FlatList,
-  Button,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import { View, ScrollView } from "react-native";
 import { Text } from "@rneui/themed";
 import React, { useEffect, useState, useContext } from "react";
 import { AntDesign } from "@expo/vector-icons";
@@ -23,6 +16,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
+import { FormatDate } from "../utils/FormatDate";
 
 export default function Review({ navigation }) {
   const [feeding, setFeeding] = useState();
@@ -84,10 +78,12 @@ export default function Review({ navigation }) {
     setCoalAnalysisData,
     pushingScheduleData,
     setPushingScheduleData,
+    globalDate,
+    globalShift,
   } = useContext(GlobalContext);
 
-  const currentDate = new Date().toISOString().split("T")[0];
-  const currentShift = shift(new Date().getHours());
+  const currentDate = new Date(globalDate).toISOString().split("T")[0];
+  const currentShift = globalShift; //shift(new Date().getHours());
 
   useEffect(() => {
     if (isLoaded) {
@@ -129,57 +125,21 @@ export default function Review({ navigation }) {
   };
 
   const getfeedingdata = async () => {
-    /* await axios
-      .get(BaseUrl + "/feeding", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-        },
-      })
-      .then((responce) => setFeeding(responce.data.data[0]))
-      .catch((error) => console.log(error));*/
     setFeeding(feedingData);
     setIsLoaded(false);
   };
 
   const getReclaimingData = async () => {
-    /* await axios
-      .get(BaseUrl + "/reclaiming", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-        },
-      })
-      .then((responce) => setReclaiming(responce.data.data[0]))
-      .catch((error) => console.log(error));*/
     setReclaiming(reclaimingData);
     setIsLoaded(false);
   };
 
   const getRunningHoursdata = async () => {
-    /* await axios
-      .get(BaseUrl + "/runningHours", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-        },
-      })
-      .then((responce) => setRunningHours(responce.data.data[0]))
-      .catch((error) => console.log(error));*/
     setRunningHours(runningHoursData);
     setIsLoaded(false);
   };
 
   const getShiftDelayData = async () => {
-    /*  await axios
-      .get(BaseUrl + "/shiftDelay", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-        },
-      })
-      .then((responce) => setShiftDelays(responce.data.data))
-      .catch((error) => console.log(error));*/
     setShiftDelays(shiftDelaysData);
     setIsLoaded(false);
   };
@@ -225,58 +185,22 @@ export default function Review({ navigation }) {
   };
 
   const getMbTopCoalData = async () => {
-    /* await axios
-      .get(BaseUrl + "/mbtopStock", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-        },
-      })
-      .then((responce) => setMbtopCoalData(responce.data.data[0]))
-      .catch((error) => console.log(error));*/
     setMbtopCoalData(mbTopStockData);
     setIsLoaded(false);
   };
 
   const getCoalTowerStock = async () => {
-    /*await axios
-      .get(BaseUrl + "/coaltowerstock", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-        },
-      })
-      .then((responce) => setCoalTowerStock(responce.data.data[0]))
-      .catch((error) => console.log(error));*/
     setCoalTowerStock(coalTowerStockData);
 
     setIsLoaded(false);
   };
 
   const getCoalAnalysisData = async () => {
-    /* await axios
-      .get(BaseUrl + "/coalAnalysis", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-        },
-      })
-      .then((responce) => setCoalAnalysis(responce.data.data[0]))
-      .catch((error) => console.log(error));*/
     setCoalAnalysis(coalAnalysisData);
     setIsLoaded(false);
   };
 
   const getPushingScheduleData = async () => {
-    /* await axios
-      .get(BaseUrl + "/pushings", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-        },
-      })
-      .then((responce) => setPushingSchedule(responce.data.data[0]))
-      .catch((error) => console.log(error));*/
     setPushingSchedule(pushingScheduleData);
     setIsLoaded(false);
   };
@@ -293,10 +217,7 @@ export default function Review({ navigation }) {
       ...feeding,
       total_feeding: totalFeeding,
     };
-    /* await axios
-      .put(BaseUrl + "/feeding", updatedFeeding)
-      .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));*/
+
     setFeedingData(updatedFeeding);
 
     setEditFeeding(false);
@@ -308,10 +229,14 @@ export default function Review({ navigation }) {
       parseInt(reclaiming.cc50recl) +
       parseInt(reclaiming.cc126recl);
     let coaltotal = 0;
-    for (let i = 1; i <= reclaimingCount; i++) {
-      coaltotal = coaltotal + parseInt(reclaiming["coal" + i + "recl"]);
+    for (let i = 1; i <= 8; i++) {
+      coaltotal =
+        coaltotal +
+        parseInt(reclaiming["coal" + i + "recl"]) +
+        parseInt(reclaiming["excoal" + i + "recl"]);
     }
     if (coaltotal !== streamtotal) {
+      console.log(coaltotal, streamtotal);
       alert("CoalTotal and StreamTotal should be equal..");
       return;
     }
@@ -319,23 +244,13 @@ export default function Review({ navigation }) {
       ...reclaiming,
       total_reclaiming: streamtotal,
     };
-    /*  await axios
-      .put(BaseUrl + "/reclaiming", updatedReclaiming)
-      .then(function (response) {
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });*/
+
     setReclaimingData(updatedReclaiming);
+    console.log(reclaimingData);
     setEditReclaiming(false);
   };
 
   const onUpdateRunningHours = async () => {
-    /* await axios
-      .put(BaseUrl + "/runningHours", runningHours)
-      .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));*/
     setRunningHoursData(runningHours);
     setEditRunningHours(false);
   };
@@ -411,16 +326,6 @@ export default function Review({ navigation }) {
       (sd) => sd.delayNumber != deleteDelayNumber
     );
     setShiftDelaysData(shiftDelaysNew);
-    /* await axios
-      .delete(BaseUrl + "/shiftDelay", {
-        params: {
-          date: currentDate,
-          shift: currentShift,
-          delayNumber: deleteDelayNumber,
-        },
-      })
-      .then((responce) => console.log(responce.data))
-      .catch((error) => console.log(error));*/
   };
 
   const onUpdateShiftDelays = async () => {
@@ -436,15 +341,7 @@ export default function Review({ navigation }) {
         reason: delayComponent["desc" + i],
       };
     }
-    /* for (let i = 0; i < count; i++) {
-      await axios
-        .put(BaseUrl + "/shiftDelay", shiftDelays[i])
-        .then((response) => console.log(response.data))
-        .catch((error) => {
-          setDoneScreen(false);
-          alert("Could not save data..");
-        });
-    }*/
+
     setShiftDelaysData(shiftDelays);
     setEditShiftDelays(false);
   };
@@ -456,13 +353,7 @@ export default function Review({ navigation }) {
         totalMbtopStock + parseInt(mbtopCoalData["coal" + (i + 1) + "stock"]);
     }
     const newMbtopData = { ...mbtopCoalData, total_stock: totalMbtopStock };
-    /*  await axios
-      .put(BaseUrl + "/mbtopStock", newMbtopData)
-      .then((response) => console.log(response.data))
-      .catch((error) => {
-        setDoneScreen(false);
-        alert("Could not update data..");
-      });*/
+
     setMbTopStockData(newMbtopData);
     setEditMbtopStock(false);
   };
@@ -477,10 +368,7 @@ export default function Review({ navigation }) {
       ...coalTowerStock,
       total_stock: totalCoalTowerStock,
     };
-    /* await axios
-      .put(BaseUrl + "/coaltowerstock", updatedCoalTowerStock)
-      .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));*/
+
     setCoalTowerStockData(updatedCoalTowerStock);
 
     setEditCoalTowerStock(false);
@@ -495,10 +383,7 @@ export default function Review({ navigation }) {
       alert("Total of Ash,Vm,Fc should be 100..");
       return;
     }
-    /* await axios
-      .put(BaseUrl + "/coalAnalysis", coalAnalysis)
-      .then((response) => console.log(response.data))
-      .catch((error) => alert("Could not save data.."));*/
+
     setCoalAnalysisData(coalAnalysis);
     setEditCoalAnalysis(false);
   };
@@ -512,12 +397,7 @@ export default function Review({ navigation }) {
       parseInt(pushingSchedule.bat4) +
       parseInt(pushingSchedule.bat5);
     let newValues = { ...pushingSchedule, total_pushings: ptotal.toString() };
-    /*  await axios
-      .put(BaseUrl + "/pushings", newValues)
-      .then((response) => console.log(response.data))
-      .catch((error) => {
-        alert("Could not save data..");
-      });*/
+
     setPushingScheduleData(newValues);
     setEditPushingSchedule(false);
   };
@@ -616,7 +496,7 @@ export default function Review({ navigation }) {
                 color: "#DF362D",
               }}
             >
-              DATE : {currentDate}
+              DATE : {FormatDate(globalDate)}
             </Text>
             <Text
               style={{
@@ -888,6 +768,38 @@ export default function Review({ navigation }) {
                 />
               )
             )}
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
+              reclaiming["excoal" + item + "name"] === null ||
+              reclaiming["excoal" + item + "recl"] === 0 ? null : (
+                <AppTextBox
+                  key={index}
+                  label={reclaiming["excoal" + item + "name"]}
+                  labelcolor="#ffd900"
+                  value={reclaiming["excoal" + item + "recl"].toString()}
+                  onChangeText={(newValue) => {
+                    if (newValue === "") {
+                      setUpdateReclButtVisible(true);
+                      setReclaiming({
+                        ...reclaiming,
+                        ["excoal" + item + "recl"]: "",
+                      });
+                      return;
+                    }
+                    if (!/^[0-9]*$/.test(newValue)) {
+                      alert("Enter Numbers only...");
+                      return;
+                    } else {
+                      setUpdateReclButtVisible(false);
+                      setReclaiming({
+                        ...reclaiming,
+                        ["excoal" + item + "recl"]: newValue,
+                      });
+                    }
+                  }}
+                  editable={editReclaiming}
+                />
+              )
+            )}
             {["cc49", "cc50", "cc126"].map((item, index) => (
               <AppTextBox
                 key={index}
@@ -1000,7 +912,6 @@ export default function Review({ navigation }) {
                         ...runningHours,
                         ["str" + item + "hrs"]: newValue,
                       });
-                      // checkIsRunningHoursNull(newValue, "str" + item + "hrs");
                     }}
                     enabled={editRunningHours}
                   />
@@ -1016,7 +927,6 @@ export default function Review({ navigation }) {
                         ...runningHours,
                         ["str" + item + "min"]: newValue,
                       });
-                      // checkIsRunningHoursNull(newValue, "str" + item + "min");
                     }}
                     enabled={editRunningHours}
                   />

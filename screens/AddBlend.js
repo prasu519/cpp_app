@@ -1,7 +1,8 @@
 import { View, Text, TextInput, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
+import moment from "moment-timezone";
 
 import FieldSet from "react-native-fieldset";
 import { Formik } from "formik";
@@ -15,18 +16,26 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { FormatDate } from "../utils/FormatDate";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 export default function AddBlend({ navigation }) {
   const [count, setCount] = useState(0);
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const { credentials, setCredentials } = useContext(GlobalContext);
 
-  const currentDate = new Date().toISOString().split("T")[0];
+  const displayDate = new Date();
+  /* let blendDate = moment()
+    .tz("Asia/Kolkata")
+    .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");*/
+  const blendDate = new Date().toISOString().split("T")[0];
+
   const currentShift = shift(new Date().getHours());
 
   const handleCount = (value) => {
     setCount(parseInt(value));
-    console.log(currentDate);
+    //console.log(currentDate);
   };
 
   const DisplayBlendForm = (handleChange) => {
@@ -45,12 +54,12 @@ export default function AddBlend({ navigation }) {
           >
             <Text
               style={{
-                height: hp(7),
+                height: hp(5),
                 width: wp(30),
                 borderRadius: 10,
                 textAlign: "center",
                 textAlignVertical: "center",
-                fontSize: hp(4),
+                fontSize: hp(3),
                 fontWeight: "bold",
                 backgroundColor: "orange",
               }}
@@ -61,7 +70,7 @@ export default function AddBlend({ navigation }) {
               style={{
                 flex: 1,
                 flexDirection: "row",
-                height: hp(8),
+                height: hp(10),
                 borderRadius: 25,
                 alignItems: "center",
                 justifyContent: "flex-end",
@@ -71,12 +80,12 @@ export default function AddBlend({ navigation }) {
               <TextInput
                 style={{
                   backgroundColor: "white",
-                  height: 60,
+                  height: hp(6),
                   width: wp(35),
                   borderRadius: 10,
                   textAlign: "center",
                   textAlignVertical: "center",
-                  fontSize: hp(4),
+                  fontSize: hp(3),
                   borderWidth: 1,
                 }}
                 placeholder="Name"
@@ -150,13 +159,15 @@ export default function AddBlend({ navigation }) {
         alert("Could not save data..");
       });
     setCount(0);
+    console.log(finalValues);
   };
 
   return (
     <Formik
       initialValues={{
-        date: currentDate,
+        date: blendDate,
         shift: currentShift,
+        empnum: credentials.empnum,
         total: count,
       }}
       onSubmit={handleSubmit}
@@ -173,7 +184,7 @@ export default function AddBlend({ navigation }) {
               style={{
                 position: "absolute",
                 zIndex: 1,
-                height: hp(20),
+                height: hp(25),
                 width: wp(100),
                 backgroundColor: "#2FF3E0",
                 borderBottomLeftRadius: hp(8),
@@ -224,7 +235,7 @@ export default function AddBlend({ navigation }) {
                     color: "#DF362D",
                   }}
                 >
-                  DATE : {currentDate}
+                  DATE : {FormatDate(displayDate)}
                 </Text>
                 <Text
                   style={{
@@ -236,12 +247,32 @@ export default function AddBlend({ navigation }) {
                   SHIFT : {currentShift}
                 </Text>
               </View>
+              <View
+                style={{
+                  height: hp(3),
+                  width: wp(60),
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  marginTop: hp(2),
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: hp(2.5),
+                    fontWeight: "bold",
+                    color: "#DF362D",
+                  }}
+                >
+                  Emp No : {credentials.empnum}
+                </Text>
+              </View>
             </View>
             <ScrollView
               style={{
                 position: "relative",
                 zIndex: 1,
-                marginTop: hp(20),
+                marginTop: hp(26),
                 padding: hp(2),
               }}
             >
@@ -254,13 +285,13 @@ export default function AddBlend({ navigation }) {
                   style={{
                     flexDirection: "row",
                     justifyContent: "center",
-                    padding: 5,
                     gap: 20,
-                    height: 70,
+                    height: hp(9),
                     width: "100%",
                     backgroundColor: "#4ecdc4",
                     borderRadius: 25,
                     alignItems: "center",
+                    marginBottom: hp(2),
                   }}
                 >
                   <Text
@@ -277,6 +308,7 @@ export default function AddBlend({ navigation }) {
                     id="coalCount"
                     style={{
                       width: 100,
+
                       backgroundColor: "white",
                     }}
                     mode="dropdown"
@@ -288,7 +320,7 @@ export default function AddBlend({ navigation }) {
                         key={number}
                         label={number.toString()}
                         value={number}
-                        style={{ fontSize: 18 }}
+                        style={{ fontSize: 15 }}
                       />
                     ))}
                   </Picker>
@@ -296,11 +328,9 @@ export default function AddBlend({ navigation }) {
                 {count === 0 ? null : (
                   <>
                     <FieldSet label="New Blend">
-                      <>
-                        {DisplayBlendForm(handleChange)}
-                        <AppFormButton buttonText="Add New Blend" />
-                      </>
+                      <>{DisplayBlendForm(handleChange)}</>
                     </FieldSet>
+                    <AppFormButton buttonText="Add New Blend" />
                   </>
                 )}
               </View>

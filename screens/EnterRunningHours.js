@@ -4,7 +4,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { Formik } from "formik";
 import AppDropdown from "../components/AppDropdown";
 import AppFormButton from "../components/AppFormButton";
-import axios from "axios";
+
 import DoneScreen from "./DoneScreen";
 import shift from "../utils/Shift";
 import FieldSet from "react-native-fieldset";
@@ -13,13 +13,16 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
+import { FormatDate } from "../utils/FormatDate";
 
 export default function EnterRunningHours({ navigation }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
-  const currentDate = new Date().toISOString().split("T")[0];
-  const currentShift = shift(new Date().getHours());
-  const { runningHoursData, setRunningHoursData } = useContext(GlobalContext);
+  const { runningHoursData, setRunningHoursData, globalDate, globalShift } =
+    useContext(GlobalContext);
+
+  const currentDate = new Date(globalDate).toISOString().split("T")[0];
+  const currentShift = globalShift; //shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
     if (
@@ -43,18 +46,7 @@ export default function EnterRunningHours({ navigation }) {
     setDoneScreen(true);
     setRunningHoursData(values);
     setProgress(1);
-    /* setProgress(0);
-    setDoneScreen(true);
-    await axios
-      .post(BaseUrl + "/runningHours", values, {
-        onUploadProgress: (progress) =>
-          setProgress(progress.loaded / progress.total),
-      })
-      .then((responce) => console.log(responce.data))
-      .catch((error) => {
-        setDoneScreen(false);
-        alert("Could not save data..");
-      });*/
+
     resetForm();
     setTimeout(() => navigation.goBack(), 1000);
   };
@@ -142,7 +134,7 @@ export default function EnterRunningHours({ navigation }) {
                     color: "#DF362D",
                   }}
                 >
-                  DATE : {currentDate}
+                  DATE : {FormatDate(globalDate)}
                 </Text>
                 <Text
                   style={{
@@ -228,7 +220,6 @@ export default function EnterRunningHours({ navigation }) {
                           ]}
                           selectedValue={values["str" + item + "hrs"]}
                           onValueChange={handleChange("str" + item + "hrs")}
-                          // onBlur={() => setFieldTouched("str"+item+"hrs")}
                         />
                         <Text style={{ fontWeight: "900" }}>:</Text>
                         <AppDropdown
@@ -236,7 +227,6 @@ export default function EnterRunningHours({ navigation }) {
                           items={["", "00", "10", "20", "30", "40", "50"]}
                           selectedValue={values["str" + item + "min"]}
                           onValueChange={handleChange("str" + item + "min")}
-                          //onBlur={() => setFieldTouched("str2min")}
                         />
                       </View>
                     </View>
@@ -312,7 +302,6 @@ export default function EnterRunningHours({ navigation }) {
                           ]}
                           selectedValue={values["cc" + item + "hrs"]}
                           onValueChange={handleChange("cc" + item + "hrs")}
-                          // onBlur={() => setFieldTouched("str"+item+"hrs")}
                         />
                         <Text style={{ fontWeight: "900" }}>:</Text>
                         <AppDropdown
@@ -320,7 +309,6 @@ export default function EnterRunningHours({ navigation }) {
                           items={["", "00", "10", "20", "30", "40", "50"]}
                           selectedValue={values["cc" + item + "min"]}
                           onValueChange={handleChange("cc" + item + "min")}
-                          //onBlur={() => setFieldTouched("str2min")}
                         />
                       </View>
                     </View>

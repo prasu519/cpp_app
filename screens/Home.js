@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import React, { useState, useContext, useEffect } from "react";
 import { Button, Text } from "@rneui/base";
 import {
@@ -9,16 +10,25 @@ import ShiftReportAuthentication from "./ShiftReportAuthentication";
 import { GlobalContext } from "../contextApi/GlobalContext";
 import axios from "axios";
 import shift from "../utils/Shift";
+import BlendAuthentication from "./BlendAuthentication";
 
 export default function Home({ navigation }) {
-  const { credentials, setCredentials } = useContext(GlobalContext);
   const [authModelVisible, setAuthModelVisible] = useState(false);
+  const [blendAuthModelVisible, setBlendAuthModelVisible] = useState(false);
   const [shiftReportEnteredBy, setShiftReportEnteredBy] = useState();
+  const {
+    credentials,
+    setCredentials,
+    globalDate,
+    setGlobalDate,
+    globalShift,
+    setGlobalShift,
+  } = useContext(GlobalContext);
 
-  const currentDate = new Date().toISOString().split("T")[0];
-  const currentShift = shift(new Date().getHours());
+  // const currentDate = new Date().toISOString().split("T")[0];
+  // const currentShift = shift(new Date().getHours());
 
-  useEffect(() => {
+  /* useEffect(() => {
     const getShiftReportEntryDetails = async () => {
       await axios
         .get(BaseUrl + "/shiftreportenteredby", {
@@ -31,30 +41,40 @@ export default function Home({ navigation }) {
         .catch((error) => console.log(error));
     };
     getShiftReportEntryDetails();
-  }, [handleEnterShiftReport]);
+  }, [handleEnterShiftReport]);*/
+
+  /* useFocusEffect(
+    React.useCallback(() => {
+      const getShiftReportEntryDetails = async () => {
+        await axios
+          .get(BaseUrl + "/shiftreportenteredby", {
+            params: {
+              date: currentDate,
+              shift: currentShift,
+            },
+          })
+          .then((responce) => setShiftReportEnteredBy(responce.data.data[0]))
+          .catch((error) => console.log(error));
+      };
+      getShiftReportEntryDetails();
+    }, [])
+  );*/
 
   const handleAuthModelClose = () => {
     setAuthModelVisible(false);
   };
-
-  const handleEnterShiftReport = () => {
-    if (shiftReportEnteredBy === undefined) setAuthModelVisible(true);
-    else
-      alert(
-        currentDate +
-          " , " +
-          currentShift +
-          " - Shift Report has already been entered by [ " +
-          shiftReportEnteredBy.name +
-          " - " +
-          shiftReportEnteredBy.empnum +
-          " ]"
-      );
+  const handleBlendAuthClose = () => {
+    setBlendAuthModelVisible(false);
   };
 
-  const handleAuthModelSubmit = async (empnum) => {
-    // Handle the submitted input
-    console.log("Submitted input:", empnum);
+  const handleEnterShiftReport = () => {
+    setAuthModelVisible(true);
+  };
+  const handleEnterBlend = () => {
+    setBlendAuthModelVisible(true);
+  };
+
+  const handleBlendAuthModelSubmit = async (empnum) => {
     await axios
       .get(BaseUrl + "/employedetails", {
         params: {
@@ -64,12 +84,32 @@ export default function Home({ navigation }) {
       .then((responce) => {
         if (responce.data.data[0]) {
           setCredentials(responce.data.data[0]);
-          console.log(responce.data.data[0]);
-          navigation.navigate("ShiftReportEntry");
+
+          navigation.navigate("AddBlend");
         } else alert("Wrong Employee Number..");
       })
       .catch((error) => console.log(error));
   };
+
+  const handleAuthModelSubmit = async (empnum, selectedDate, selectedShift) => {
+    await axios
+      .get(BaseUrl + "/employedetails", {
+        params: {
+          empnum: empnum,
+        },
+      })
+      .then((responce) => {
+        if (responce.data.data[0]) {
+          setCredentials(responce.data.data[0]);
+
+          navigation.navigate("ShiftReportEntry");
+        } else alert("Wrong Employee Number..");
+      })
+      .catch((error) => console.log(error));
+    setGlobalDate(selectedDate);
+    setGlobalShift(selectedShift);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -116,8 +156,13 @@ export default function Home({ navigation }) {
           titleStyle={{ fontSize: 25, color: "white" }}
           radius={25}
           color="#FF8080"
-          onPress={() => navigation.navigate("AddBlend")}
+          onPress={handleEnterBlend} //{() => navigation.navigate("AddBlend")}
         ></Button>
+        <BlendAuthentication
+          onClose={handleBlendAuthClose}
+          visible={blendAuthModelVisible}
+          onSubmit={handleBlendAuthModelSubmit}
+        />
         <Button
           title={"View Reports"}
           buttonStyle={{ width: 200, height: 100 }}

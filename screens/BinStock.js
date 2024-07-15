@@ -14,16 +14,19 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
+import { FormatDate } from "../utils/FormatDate";
 
 export default function BinStock({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
   const [count, setCount] = useState();
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
-  const currentDate = new Date().toISOString().split("T")[0];
-  const { mbTopStockData, setMbTopStockData } = useContext(GlobalContext);
+  const { mbTopStockData, setMbTopStockData, globalDate, globalShift } =
+    useContext(GlobalContext);
 
-  const currentShift = shift(new Date().getHours());
+  const currentDate = new Date(globalDate).toISOString().split("T")[0];
+  const currentShift = globalShift; //shift(new Date().getHours());
+
   useEffect(() => {
     const getCoalNames = async () => {
       await axios
@@ -67,20 +70,6 @@ export default function BinStock({ navigation }) {
     setProgress(0);
     setDoneScreen(true);
     setProgress(1);
-    /* setProgress(0);
-    setDoneScreen(true);
-    await axios
-      .post(BaseUrl + "/mbtopStock", newValues, {
-        onUploadProgress: (progress) =>
-          setProgress(progress.loaded / progress.total),
-      })
-      .then(function (response) {
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        setDoneScreen(false);
-        alert("Could not save data..");
-      });*/
 
     for (let i = 1; i <= count; i++) {
       values["coal" + i + "stock"] = "";
@@ -176,7 +165,7 @@ export default function BinStock({ navigation }) {
                     color: "#DF362D",
                   }}
                 >
-                  DATE : {currentDate}
+                  DATE : {FormatDate(globalDate)}
                 </Text>
                 <Text
                   style={{

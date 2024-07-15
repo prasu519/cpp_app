@@ -5,10 +5,8 @@ import { AntDesign } from "@expo/vector-icons";
 import AppFormButton from "../components/AppFormButton";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import ErrorMessage from "../components/ErrorMessage";
 import shift from "../utils/Shift";
-import BaseUrl from "../config/BaseUrl";
 import DoneScreen from "./DoneScreen";
 import FieldSet from "react-native-fieldset";
 import {
@@ -16,6 +14,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
+import { FormatDate } from "../utils/FormatDate";
 
 const validationSchema = Yup.object().shape({
   ci: Yup.number()
@@ -49,10 +48,11 @@ const validationSchema = Yup.object().shape({
 export default function EnterCoalAnalysis({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
-  const { coalAnalysisData, setCoalAnalysisData } = useContext(GlobalContext);
+  const { coalAnalysisData, setCoalAnalysisData, globalDate, globalShift } =
+    useContext(GlobalContext);
 
-  const currentDate = new Date().toISOString().split("T")[0];
-  const currentShift = shift(new Date().getHours());
+  const currentDate = new Date(globalDate).toISOString().split("T")[0];
+  const currentShift = globalShift; //shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
     let totalOfAVF =
@@ -65,18 +65,7 @@ export default function EnterCoalAnalysis({ navigation, route }) {
     setDoneScreen(true);
     setCoalAnalysisData(values);
     setProgress(1);
-    /*  setProgress(0);
-    setDoneScreen(true);
-    await axios
-      .post(BaseUrl + "/coalAnalysis", values, {
-        onUploadProgress: (progress) =>
-          setProgress(progress.loaded / progress.total),
-      })
-      .then((response) => console.log(response.data))
-      .catch((error) => {
-        setDoneScreen(false);
-        alert("Could not save data..");
-      });*/
+
     resetForm();
     setTimeout(() => navigation.goBack(), 1000);
   };
@@ -165,7 +154,7 @@ export default function EnterCoalAnalysis({ navigation, route }) {
                     color: "#DF362D",
                   }}
                 >
-                  DATE : {currentDate}
+                  DATE : {FormatDate(globalDate)}
                 </Text>
                 <Text
                   style={{
@@ -200,7 +189,7 @@ export default function EnterCoalAnalysis({ navigation, route }) {
                   >
                     Enter Coal Analysis
                   </Text>
-                  {["ci", "ash", "fc", "vm", "tm"].map((item, index) => (
+                  {["ci", "ash", "vm", "fc", "tm"].map((item, index) => (
                     <View key={index}>
                       <AppTextBox
                         label={item}

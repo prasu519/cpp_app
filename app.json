@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "cpp_app",
+    "name": "Cpp-App",
     "slug": "cpp_app",
     "version": "1.0.0",
+    "description": "Everything about CPP",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -31,6 +32,12 @@
       "eas": {
         "projectId": "23718418-69cf-45da-b31c-77cb58c486c9"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/23718418-69cf-45da-b31c-77cb58c486c9"
     }
   }
 }

@@ -17,6 +17,8 @@ import PushingSchedule from "../screens/PushingSchedule";
 import EnterCoalTowerStock from "../screens/EnterCoalTowerStock";
 import ViewReports from "../screens/ViewReports";
 import ShiftReportAuthentication from "../screens/ShiftReportAuthentication";
+import ShiftReportView from "../screens/ShiftReportView";
+import DayReportView from "../screens/DayReportView";
 
 const stack = createNativeStackNavigator();
 
@@ -44,6 +46,8 @@ function AppNavigator(props) {
       <stack.Screen name="BinStock" component={BinStock} />
       <stack.Screen name="CoalTowerStock" component={EnterCoalTowerStock} />
       <stack.Screen name="ViewReports" component={ViewReports} />
+      <stack.Screen name="ShiftReportView" component={ShiftReportView} />
+      <stack.Screen name="DayReportView" component={DayReportView} />
     </stack.Navigator>
   );
 }

@@ -14,6 +14,8 @@ export const GlobalProvider = ({ children }) => {
   const [coalTowerStockData, setCoalTowerStockData] = useState();
   const [coalAnalysisData, setCoalAnalysisData] = useState();
   const [pushingScheduleData, setPushingScheduleData] = useState();
+  const [globalDate, setGlobalDate] = useState();
+  const [globalShift, setGlobalShift] = useState();
 
   return (
     <GlobalContext.Provider
@@ -36,6 +38,10 @@ export const GlobalProvider = ({ children }) => {
         setCoalAnalysisData,
         pushingScheduleData,
         setPushingScheduleData,
+        globalDate,
+        setGlobalDate,
+        globalShift,
+        setGlobalShift,
       }}
     >
       {children}

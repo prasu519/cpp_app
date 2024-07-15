@@ -10,24 +10,38 @@ import {
 import { GlobalContext } from "../contextApi/GlobalContext";
 import DoneScreen from "./DoneScreen";
 import axios from "axios";
+import { FormatDate } from "../utils/FormatDate";
 
 export default function ShiftReportEntry({ navigation }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const currentDate = new Date().toISOString().split("T")[0];
-  const currentShift = shift(new Date().getHours());
   const {
     credentials,
+    setCredentials,
     reclaimingData,
+    setReclaimingData,
     feedingData,
+    setFeedingData,
     runningHoursData,
+    setRunningHoursData,
     shiftDelaysData,
+    setShiftDelaysData,
     mbTopStockData,
+    setMbTopStockData,
     coalTowerStockData,
+    setCoalTowerStockData,
     coalAnalysisData,
+    setCoalAnalysisData,
     pushingScheduleData,
+    setPushingScheduleData,
+    globalDate,
+    globalShift,
   } = useContext(GlobalContext);
+
+  const currentDate =
+    globalDate && new Date(globalDate).toISOString().split("T")[0];
+  const currentShift = globalShift;
 
   let reclaimingStatus = false;
   let feedingStatus = false;
@@ -41,6 +55,7 @@ export default function ShiftReportEntry({ navigation }) {
 
   let name = credentials.name;
   let empnum = credentials.empnum;
+
   let shiftReportEnteredBy = {
     date: currentDate,
     shift: currentShift,
@@ -184,6 +199,14 @@ export default function ShiftReportEntry({ navigation }) {
         });
     }
     setProgress(1);
+    setReclaimingData(undefined);
+    setFeedingData(undefined);
+    setRunningHoursData(undefined);
+    setShiftDelaysData(undefined);
+    setMbTopStockData(undefined);
+    setCoalTowerStockData(undefined);
+    setCoalAnalysisData(undefined);
+    setPushingScheduleData(undefined);
     setTimeout(() => {
       navigation.navigate("Home");
     }, 2000);
@@ -222,7 +245,17 @@ export default function ShiftReportEntry({ navigation }) {
               name="leftcircle"
               size={40}
               color="black"
-              onPress={() => navigation.goBack()}
+              onPress={() => {
+                setReclaimingData(undefined);
+                setFeedingData(undefined);
+                setRunningHoursData(undefined);
+                setShiftDelaysData(undefined);
+                setMbTopStockData(undefined);
+                setCoalTowerStockData(undefined);
+                setCoalAnalysisData(undefined);
+                setPushingScheduleData(undefined);
+                navigation.goBack();
+              }}
             />
             <Text
               style={{
@@ -253,7 +286,7 @@ export default function ShiftReportEntry({ navigation }) {
                 color: "#DF362D",
               }}
             >
-              DATE : {currentDate}
+              DATE : {FormatDate(globalDate)}
             </Text>
             <Text
               style={{
@@ -262,7 +295,7 @@ export default function ShiftReportEntry({ navigation }) {
                 color: "#DF362D",
               }}
             >
-              SHIFT : {currentShift}
+              SHIFT : {globalShift}
             </Text>
           </View>
           <View

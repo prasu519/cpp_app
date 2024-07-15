@@ -13,6 +13,7 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
+import { FormatDate } from "../utils/FormatDate";
 
 export default function EnterDelays({ navigation }) {
   const [newDelayComponent, setNewDelayComponent] = useState([""]);
@@ -24,7 +25,11 @@ export default function EnterDelays({ navigation }) {
   const [progress, setProgress] = useState(0);
   const [allEntrys, setAllEntrys] = useState(false);
   const [oldDelays, setOldDelays] = useState([]);
-  const { shiftDelaysData, setShiftDelaysData } = useContext(GlobalContext);
+  const { shiftDelaysData, setShiftDelaysData, globalDate, globalShift } =
+    useContext(GlobalContext);
+
+  const currentDate = new Date(globalDate).toISOString().split("T")[0];
+  const currentShift = globalShift; //shift(new Date().getHours());
 
   useEffect(() => {
     getShiftDelayData();
@@ -49,9 +54,7 @@ export default function EnterDelays({ navigation }) {
     delete tempObject["tomin" + index];
     delete tempObject["desc" + index];
     setDelayComponent(tempObject);
-    if (count === 1) {
-      setButtonVisible(false);
-    }
+    setButtonVisible(false);
   };
 
   const getShiftDelayData = async () => {
@@ -71,6 +74,20 @@ export default function EnterDelays({ navigation }) {
       alert("Add atleat one Delay..");
       return;
     }
+
+    for (i = 0; i < count; i++) {
+      if (
+        delayComponent["fromhr" + i.toString()] === undefined ||
+        delayComponent["frommin" + i.toString()] === undefined ||
+        delayComponent["tohr" + i.toString()] === undefined ||
+        delayComponent["tomin" + i.toString()] === undefined ||
+        delayComponent["desc" + i.toString()] === undefined
+      ) {
+        alert("Make sure to Enter All Values before submitt..");
+        return;
+      }
+    }
+
     const totOldDelays = oldDelays.length;
     let nextDelayNo = 1;
     if (totOldDelays != 0) nextDelayNo = totOldDelays + 1;
@@ -89,28 +106,11 @@ export default function EnterDelays({ navigation }) {
     setProgress(0);
     setDoneScreen(true);
     setProgress(1);
-    /* setProgress(0);
-    setDoneScreen(true);
-    for (let i = 0; i < count; i++) {
-      await axios
-        .post(BaseUrl + "/shiftDelay", delays[i], {
-          onUploadProgress: (progress) =>
-            setProgress(progress.loaded / progress.total),
-        })
-        .then((response) => console.log(response.data))
-        .catch((error) => {
-          setDoneScreen(false);
-          alert("Could not save data..");
-        });
-    }*/
     setDelayComponent({});
     setNewDelayComponent([""]);
     setButtonVisible(true);
     setTimeout(() => navigation.goBack(), 1000);
   };
-
-  const currentDate = new Date().toISOString().split("T")[0];
-  const currentShift = shift(new Date().getHours());
 
   return (
     <>
@@ -175,7 +175,7 @@ export default function EnterDelays({ navigation }) {
                 color: "#DF362D",
               }}
             >
-              DATE : {currentDate}
+              DATE : {FormatDate(globalDate)}
             </Text>
             <Text
               style={{
@@ -382,7 +382,6 @@ export default function EnterDelays({ navigation }) {
               <AppButton
                 buttonName="Add New Delay"
                 buttonColour={buttonVisible ? "#C7B7A3" : "#87A922"}
-                //buttonColour="#87A922"
                 width="60%"
                 disabled={buttonVisible}
                 onPress={handleNewDelayComponent}
@@ -392,7 +391,6 @@ export default function EnterDelays({ navigation }) {
           <AppButton
             buttonName="Submit"
             buttonColour={buttonVisible ? "#C7B7A3" : "#fc5c65"}
-            //buttonColour="#fc5c65"
             disabled={buttonVisible}
             onPress={handleSubmit}
           />
