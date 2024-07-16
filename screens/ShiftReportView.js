@@ -341,9 +341,6 @@ export default function ShiftReportView({ navigation }) {
   };
 
   const handleSubmit = () => {
-    let day = selectedDate.getDate();
-    let month = selectedDate.getMonth() + 1;
-    let year = selectedDate.getFullYear();
     //let date = day + "/" + month + "/" + year;
     let date = selectedDate.toISOString().split("T")[0];
     if (selectedShift === "" || selectedShift === "Select") {
@@ -634,7 +631,7 @@ export default function ShiftReportView({ navigation }) {
         />
       </View>
       <ScrollView>
-        {loadCard && (
+        {loadCard && reclaiming && mbTopStock && coalCount > 0 && (
           <View style={{ marginTop: hp(1), marginBottom: hp(2) }}>
             <Card>
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>

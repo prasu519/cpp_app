@@ -25,41 +25,6 @@ export default function Home({ navigation }) {
     setGlobalShift,
   } = useContext(GlobalContext);
 
-  // const currentDate = new Date().toISOString().split("T")[0];
-  // const currentShift = shift(new Date().getHours());
-
-  /* useEffect(() => {
-    const getShiftReportEntryDetails = async () => {
-      await axios
-        .get(BaseUrl + "/shiftreportenteredby", {
-          params: {
-            date: currentDate,
-            shift: currentShift,
-          },
-        })
-        .then((responce) => setShiftReportEnteredBy(responce.data.data[0]))
-        .catch((error) => console.log(error));
-    };
-    getShiftReportEntryDetails();
-  }, [handleEnterShiftReport]);*/
-
-  /* useFocusEffect(
-    React.useCallback(() => {
-      const getShiftReportEntryDetails = async () => {
-        await axios
-          .get(BaseUrl + "/shiftreportenteredby", {
-            params: {
-              date: currentDate,
-              shift: currentShift,
-            },
-          })
-          .then((responce) => setShiftReportEnteredBy(responce.data.data[0]))
-          .catch((error) => console.log(error));
-      };
-      getShiftReportEntryDetails();
-    }, [])
-  );*/
-
   const handleAuthModelClose = () => {
     setAuthModelVisible(false);
   };

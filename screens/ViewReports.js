@@ -36,7 +36,7 @@ export default function ViewReports({ navigation }) {
             paddingLeft: hp(2),
             flexDirection: "row",
             alignItems: "center",
-            gap: wp(15),
+            gap: wp(18),
           }}
         >
           <AntDesign
@@ -64,12 +64,11 @@ export default function ViewReports({ navigation }) {
           zIndex: 1,
           marginTop: hp(15),
           padding: hp(2),
-          gap: wp(2),
+          gap: wp(5),
         }}
       >
         <Button
           title={"Shift Report"}
-          color={"#000080"}
           buttonStyle={{
             height: hp(5),
             width: wp(40),
@@ -87,7 +86,6 @@ export default function ViewReports({ navigation }) {
         />
         <Button
           title={"Day Report"}
-          color={"#000080"}
           buttonStyle={{
             height: hp(5),
             width: wp(40),
@@ -105,7 +103,6 @@ export default function ViewReports({ navigation }) {
         />
         <Button
           title={"Blend Report"}
-          color={"#000080"}
           buttonStyle={{
             height: hp(5),
             width: wp(40),
@@ -116,6 +113,9 @@ export default function ViewReports({ navigation }) {
           titleStyle={{
             fontSize: hp(2),
             fontWeight: "600",
+          }}
+          onPress={() => {
+            navigation.navigate("BlendReportView");
           }}
         />
       </View>

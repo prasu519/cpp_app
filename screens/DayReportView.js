@@ -20,13 +20,13 @@ export default function DayReportView({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loadCard, setLoadCard] = useState(false);
-  const [loadData, setLoadData] = useState(true);
+  const [loadData, setLoadData] = useState(false);
   const [mergedReclaimingData, setMergedReclaimingData] = useState({});
   const [mergedFeedingData, setMergedFeedingData] = useState({});
   const [mergedPushingData, setMergedPushingData] = useState({});
-  let reclaimingA = {};
-  let reclaimingB = {};
-  let reclaimingC = {};
+  let reclaimingA;
+  let reclaimingB;
+  let reclaimingC;
 
   const generatePDF = async () => {
     try {
@@ -194,17 +194,17 @@ export default function DayReportView({ navigation }) {
   const requestStoragePermission = async () => {
     try {
       const { status } = await MediaLibrary.requestPermissionsAsync();
-      console.log("Permission status:", status);
+      // console.log("Permission status:", status);
 
       if (status === "granted") {
-        console.log("Permission granted");
+        // console.log("Permission granted");
         return true;
       } else {
-        console.log("Permission denied");
-        Alert.alert(
+        //console.log("Permission denied");
+        /* Alert.alert(
           "Permission Denied!",
           "You need to give storage permission to download the file"
-        );
+        );*/
         return false;
       }
     } catch (err) {
@@ -325,7 +325,11 @@ export default function DayReportView({ navigation }) {
         },
       });
       // Extract and set the data
-      if (response.data.data[0]) {
+      if (
+        response.data.data[0] &&
+        response.data.data[1] &&
+        response.data.data[2]
+      ) {
         const data = response.data.data;
         let newFeedingCoal = {};
         newFeedingCoal["ct1"] = data[0].ct1 + data[1].ct1 + data[2].ct1;
@@ -341,13 +345,9 @@ export default function DayReportView({ navigation }) {
         return newFeedingCoal;
       } else {
         setLoadData(false);
-        alert("Feeding Data Not Available");
       }
     } catch (error) {
       console.log(error);
-      alert(
-        "Failed to fetch Feeding data. Please check the date and try again."
-      );
     }
   };
 
@@ -359,7 +359,11 @@ export default function DayReportView({ navigation }) {
         },
       });
       // Extract and set the data
-      if (response.data.data[0]) {
+      if (
+        response.data.data[0] &&
+        response.data.data[1] &&
+        response.data.data[2]
+      ) {
         const data = response.data.data;
 
         let newPushings = {};
@@ -377,13 +381,9 @@ export default function DayReportView({ navigation }) {
         return newPushings;
       } else {
         setLoadData(false);
-        alert("Pushings Data Not Available");
       }
     } catch (error) {
       console.log(error);
-      alert(
-        "Failed to fetch Pushings data. Please check the date and try again."
-      );
     }
   };
 
@@ -394,18 +394,26 @@ export default function DayReportView({ navigation }) {
     let reclaimingCoalA = await getAShiftReclaimingData();
     let reclaimingCoalB = await getBShiftReclaimingData();
     let reclaimingCoalC = await getCShiftReclaimingData();
-    let mergedReclData = mergeReclaiming(
-      reclaimingCoalA,
-      reclaimingCoalB,
-      reclaimingCoalC
-    );
-    setMergedReclaimingData(mergedReclData);
+    if (reclaimingA && reclaimingB && reclaimingC) {
+      let mergedReclData = mergeReclaiming(
+        reclaimingCoalA,
+        reclaimingCoalB,
+        reclaimingCoalC
+      );
+      setMergedReclaimingData(mergedReclData);
+    }
 
     let feedingData = await getTotalFeeding(date);
-    setMergedFeedingData(feedingData);
+    if (feedingData !== undefined) {
+      console.log("inside feed");
+      setMergedFeedingData(feedingData);
+    }
 
     let pushingData = await getTotalPushings(date);
-    setMergedPushingData(pushingData);
+    if (pushingData !== undefined) {
+      console.log("inside push");
+      setMergedPushingData(pushingData);
+    }
 
     setLoadCard(true);
   };
@@ -418,7 +426,11 @@ export default function DayReportView({ navigation }) {
         },
       });
       // Extract and set the data
-      if (response.data.data[0]) {
+      if (
+        response.data.data[0] &&
+        response.data.data[1] &&
+        response.data.data[2]
+      ) {
         const data = response.data.data;
         reclaimingA = data[0];
         reclaimingB = data[1];
@@ -426,40 +438,13 @@ export default function DayReportView({ navigation }) {
         setLoadData(true);
       } else {
         setLoadData(false);
-        alert("Reclaiming Data Not Available");
+        alert("Data not available in the selected date..");
       }
     } catch (error) {
       console.log(error);
       alert(
         "Error",
         "Failed to fetch data. Please check the date and try again."
-      );
-    }
-  };
-
-  const getPushingScheduleDataDaywise = async (date) => {
-    try {
-      const response = await axios.get(BaseUrl + "/pushings/daywise", {
-        params: {
-          date: date,
-        },
-      });
-      // Extract and set the data
-      if (response.data.data[0]) {
-        const data = response.data.data;
-
-        pushingsA = data[0];
-        pushingsB = data[1];
-        pushingsC = data[2];
-        setLoadData(true);
-      } else {
-        setLoadData(false);
-        alert("Pushings Data Not Available");
-      }
-    } catch (error) {
-      console.log(error);
-      alert(
-        "Failed to fetch Pushings data. Please check the date and try again."
       );
     }
   };
