@@ -1,10 +1,10 @@
 {
   "build": {
-    "cpp_app_apk1": {
+    "cpp_app_apk": {
       "android": {
         "buildType": "apk"
       },
-      "channel": "cpp_app_apk1"
+      "channel": "cpp_app_apk"
     },
     "preview2": {
       "android": {
