@@ -199,7 +199,7 @@ export default function EnterCoalAnalysis({ navigation, route }) {
                         onChangeText={handleChange(item)}
                         onBlur={() => setFieldTouched(item)}
                         value={values[item]}
-                        maxLength={2}
+                        maxLength={item === "ci" ? 2 : 5}
                         placeholder={item === "ci" ? "%" : ""}
                       />
                       <ErrorMessage

@@ -65,9 +65,10 @@ export default function ShiftReportView({ navigation }) {
               </div>
             </div>
      
-            <div style="display:flex; flex-direction:row; width:800px; height:800px; border:2px solid black; margin-top:10px">
+            <div style="display:flex; flex-direction:row; width:800px; height:900px; border:2px solid black; margin-top:10px">
               <div style=" flex-direction:column;width:200px;float:left; border-right: 2px solid black; text-align:center;align-items:flex-start;">
                 <h2 style="text-decoration: underline;">Reclaiming Data</h2>
+                <h3 style="text-decoration: underline; margin-top:20px ">Coal-wise Reclm</h3>
                 ${Array.from({ length: 8 }, (_, index) =>
                   reclaiming["coal" + (index + 1) + "name"] === null ||
                   reclaiming["coal" + (index + 1) + "recl"] === 0
@@ -131,6 +132,30 @@ export default function ShiftReportView({ navigation }) {
                   <span style="font-size: 20px; font-weight:bold">${
                     reclaiming.total_reclaiming
                   }</span>
+
+
+                  <h3 style="text-decoration: underline; margin-top:20px">MB-Top coal stock</h3>
+                ${Array.from({ length: 8 }, (_, index) =>
+                  mbTopStock["coal" + (index + 1) + "name"] === undefined ||
+                  mbTopStock["coal" + (index + 1) + "stock"] === null
+                    ? null
+                    : `
+                  <div style="margin-bottom: 10px;  flex-direction: row; ">
+                    <span style="font-size: 20px; font-weight:bold">
+                      ${mbTopStock["coal" + (index + 1) + "name"].toUpperCase()}
+                    </span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                      ${
+                        mbTopStock["coal" + (index + 1) + "stock"] === null
+                          ? "000"
+                          : mbTopStock["coal" + (index + 1) + "stock"]
+                      }
+                    </span>
+                  </div>
+                `
+                ).join("")}
+
+
                   <h3 style="text-decoration: underline; margin-top:20px">Total MB Top Stock</h3>
                   <span style="font-size: 25px; font-weight:bold">${
                     mbTopStock.total_stock
@@ -161,7 +186,7 @@ export default function ShiftReportView({ navigation }) {
                     (item, index) =>
                       `
                   <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
-                    <span style="font-size: 20px; font-weight:bold">${item.toUpperCase()}</span>
+                    <span style="font-size: 18px; font-weight:bold">${item.toUpperCase()}</span>
                     <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
                       ${feeding[item] === 0 ? "0000" : feeding[item]}
                     </span> 
@@ -173,6 +198,25 @@ export default function ShiftReportView({ navigation }) {
                   <span style="font-size: 20px; font-weight:bold">${
                     feeding.total_feeding
                   }</span>
+
+                  <h3 style="text-decoration: underline; margin-top:20px">Coal-Tower Stock</h3>
+                ${["ct1", "ct2", "ct3"]
+                  .map(
+                    (item, index) =>
+                      `
+                  <div style="margin-bottom: 10px;  flex-direction: row; ">
+                    <span style="font-size: 20px; font-weight:bold">
+                      ${item.toUpperCase()}
+                    </span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                      ${coalTowerStock[item + "stock"]}
+                    </span>
+                  </div>
+                `
+                  )
+                  .join("")}
+
+
                   <h3 style="text-decoration: underline; margin-top:20px">Total Coal-Tower Stock</h3>
                   <span style="font-size: 25px; font-weight:bold">${
                     coalTowerStock.total_stock
@@ -277,6 +321,30 @@ export default function ShiftReportView({ navigation }) {
                   .join("")}
             </div>
           </div>
+
+
+
+          <div style="display:flex; flex-direction:row; width:800px; height:900px; border:2px solid black; margin-top:10px">
+              <div style=" flex-direction:row;height:900px;width:800px;float:left; border-bottom: 2px solid black; text-align:center;align-items:flex-start;">
+                <h2 style="text-decoration: underline; text-align:center;">Shift Delays</h2>
+                
+                ${Array.from(
+                  { length: shiftDelays.length },
+                  (_, index) => `
+                      <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
+                <p style="font-size: 20px; font-weight:bold">From   : ${shiftDelays[index]["fromTime"]}</p>
+                <p style="font-size: 20px; font-weight:bold">To     : ${shiftDelays[index]["toTime"]}</p>
+                <p style="font-size: 20px; font-weight:bold">Reason : ${shiftDelays[index]["reason"]}</p>
+                </div>
+                <hr class="custom-hr">
+                `
+                ).join("")}
+                </div>
+
+             
+             
+          </div>
+          
           </body>
           </html>
         `;
@@ -649,7 +717,7 @@ export default function ShiftReportView({ navigation }) {
                           marginBottom: 10,
                           display: "flex",
                           flexDirection: "row",
-                          marginLeft: wp(15),
+                          marginLeft: wp(6),
                           gap: hp(3),
                         }}
                       >
@@ -684,7 +752,7 @@ export default function ShiftReportView({ navigation }) {
                           marginBottom: 10,
                           display: "flex",
                           flexDirection: "row",
-                          marginLeft: wp(15),
+                          marginLeft: wp(6),
                           gap: hp(3),
                         }}
                       >
@@ -716,7 +784,7 @@ export default function ShiftReportView({ navigation }) {
                         marginBottom: 10,
                         display: "flex",
                         flexDirection: "row",
-                        marginLeft: wp(15),
+                        marginLeft: wp(6),
                         gap: hp(3),
                       }}
                     >
@@ -778,6 +846,46 @@ export default function ShiftReportView({ navigation }) {
                       </View>
                     </View>
                     <Card.Divider />
+                    <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                      MB Top Coal Stock
+                    </Card.Title>
+                    <Card.Divider />
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
+                      mbTopStock["coal" + item + "name"] === undefined ||
+                      mbTopStock["coal" + item + "stock"] === null ? null : (
+                        <View
+                          key={index}
+                          style={{
+                            marginBottom: 10,
+                            display: "flex",
+                            flexDirection: "row",
+                            marginLeft: wp(6),
+                            gap: hp(3),
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: wp(30),
+
+                              alignItems: "flex-end",
+                            }}
+                          >
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {mbTopStock["coal" + item + "name"].toUpperCase()}
+                            </Text>
+                          </View>
+                          <Divider orientation="vertical" />
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {mbTopStock["coal" + item + "stock"] === "null"
+                              ? "000"
+                              : mbTopStock["coal" + item + "stock"]}
+                          </Text>
+                        </View>
+                      )
+                    )}
+                    <Card.Divider />
                     <View
                       style={{
                         marginBottom: 10,
@@ -802,7 +910,7 @@ export default function ShiftReportView({ navigation }) {
                             color: "red",
                           }}
                         >
-                          Total Stock
+                          Total MB Stock
                         </Text>
                       </View>
                       <Divider orientation="vertical" />
@@ -934,6 +1042,46 @@ export default function ShiftReportView({ navigation }) {
                       </View>
                     </View>
                     <Card.Divider />
+                    <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                      Coal Tower Stock
+                    </Card.Title>
+                    <Card.Divider />
+                    {["ct1", "ct2", "ct3"].map((item, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(8),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {item.toUpperCase()}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(25),
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {coalTowerStock[item] === 0
+                              ? "000"
+                              : coalTowerStock[item + "stock"]}
+                          </Text>
+                        </View>
+                      </View>
+                    ))}
+                    <Card.Divider />
                     <View
                       style={{
                         marginBottom: 10,
@@ -951,13 +1099,13 @@ export default function ShiftReportView({ navigation }) {
                       >
                         <Text
                           style={{
-                            fontSize: wp(6),
+                            fontSize: wp(5.9),
                             fontWeight: "bold",
-
+                            marginRight: wp(-1),
                             color: "red",
                           }}
                         >
-                          Total Stock
+                          Total CT Stock
                         </Text>
                       </View>
                       <Divider orientation="vertical" />

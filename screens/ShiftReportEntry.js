@@ -65,140 +65,154 @@ export default function ShiftReportEntry({ navigation }) {
   };
 
   const handleFinalReport = async () => {
-    setProgress(0);
-    setDoneScreen(true);
-
-    await axios
-      .post(BaseUrl + "/reclaiming", reclaimingData)
-      .then(function (response) {
-        reclaimingStatus = true;
-        console.log(response.data);
-        setProgress(0.1);
-      })
-      .catch(function (error) {
-        reclaimingStatus = false;
-        console.log(error);
-        alert("Could not save reclaiming data..");
-      });
-
-    await axios
-      .post(BaseUrl + "/feeding", feedingData)
-      .then((response) => {
-        feedingStatus = true;
-        console.log(response.data);
-        setProgress(0.2);
-      })
-      .catch((error) => {
-        feedingStatus = false;
-        console.log(error);
-        alert("Could not save Feeding data..");
-      });
-
-    await axios
-      .post(BaseUrl + "/runningHours", runningHoursData)
-      .then((responce) => {
-        runningHoursStatus = true;
-        console.log(responce.data);
-        setProgress(0.3);
-      })
-      .catch((error) => {
-        runningHoursStatus = false;
-        console.log(error);
-        alert("Could not save running hours data..");
-      });
-
-    let count = shiftDelaysData.length;
-    for (let i = 0; i < count; i++) {
-      await axios
-        .post(BaseUrl + "/shiftDelay", shiftDelaysData[i])
-        .then((response) => {
-          shiftDelaysStatus = true;
-          console.log(response.data);
-          setProgress(0.4);
-        })
-        .catch((error) => {
-          shiftDelaysStatus = false;
-          console.log(error);
-          alert("Could not save shiftDelays data..");
-        });
-    }
-
-    await axios
-      .post(BaseUrl + "/mbtopStock", mbTopStockData)
-      .then(function (response) {
-        mbTopStockStatus = true;
-        console.log(response.data);
-        setProgress(0.5);
-      })
-      .catch(function (error) {
-        mbTopStockStatus = false;
-        console.log(error);
-        alert("Could not save MbTop Stock data..");
-      });
-
-    await axios
-      .post(BaseUrl + "/coaltowerstock", coalTowerStockData)
-      .then((response) => {
-        coalTowerStockStatus = true;
-        console.log(response.data);
-        setProgress(0.6);
-      })
-      .catch((error) => {
-        coalTowerStockStatus = false;
-        console.log(error);
-        alert("Could not save Coal Tower Stock data..");
-      });
-
-    await axios
-      .post(BaseUrl + "/coalAnalysis", coalAnalysisData)
-      .then((response) => {
-        coalAnalysisStatus = true;
-        console.log(response.data);
-        setProgress(0.7);
-      })
-      .catch((error) => {
-        coalAnalysisStatus = false;
-        console.log(error);
-        alert("Could not save Coal Analysis data..");
-      });
-
-    await axios
-      .post(BaseUrl + "/pushings", pushingScheduleData)
-      .then((response) => {
-        pushingScheduleStatus = true;
-        console.log(response.data);
-        setProgress(0.8);
-      })
-      .catch((error) => {
-        pushingScheduleStatus = false;
-        console.log(error);
-        alert("Could not save Pushing schedule data..");
-      });
-
     if (
-      reclaimingStatus &&
-      feedingStatus &&
-      runningHoursStatus &&
-      shiftDelaysStatus &&
-      mbTopStockStatus &&
-      coalTowerStockStatus &&
-      coalAnalysisStatus &&
-      pushingScheduleStatus
+      reclaimingData &&
+      feedingData &&
+      runningHoursData &&
+      shiftDelaysData &&
+      mbTopStockData &&
+      coalTowerStockData &&
+      coalAnalysisData &&
+      pushingScheduleData
     ) {
+      setProgress(0);
+      setDoneScreen(true);
+
       await axios
-        .post(BaseUrl + "/shiftreportenteredby", shiftReportEnteredBy)
+        .post(BaseUrl + "/reclaiming", reclaimingData)
         .then(function (response) {
-          credentialsStatus = true;
-          console.log(response.data);
-          setProgress(0.9);
+          reclaimingStatus = true;
+
+          setProgress(0.1);
         })
         .catch(function (error) {
-          credentialsStatus = false;
+          reclaimingStatus = false;
           console.log(error);
-          alert("Could not save Shift report entered by data..");
+          alert("Could not save reclaiming data..");
         });
+
+      await axios
+        .post(BaseUrl + "/feeding", feedingData)
+        .then((response) => {
+          feedingStatus = true;
+
+          setProgress(0.2);
+        })
+        .catch((error) => {
+          feedingStatus = false;
+          console.log(error);
+          alert("Could not save Feeding data..");
+        });
+
+      await axios
+        .post(BaseUrl + "/runningHours", runningHoursData)
+        .then((responce) => {
+          runningHoursStatus = true;
+          console.log(responce.data);
+          setProgress(0.3);
+        })
+        .catch((error) => {
+          runningHoursStatus = false;
+          console.log(error);
+          alert("Could not save running hours data..");
+        });
+
+      let count = shiftDelaysData.length;
+      for (let i = 0; i < count; i++) {
+        await axios
+          .post(BaseUrl + "/shiftDelay", shiftDelaysData[i])
+          .then((response) => {
+            shiftDelaysStatus = true;
+
+            setProgress(0.4);
+          })
+          .catch((error) => {
+            shiftDelaysStatus = false;
+            console.log(error);
+            alert("Could not save shiftDelays data..");
+          });
+      }
+
+      await axios
+        .post(BaseUrl + "/mbtopStock", mbTopStockData)
+        .then(function (response) {
+          mbTopStockStatus = true;
+
+          setProgress(0.5);
+        })
+        .catch(function (error) {
+          mbTopStockStatus = false;
+          console.log(error);
+          alert("Could not save MbTop Stock data..");
+        });
+
+      await axios
+        .post(BaseUrl + "/coaltowerstock", coalTowerStockData)
+        .then((response) => {
+          coalTowerStockStatus = true;
+
+          setProgress(0.6);
+        })
+        .catch((error) => {
+          coalTowerStockStatus = false;
+          console.log(error);
+          alert("Could not save Coal Tower Stock data..");
+        });
+
+      await axios
+        .post(BaseUrl + "/coalAnalysis", coalAnalysisData)
+        .then((response) => {
+          coalAnalysisStatus = true;
+
+          setProgress(0.7);
+        })
+        .catch((error) => {
+          coalAnalysisStatus = false;
+          console.log(error);
+          alert("Could not save Coal Analysis data..");
+        });
+
+      await axios
+        .post(BaseUrl + "/pushings", pushingScheduleData)
+        .then((response) => {
+          pushingScheduleStatus = true;
+
+          setProgress(0.8);
+        })
+        .catch((error) => {
+          pushingScheduleStatus = false;
+          console.log(error);
+          alert("Could not save Pushing schedule data..");
+        });
+
+      if (
+        reclaimingStatus &&
+        feedingStatus &&
+        runningHoursStatus &&
+        shiftDelaysStatus &&
+        mbTopStockStatus &&
+        coalTowerStockStatus &&
+        coalAnalysisStatus &&
+        pushingScheduleStatus
+      ) {
+        await axios
+          .post(BaseUrl + "/shiftreportenteredby", shiftReportEnteredBy)
+          .then(function (response) {
+            credentialsStatus = true;
+
+            setProgress(0.9);
+          })
+          .catch(function (error) {
+            credentialsStatus = false;
+            console.log(error);
+            alert("Could not save Shift report entered by data..");
+          });
+      }
+      setProgress(1);
+    } else {
+      alert("Enter all data..");
+      return;
     }
-    setProgress(1);
     setReclaimingData(undefined);
     setFeedingData(undefined);
     setRunningHoursData(undefined);
@@ -209,7 +223,7 @@ export default function ShiftReportEntry({ navigation }) {
     setPushingScheduleData(undefined);
     setTimeout(() => {
       navigation.navigate("Home");
-    }, 2000);
+    }, 1000);
   };
 
   return (

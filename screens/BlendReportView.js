@@ -18,6 +18,14 @@ export default function BlendReportView({ navigation }) {
   const [showFromDatePicker, setShowFromDatePicker] = useState(false);
   const [showToDatePicker, setShowToDatePicker] = useState(false);
   const [blendData, setBlendData] = useState({});
+  const [excludedKeys, setExcludedKeys] = useState([
+    "__v",
+    "_id",
+    "date",
+    "shift",
+    "empnum",
+    "total",
+  ]);
 
   const handleFromDateChange = (event, date) => {
     setShowFromDatePicker(false);
@@ -208,9 +216,7 @@ export default function BlendReportView({ navigation }) {
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>
                 {"Blend - " + (index + 1)}
               </Card.Title>
-
               <Card.Divider />
-
               <View
                 key={index}
                 style={{
@@ -236,7 +242,6 @@ export default function BlendReportView({ navigation }) {
                   {blendData[index]["date"].split("T", 1)}
                 </Text>
               </View>
-
               <View
                 key={index + 1}
                 style={{
@@ -262,36 +267,43 @@ export default function BlendReportView({ navigation }) {
                   {blendData[index]["shift"].split("T", 1)}
                 </Text>
               </View>
-
               <Card.Divider />
 
-              {Array.from({ length: 2 }, (_, inindex) => (
-                <View
-                  key={inindex}
-                  style={{
-                    marginBottom: 10,
-                    display: "flex",
-                    flexDirection: "row",
-                    marginLeft: wp(10),
-                    gap: hp(3),
-                  }}
-                >
-                  <View
-                    style={{
-                      width: wp(30),
-                      alignItems: "flex-end",
-                    }}
-                  >
-                    <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                      {blendData[index]["cn" + (inindex + 1)]}
-                    </Text>
-                  </View>
-                  <Divider orientation="vertical" />
-                  <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                    {blendData[index]["cp" + (inindex + 1)]}
-                  </Text>
-                </View>
-              ))}
+              {blendData[index] &&
+                Object.keys(blendData[index])
+                  .filter(
+                    (key) =>
+                      !excludedKeys.includes(key) && !key.startsWith("cp")
+                  )
+                  .map((ikey, inindex) => {
+                    return (
+                      <View
+                        key={inindex}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(10),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {blendData[index]["cn" + (inindex + 1)]}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {blendData[index]["cp" + (inindex + 1)] + "%"}
+                        </Text>
+                      </View>
+                    );
+                  })}
             </Card>
           ))}
       </ScrollView>

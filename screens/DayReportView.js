@@ -405,13 +405,11 @@ export default function DayReportView({ navigation }) {
 
     let feedingData = await getTotalFeeding(date);
     if (feedingData !== undefined) {
-      console.log("inside feed");
       setMergedFeedingData(feedingData);
     }
 
     let pushingData = await getTotalPushings(date);
     if (pushingData !== undefined) {
-      console.log("inside push");
       setMergedPushingData(pushingData);
     }
 
