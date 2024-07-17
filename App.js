@@ -7,7 +7,7 @@ import { GlobalProvider } from "./contextApi/GlobalContext";
 const App = () => {
   return (
     <GlobalProvider>
-      <StatusBar barStyle="light-content" hidden={false} />
+      <StatusBar barStyle="dark-content" hidden={false} />
       <NavigationContainer>
         <AppNavigator />
       </NavigationContainer>
