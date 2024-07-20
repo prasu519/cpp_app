@@ -5,7 +5,7 @@ import AppTextBox from "../components/AppTextBox";
 import axios from "axios";
 import AppFormButton from "../components/AppFormButton";
 import { AntDesign } from "@expo/vector-icons";
-import shift from "../utils/Shift";
+
 import BaseUrl from "../config/BaseUrl";
 import FieldSet from "react-native-fieldset";
 import DoneScreen from "./DoneScreen";
@@ -20,10 +20,12 @@ export default function BinStock({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
   const [count, setCount] = useState();
   const [doneScreen, setDoneScreen] = useState(false);
+  const [buttonEnable, setButtonEnable] = useState(false);
   const [progress, setProgress] = useState(0);
   const { mbTopStockData, setMbTopStockData, globalDate, globalShift } =
     useContext(GlobalContext);
-
+  const [totalReclaiming, setTotalReclaiming] = useState(0);
+  const [totalValues, setTotalValues] = useState(Array(count).fill(""));
   const currentDate = new Date(globalDate).toISOString().split("T")[0];
   const currentShift = globalShift; //shift(new Date().getHours());
 
@@ -39,6 +41,7 @@ export default function BinStock({ navigation }) {
         .then((response) => {
           setCoalNames(response.data.data[0]);
           setCount(response.data.data[0].total);
+          setButtonEnable(true);
         })
         .catch((error) => console.log(error));
     };
@@ -211,6 +214,15 @@ export default function BinStock({ navigation }) {
                           return;
                         } else {
                           setFieldValue("coal" + (index + 1) + "stock", value);
+
+                          const newValues = [...totalValues];
+                          newValues[index] = value;
+                          setTotalValues(newValues);
+                          const total = newValues.reduce(
+                            (sum, val) => sum + (parseInt(val) || 0),
+                            0
+                          );
+                          setTotalReclaiming(total);
                         }
                       }}
                       keyboardType="number-pad"
@@ -218,9 +230,41 @@ export default function BinStock({ navigation }) {
                       maxLength={4}
                     />
                   ))}
-                  <AppFormButton buttonText="Submit" />
                 </>
               </FieldSet>
+              <FieldSet>
+                <>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginLeft: wp(10),
+                      }}
+                    >
+                      Total Stock :
+                    </Text>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginLeft: wp(20),
+                      }}
+                    >
+                      {totalReclaiming}
+                    </Text>
+                  </View>
+                </>
+              </FieldSet>
+              <AppFormButton
+                buttonText="Submit"
+                disabled={!buttonEnable}
+                buttonColour={buttonEnable ? "#fc5c65" : "#C7B7A3"}
+              />
             </ScrollView>
           </View>
         </>

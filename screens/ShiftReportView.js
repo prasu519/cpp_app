@@ -30,6 +30,7 @@ export default function ShiftReportView({ navigation }) {
   const [shiftDelays, setShiftDelays] = useState();
   const [coalAnalysisData, setCoalAnalysisData] = useState();
   const [pushingSchedule, setPushingSchedule] = useState();
+  const [shiftReportEnteredBy, setShiftReportEnteredBy] = useState();
 
   const [coalCount, setCoalCount] = useState(0);
   const [blendCount, setBlendCount] = useState(0);
@@ -62,6 +63,14 @@ export default function ShiftReportView({ navigation }) {
                 <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
                     Shift : ${selectedShift}
                 </span>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
+                    Name : ${shiftReportEnteredBy.name}
+                </span>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
+                    Emp No : ${shiftReportEnteredBy.empnum}
+                </span>
               </div>
             </div>
      
@@ -70,7 +79,7 @@ export default function ShiftReportView({ navigation }) {
                 <h2 style="text-decoration: underline;">Reclaiming Data</h2>
                 <h3 style="text-decoration: underline; margin-top:20px ">Coal-wise Reclm</h3>
                 ${Array.from({ length: 8 }, (_, index) =>
-                  reclaiming["coal" + (index + 1) + "name"] === null ||
+                  reclaiming["coal" + (index + 1) + "name"] === null &&
                   reclaiming["coal" + (index + 1) + "recl"] === 0
                     ? null
                     : `
@@ -90,7 +99,7 @@ export default function ShiftReportView({ navigation }) {
                 ).join("")}
 
                 ${Array.from({ length: 8 }, (_, index) =>
-                  reclaiming["excoal" + (index + 1) + "name"] === null ||
+                  reclaiming["excoal" + (index + 1) + "name"] === null &&
                   reclaiming["excoal" + (index + 1) + "recl"] === 0
                     ? null
                     : `
@@ -283,6 +292,11 @@ export default function ShiftReportView({ navigation }) {
               `
                 )
                 .join("")}
+                <h3 style="text-decoration: underline; margin-top:20px">Total Pushigs</h3>
+                <span style="font-size: 20px; font-weight:bold">${
+                  pushingSchedule.total_pushings
+                }</span>
+                
               <h2 style="text-decoration: underline; margin-top:20px">Running-Hours</h2>
               ${[2, 3, 4]
                 .map(
@@ -416,6 +430,8 @@ export default function ShiftReportView({ navigation }) {
       return;
     }
     let shift = selectedShift;
+
+    getShiftReportPersonDetails(date, shift);
     getBlend(date, shift);
     getReclaimingData(date, shift);
     getfeedingdata(date, shift);
@@ -427,6 +443,20 @@ export default function ShiftReportView({ navigation }) {
     getPushingScheduleData(date, shift);
 
     setLoadCard(true);
+  };
+
+  const getShiftReportPersonDetails = async (date, shift) => {
+    await axios
+      .get(BaseUrl + "/shiftreportenteredby", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => {
+        setShiftReportEnteredBy(responce.data.data[0]);
+      })
+      .catch((error) => console.log(error));
   };
 
   const getBlend = async (date, shift) => {
@@ -709,7 +739,7 @@ export default function ShiftReportView({ navigation }) {
               {reclaiming && mbTopStock && coalCount > 0 && (
                 <View>
                   {Array.from({ length: coalCount }, (_, index) =>
-                    reclaiming["coal" + (index + 1) + "name"] === null ||
+                    reclaiming["coal" + (index + 1) + "name"] === "" &&
                     reclaiming["coal" + (index + 1) + "recl"] === 0 ? null : (
                       <View
                         key={index}
@@ -744,7 +774,7 @@ export default function ShiftReportView({ navigation }) {
                     )
                   )}
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
-                    reclaiming["excoal" + item + "name"] === null ||
+                    reclaiming["excoal" + item + "name"] === "" &&
                     reclaiming["excoal" + item + "recl"] === 0 ? null : (
                       <View
                         key={index}

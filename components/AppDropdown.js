@@ -1,6 +1,10 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { Picker } from "@react-native-picker/picker";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 
 export default function AppDropdown({
   id,
@@ -13,7 +17,7 @@ export default function AppDropdown({
     <Picker
       id={id}
       style={{
-        width: 100,
+        width: wp(30),
       }}
       mode="dropdown"
       enabled={enable}
@@ -24,7 +28,7 @@ export default function AppDropdown({
           key={number}
           label={number.toString()}
           value={number}
-          style={{ fontSize: 18 }}
+          style={{ fontSize: hp(2.5) }}
         />
       ))}
     </Picker>

@@ -25,6 +25,8 @@ export default function EnterReclaiming({ navigation }) {
   const [extraCoal, setExtraCoal] = useState([""]);
   const [ecCount, setEcCount] = useState(0);
   const [exCount, setExCount] = useState(0);
+  const [totalReclaiming, setTotalReclaiming] = useState(0);
+  const [totalValues, setTotalValues] = useState(Array(count).fill(""));
 
   const { setReclaimingData, globalDate, globalShift } =
     useContext(GlobalContext);
@@ -394,6 +396,15 @@ export default function EnterReclaiming({ navigation }) {
                                 "coal" + (index + 1) + "recl",
                                 value
                               );
+                              const newValues = [...totalValues];
+                              newValues[index] = value;
+                              setTotalValues(newValues);
+
+                              const total = newValues.reduce(
+                                (sum, val) => sum + (parseInt(val) || 0),
+                                0
+                              );
+                              setTotalReclaiming(total);
                             }
                           }}
                           keyboardType="number-pad"
@@ -404,6 +415,38 @@ export default function EnterReclaiming({ navigation }) {
                         />
                       );
                     })}
+                  </>
+                </FieldSet>
+
+                <FieldSet>
+                  <>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text
+                        style={{
+                          alignSelf: "left",
+
+                          fontSize: hp(2.7),
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: 10,
+                        }}
+                      >
+                        Total Reclaiming :
+                      </Text>
+                      <Text
+                        style={{
+                          alignSelf: "left",
+
+                          fontSize: hp(2.7),
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: wp(3),
+                          marginLeft: wp(10),
+                        }}
+                      >
+                        {totalReclaiming}
+                      </Text>
+                    </View>
                   </>
                 </FieldSet>
 
@@ -488,6 +531,15 @@ export default function EnterReclaiming({ navigation }) {
                                     "excoal" + (index + 1) + "recl",
                                     value
                                   );
+                                  const newValues = [...totalValues];
+                                  newValues[index] = value;
+                                  setTotalValues(newValues);
+
+                                  const total = newValues.reduce(
+                                    (sum, val) => sum + (parseInt(val) || 0),
+                                    0
+                                  );
+                                  setTotalReclaiming(total);
                                 }
                               }}
                             />
@@ -615,6 +667,15 @@ export default function EnterReclaiming({ navigation }) {
                             return;
                           } else {
                             setFieldValue("coal" + (index + 1) + "recl", value);
+                            const newValues = [...totalValues];
+                            newValues[index] = value;
+                            setTotalValues(newValues);
+
+                            const total = newValues.reduce(
+                              (sum, val) => sum + (parseInt(val) || 0),
+                              0
+                            );
+                            setTotalReclaiming(total);
                           }
                         }}
                         keyboardType="number-pad"
@@ -622,6 +683,37 @@ export default function EnterReclaiming({ navigation }) {
                         maxLength={4}
                       />
                     ))}
+                  </>
+                </FieldSet>
+                <FieldSet>
+                  <>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text
+                        style={{
+                          alignSelf: "left",
+
+                          fontSize: hp(2.7),
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: 10,
+                        }}
+                      >
+                        Total Reclaiming :
+                      </Text>
+                      <Text
+                        style={{
+                          alignSelf: "left",
+
+                          fontSize: hp(2.7),
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: wp(3),
+                          marginLeft: wp(10),
+                        }}
+                      >
+                        {totalReclaiming}
+                      </Text>
+                    </View>
                   </>
                 </FieldSet>
 
@@ -662,6 +754,15 @@ export default function EnterReclaiming({ navigation }) {
                                       "excoal" + item + "recl",
                                       value
                                     );
+                                    const newValues = [...totalValues];
+                                    newValues[index] = value;
+                                    setTotalValues(newValues);
+
+                                    const total = newValues.reduce(
+                                      (sum, val) => sum + (parseInt(val) || 0),
+                                      0
+                                    );
+                                    setTotalReclaiming(total);
                                   }}
                                   keyboardType="number-pad"
                                   value={values[
@@ -782,6 +883,15 @@ export default function EnterReclaiming({ navigation }) {
                                         "recl",
                                       value
                                     );
+                                    const newValues = [...totalValues];
+                                    newValues[index] = value;
+                                    setTotalValues(newValues);
+
+                                    const total = newValues.reduce(
+                                      (sum, val) => sum + (parseInt(val) || 0),
+                                      0
+                                    );
+                                    setTotalReclaiming(total);
                                   }
                                 }}
                               />

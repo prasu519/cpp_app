@@ -206,9 +206,9 @@ export default function EnterDelays({ navigation }) {
                   onDelete={() => handleDelete(index)}
                   disable={true}
                   items={
-                    currentShift == "A"
+                    currentShift === "A"
                       ? ["", "6", "7", "8", "9", "10", "11", "12", "13", "14"]
-                      : currentShift == "B"
+                      : currentShift === "B"
                       ? [
                           "",
                           "14",
@@ -221,7 +221,7 @@ export default function EnterDelays({ navigation }) {
                           "21",
                           "22",
                         ]
-                      : ["", "22", "23", "24", "1", "2", "3", "4", "5", "6"]
+                      : ["", "22", "23", "00", "1", "2", "3", "4", "5", "6"]
                   }
                   selectedValueFromHr={
                     delayComponent["fromhr" + index.toString()]
@@ -238,7 +238,8 @@ export default function EnterDelays({ navigation }) {
                       return;
                     }
                     if (
-                      parseInt(value) > parseInt(delayComponent["tohr" + index])
+                      parseInt(value) >
+                      parseInt(delayComponent["tohr" + index] && shift !== "C")
                     ) {
                       alert("From time should not be more than To time..");
                       return;
@@ -300,7 +301,9 @@ export default function EnterDelays({ navigation }) {
                     }
                     if (
                       parseInt(value) <
-                      parseInt(delayComponent["fromhr" + index])
+                      parseInt(
+                        delayComponent["fromhr" + index] && shift !== "C"
+                      )
                     ) {
                       alert("To time should not be less than From time..");
                       return;

@@ -6,7 +6,6 @@ import AppFormButton from "../components/AppFormButton";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import ErrorMessage from "../components/ErrorMessage";
-import shift from "../utils/Shift";
 import FieldSet from "react-native-fieldset";
 import DoneScreen from "./DoneScreen";
 import {
@@ -42,7 +41,7 @@ export default function EnterCoalTowerStock({ navigation, route }) {
   const [progress, setProgress] = useState(0);
   const { coalTowerStockData, setCoalTowerStockData, globalDate, globalShift } =
     useContext(GlobalContext);
-
+  const [feedingCount, setFeedingCount] = useState(0);
   const currentDate = new Date(globalDate).toISOString().split("T")[0];
   const currentShift = globalShift; //shift(new Date().getHours());
 
@@ -62,6 +61,14 @@ export default function EnterCoalTowerStock({ navigation, route }) {
     setProgress(1);
     resetForm();
     setTimeout(() => navigation.goBack(), 1000);
+  };
+
+  const calculateTotalFeeding = (values) => {
+    const total =
+      (parseInt(values.ct1stock) || 0) +
+      (parseInt(values.ct2stock) || 0) +
+      (parseInt(values.ct3stock) || 0);
+    setFeedingCount(total);
   };
 
   return (
@@ -188,7 +195,15 @@ export default function EnterCoalTowerStock({ navigation, route }) {
                       <AppTextBox
                         label={"CT - " + item}
                         labelcolor="orange"
-                        onChangeText={handleChange("ct" + item + "stock")}
+                        // onChangeText={handleChange("ct" + item + "stock")}
+                        onChangeText={(text) => {
+                          handleChange("ct" + item + "stock")(text);
+                          setFieldValue("ct" + item + "stock", text, false);
+                          calculateTotalFeeding({
+                            ...values,
+                            [`ct${item}stock`]: text,
+                          });
+                        }}
                         onBlur={() => setFieldTouched("ct" + item + "stock")}
                         value={values["ct" + item + "stock"].toString()}
                         maxLength={4}
@@ -199,10 +214,38 @@ export default function EnterCoalTowerStock({ navigation, route }) {
                       />
                     </View>
                   ))}
-
-                  <AppFormButton buttonText="Submit" />
                 </>
               </FieldSet>
+              <FieldSet>
+                <>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginLeft: wp(10),
+                      }}
+                    >
+                      Total Stock :
+                    </Text>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginLeft: wp(12),
+                      }}
+                    >
+                      {feedingCount}
+                    </Text>
+                  </View>
+                </>
+              </FieldSet>
+              <AppFormButton buttonText="Submit" />
             </ScrollView>
           </View>
         </>

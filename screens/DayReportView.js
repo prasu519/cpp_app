@@ -466,7 +466,7 @@ export default function DayReportView({ navigation }) {
             paddingLeft: hp(2),
             flexDirection: "row",
             alignItems: "center",
-            gap: wp(12),
+            gap: wp(15),
           }}
         >
           <AntDesign
@@ -578,7 +578,7 @@ export default function DayReportView({ navigation }) {
                             marginBottom: 10,
                             display: "flex",
                             flexDirection: "row",
-                            marginLeft: wp(10),
+                            marginLeft: wp(5),
                             gap: hp(3),
                           }}
                         >
@@ -611,7 +611,7 @@ export default function DayReportView({ navigation }) {
                         marginBottom: 10,
                         display: "flex",
                         flexDirection: "row",
-                        marginLeft: wp(10),
+                        marginLeft: wp(5),
                         gap: hp(3),
                       }}
                     >
@@ -702,7 +702,7 @@ export default function DayReportView({ navigation }) {
                             marginBottom: 10,
                             display: "flex",
                             flexDirection: "row",
-                            marginLeft: wp(10),
+                            marginLeft: wp(5),
                             gap: hp(3),
                           }}
                         >
@@ -735,7 +735,7 @@ export default function DayReportView({ navigation }) {
                         marginBottom: 10,
                         display: "flex",
                         flexDirection: "row",
-                        marginLeft: wp(10),
+                        marginLeft: wp(5),
                         gap: hp(3),
                       }}
                     >
@@ -822,7 +822,7 @@ export default function DayReportView({ navigation }) {
                             marginBottom: 10,
                             display: "flex",
                             flexDirection: "row",
-                            marginLeft: wp(10),
+                            marginLeft: wp(5),
                             gap: hp(3),
                           }}
                         >

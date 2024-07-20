@@ -6,13 +6,17 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 
-export default function AppFormButton({ buttonText }) {
+export default function AppFormButton({
+  buttonText,
+  buttonColour = "#fc5c65",
+  ...otherProps
+}) {
   const { handleSubmit } = useFormikContext();
 
   return (
     <TouchableOpacity
       style={{
-        backgroundColor: "#fc5c65",
+        backgroundColor: buttonColour,
         borderRadius: 25,
         justifyContent: "center",
         alignItems: "center",
@@ -23,6 +27,7 @@ export default function AppFormButton({ buttonText }) {
         alignSelf: "center",
       }}
       onPress={handleSubmit}
+      {...otherProps}
     >
       <Text
         style={{

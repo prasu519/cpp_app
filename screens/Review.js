@@ -17,7 +17,6 @@ import {
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
 import { FormatDate } from "../utils/FormatDate";
-
 export default function Review({ navigation }) {
   const [feeding, setFeeding] = useState();
   const [reclaiming, setReclaiming] = useState();

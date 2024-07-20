@@ -54,6 +54,7 @@ const validationSchema = Yup.object().shape({
 export default function EnterFeeding({ navigation, route }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [feedingCount, setFeedingCount] = useState(0);
   const { feedingData, setFeedingData, globalDate, globalShift } =
     useContext(GlobalContext);
 
@@ -80,6 +81,14 @@ export default function EnterFeeding({ navigation, route }) {
 
     resetForm();
     setTimeout(() => navigation.goBack(), 1000);
+  };
+
+  const calculateTotalFeeding = (values) => {
+    const total =
+      (parseInt(values.ct1) || 0) +
+      (parseInt(values.ct2) || 0) +
+      (parseInt(values.ct3) || 0);
+    setFeedingCount(total);
   };
 
   return (
@@ -206,7 +215,11 @@ export default function EnterFeeding({ navigation, route }) {
                   <AppTextBox
                     label="CT-1"
                     labelcolor="orange"
-                    onChangeText={handleChange("ct1")}
+                    onChangeText={(text) => {
+                      handleChange("ct1")(text);
+                      setFieldValue("ct1", text, false);
+                      calculateTotalFeeding({ ...values, ct1: text });
+                    }}
                     onBlur={() => setFieldTouched("ct1")}
                     value={values["ct1"].toString()}
                     maxLength={4}
@@ -216,7 +229,11 @@ export default function EnterFeeding({ navigation, route }) {
                   <AppTextBox
                     label="CT-2"
                     labelcolor="orange"
-                    onChangeText={handleChange("ct2")}
+                    onChangeText={(text) => {
+                      handleChange("ct2")(text);
+                      setFieldValue("ct2", text, false);
+                      calculateTotalFeeding({ ...values, ct2: text });
+                    }}
                     onBlur={() => setFieldTouched("ct2")}
                     value={values["ct2"].toString()}
                     maxLength={4}
@@ -226,7 +243,11 @@ export default function EnterFeeding({ navigation, route }) {
                   <AppTextBox
                     label="CT-3"
                     labelcolor="orange"
-                    onChangeText={handleChange("ct3")}
+                    onChangeText={(text) => {
+                      handleChange("ct3")(text);
+                      setFieldValue("ct3", text, false);
+                      calculateTotalFeeding({ ...values, ct3: text });
+                    }}
                     onBlur={() => setFieldTouched("ct3")}
                     value={values["ct3"].toString()}
                     maxLength={4}
@@ -235,6 +256,39 @@ export default function EnterFeeding({ navigation, route }) {
                   <ErrorMessage error={errors.ct3} visible={touched.ct3} />
                 </>
               </FieldSet>
+
+              <FieldSet>
+                <>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginBottom: 10,
+                      }}
+                    >
+                      Total Feeding :
+                    </Text>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginBottom: wp(3),
+                        marginLeft: wp(10),
+                      }}
+                    >
+                      {feedingCount}
+                    </Text>
+                  </View>
+                </>
+              </FieldSet>
+
               <FieldSet>
                 <>
                   <Text

@@ -82,7 +82,7 @@ export default function DelayMessageComponent({
         style={{
           flexDirection: "row",
           height: hp(8),
-          width: wp(82),
+          width: wp(84),
           backgroundColor: "white",
           borderRadius: 20,
           alignSelf: "center",
@@ -119,7 +119,7 @@ export default function DelayMessageComponent({
         style={{
           flexDirection: "row",
           height: hp(8),
-          width: wp(82),
+          width: wp(84),
           backgroundColor: "white",
           borderRadius: 20,
           alignSelf: "center",

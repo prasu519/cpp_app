@@ -58,7 +58,7 @@ export default function PushingSchedule({ navigation, route }) {
     globalDate,
     globalShift,
   } = useContext(GlobalContext);
-
+  const [pushingCount, setPushingCount] = useState(0);
   const currentDate = new Date(globalDate).toISOString().split("T")[0];
   const currentShift = globalShift; //shift(new Date().getHours());
 
@@ -77,6 +77,16 @@ export default function PushingSchedule({ navigation, route }) {
 
     resetForm();
     setTimeout(() => navigation.goBack(), 1000);
+  };
+
+  const calculateTotalPushings = (values) => {
+    const total =
+      (parseInt(values.bat1) || 0) +
+      (parseInt(values.bat2) || 0) +
+      (parseInt(values.bat3) || 0) +
+      (parseInt(values.bat4) || 0) +
+      (parseInt(values.bat5) || 0);
+    setPushingCount(total);
   };
 
   return (
@@ -206,7 +216,15 @@ export default function PushingSchedule({ navigation, route }) {
                           label={"Batt-" + batt}
                           labelcolor="orange"
                           tbSize="20%"
-                          onChangeText={handleChange("bat" + batt)}
+                          //onChangeText={handleChange("bat" + batt)}
+                          onChangeText={(text) => {
+                            handleChange("bat" + batt)(text);
+                            setFieldValue("bat" + batt, text, false);
+                            calculateTotalPushings({
+                              ...values,
+                              [`bat${batt}`]: text,
+                            });
+                          }}
                           onBlur={() => setFieldTouched("bat" + batt)}
                           value={values["bat" + batt]}
                           maxLength={2}
@@ -218,11 +236,39 @@ export default function PushingSchedule({ navigation, route }) {
                         />
                       </View>
                     ))}
-
-                    <AppFormButton buttonText="Submit" />
                   </View>
                 </>
               </FieldSet>
+              <FieldSet>
+                <>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginLeft: wp(10),
+                      }}
+                    >
+                      Total Pushings :
+                    </Text>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginLeft: wp(12),
+                      }}
+                    >
+                      {pushingCount}
+                    </Text>
+                  </View>
+                </>
+              </FieldSet>
+              <AppFormButton buttonText="Submit" />
             </ScrollView>
           </View>
         </>
