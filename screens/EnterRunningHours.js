@@ -184,7 +184,7 @@ export default function EnterRunningHours({ navigation }) {
                       <View
                         style={{
                           height: hp(6),
-                          width: wp(24),
+                          width: wp(25),
                           backgroundColor: "orange",
                           borderRadius: hp(2),
                           alignItems: "center",
@@ -197,7 +197,7 @@ export default function EnterRunningHours({ navigation }) {
                       </View>
                       <View
                         style={{
-                          width: wp(55),
+                          width: wp(56),
                           backgroundColor: "white",
                           flexDirection: "row",
                           alignItems: "center",
@@ -248,7 +248,7 @@ export default function EnterRunningHours({ navigation }) {
                     Enter CHP Running Hours
                   </Text>
 
-                  {["49", "50", "126"].map((item, index) => (
+                  {["50", "49", "126"].map((item, index) => (
                     <View
                       style={{
                         flexDirection: "row",
@@ -261,7 +261,7 @@ export default function EnterRunningHours({ navigation }) {
                       <View
                         style={{
                           height: hp(6),
-                          width: wp(22),
+                          width: wp(23),
                           backgroundColor: "#e9c46a",
                           borderRadius: hp(2),
                           alignItems: "center",
@@ -279,7 +279,7 @@ export default function EnterRunningHours({ navigation }) {
                       </View>
                       <View
                         style={{
-                          width: wp(55),
+                          width: wp(56),
                           backgroundColor: "white",
                           flexDirection: "row",
                           alignItems: "center",

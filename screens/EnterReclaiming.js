@@ -27,6 +27,8 @@ export default function EnterReclaiming({ navigation }) {
   const [exCount, setExCount] = useState(0);
   const [totalReclaiming, setTotalReclaiming] = useState(0);
   const [totalValues, setTotalValues] = useState(Array(count).fill(""));
+  const [nbTotalReclaiming, setNbTotalReclaiming] = useState(0);
+  const [nbTotalValues, setNbTotalValues] = useState(Array(count).fill(""));
 
   const { setReclaimingData, globalDate, globalShift } =
     useContext(GlobalContext);
@@ -444,7 +446,7 @@ export default function EnterReclaiming({ navigation }) {
                           marginLeft: wp(10),
                         }}
                       >
-                        {totalReclaiming}
+                        {totalReclaiming + nbTotalReclaiming}
                       </Text>
                     </View>
                   </>
@@ -531,15 +533,14 @@ export default function EnterReclaiming({ navigation }) {
                                     "excoal" + (index + 1) + "recl",
                                     value
                                   );
-                                  const newValues = [...totalValues];
-                                  newValues[index] = value;
-                                  setTotalValues(newValues);
-
-                                  const total = newValues.reduce(
+                                  const nbCoalTotal = [...nbTotalValues];
+                                  nbCoalTotal[index] = value;
+                                  setNbTotalValues(nbCoalTotal);
+                                  const total = nbCoalTotal.reduce(
                                     (sum, val) => sum + (parseInt(val) || 0),
                                     0
                                   );
-                                  setTotalReclaiming(total);
+                                  setNbTotalReclaiming(total);
                                 }
                               }}
                             />
@@ -588,20 +589,6 @@ export default function EnterReclaiming({ navigation }) {
                     </Text>
 
                     <AppTextBox
-                      label={"CC49"}
-                      labelcolor={"#e9c46a"}
-                      onChangeText={(value) => {
-                        if (!/^[0-9]*$/.test(value)) {
-                          alert("Enter Numbers only...");
-                          return;
-                        } else {
-                          setFieldValue("cc49recl", value);
-                        }
-                      }}
-                      value={values["cc49recl"].toString()}
-                      maxLength={4}
-                    />
-                    <AppTextBox
                       label={"CC50"}
                       labelcolor={"#e9c46a"}
                       onChangeText={(value) => {
@@ -613,6 +600,21 @@ export default function EnterReclaiming({ navigation }) {
                         }
                       }}
                       value={values["cc50recl"].toString()}
+                      maxLength={4}
+                    />
+
+                    <AppTextBox
+                      label={"CC49"}
+                      labelcolor={"#e9c46a"}
+                      onChangeText={(value) => {
+                        if (!/^[0-9]*$/.test(value)) {
+                          alert("Enter Numbers only...");
+                          return;
+                        } else {
+                          setFieldValue("cc49recl", value);
+                        }
+                      }}
+                      value={values["cc49recl"].toString()}
                       maxLength={4}
                     />
                     <AppTextBox
@@ -711,7 +713,7 @@ export default function EnterReclaiming({ navigation }) {
                           marginLeft: wp(10),
                         }}
                       >
-                        {totalReclaiming}
+                        {totalReclaiming + nbTotalReclaiming}
                       </Text>
                     </View>
                   </>
@@ -883,15 +885,14 @@ export default function EnterReclaiming({ navigation }) {
                                         "recl",
                                       value
                                     );
-                                    const newValues = [...totalValues];
-                                    newValues[index] = value;
-                                    setTotalValues(newValues);
-
-                                    const total = newValues.reduce(
+                                    const nbCoalTotal = [...nbTotalValues];
+                                    nbCoalTotal[index] = value;
+                                    setNbTotalValues(nbCoalTotal);
+                                    const total = nbCoalTotal.reduce(
                                       (sum, val) => sum + (parseInt(val) || 0),
                                       0
                                     );
-                                    setTotalReclaiming(total);
+                                    setNbTotalReclaiming(total);
                                   }
                                 }}
                               />
@@ -940,20 +941,6 @@ export default function EnterReclaiming({ navigation }) {
                     </Text>
 
                     <AppTextBox
-                      label={"CC49"}
-                      labelcolor={"#e9c46a"}
-                      onChangeText={(value) => {
-                        if (!/^[0-9]*$/.test(value)) {
-                          alert("Enter Numbers only...");
-                          return;
-                        } else {
-                          setFieldValue("cc49recl", value);
-                        }
-                      }}
-                      value={values["cc49recl"].toString()}
-                      maxLength={4}
-                    />
-                    <AppTextBox
                       label={"CC50"}
                       labelcolor={"#e9c46a"}
                       onChangeText={(value) => {
@@ -965,6 +952,20 @@ export default function EnterReclaiming({ navigation }) {
                         }
                       }}
                       value={values["cc50recl"].toString()}
+                      maxLength={4}
+                    />
+                    <AppTextBox
+                      label={"CC49"}
+                      labelcolor={"#e9c46a"}
+                      onChangeText={(value) => {
+                        if (!/^[0-9]*$/.test(value)) {
+                          alert("Enter Numbers only...");
+                          return;
+                        } else {
+                          setFieldValue("cc49recl", value);
+                        }
+                      }}
+                      value={values["cc49recl"].toString()}
                       maxLength={4}
                     />
                     <AppTextBox

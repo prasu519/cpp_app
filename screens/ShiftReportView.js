@@ -79,7 +79,7 @@ export default function ShiftReportView({ navigation }) {
                 <h2 style="text-decoration: underline;">Reclaiming Data</h2>
                 <h3 style="text-decoration: underline; margin-top:20px ">Coal-wise Reclm</h3>
                 ${Array.from({ length: 8 }, (_, index) =>
-                  reclaiming["coal" + (index + 1) + "name"] === null &&
+                  reclaiming["coal" + (index + 1) + "name"] === "" &&
                   reclaiming["coal" + (index + 1) + "recl"] === 0
                     ? null
                     : `
@@ -89,7 +89,7 @@ export default function ShiftReportView({ navigation }) {
                     </span>
                     <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
                       ${
-                        reclaiming["coal" + (index + 1) + "recl"] === "0"
+                        reclaiming["coal" + (index + 1) + "recl"] === 0
                           ? "000"
                           : reclaiming["coal" + (index + 1) + "recl"]
                       }
@@ -99,7 +99,7 @@ export default function ShiftReportView({ navigation }) {
                 ).join("")}
 
                 ${Array.from({ length: 8 }, (_, index) =>
-                  reclaiming["excoal" + (index + 1) + "name"] === null &&
+                  reclaiming["excoal" + (index + 1) + "name"] === "" &&
                   reclaiming["excoal" + (index + 1) + "recl"] === 0
                     ? null
                     : `
@@ -111,7 +111,7 @@ export default function ShiftReportView({ navigation }) {
                     </span>
                     <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
                       ${
-                        reclaiming["excoal" + (index + 1) + "recl"] === "0"
+                        reclaiming["excoal" + (index + 1) + "recl"] === 0
                           ? "000"
                           : reclaiming["excoal" + (index + 1) + "recl"]
                       }
@@ -146,7 +146,7 @@ export default function ShiftReportView({ navigation }) {
                   <h3 style="text-decoration: underline; margin-top:20px">MB-Top coal stock</h3>
                 ${Array.from({ length: 8 }, (_, index) =>
                   mbTopStock["coal" + (index + 1) + "name"] === undefined ||
-                  mbTopStock["coal" + (index + 1) + "stock"] === null
+                  mbTopStock["coal" + (index + 1) + "stock"] === 0
                     ? null
                     : `
                   <div style="margin-bottom: 10px;  flex-direction: row; ">
@@ -158,6 +158,26 @@ export default function ShiftReportView({ navigation }) {
                         mbTopStock["coal" + (index + 1) + "stock"] === null
                           ? "000"
                           : mbTopStock["coal" + (index + 1) + "stock"]
+                      }
+                    </span>
+                  </div>
+                `
+                ).join("")}
+
+                ${Array.from({ length: 8 }, (_, index) =>
+                  mbTopStock["oldcoal" + (index + 1) + "name"] === "" ||
+                  mbTopStock["oldcoal" + (index + 1) + "stock"] === 0
+                    ? null
+                    : `
+                  <div style="margin-bottom: 10px;  flex-direction: row; ">
+                    <span style="font-size: 20px; font-weight:bold">
+                      ${mbTopStock["coal" + (index + 1) + "name"].toUpperCase()}
+                    </span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                      ${
+                        mbTopStock["oldcoal" + (index + 1) + "stock"] === 0
+                          ? "000"
+                          : mbTopStock["oldcoal" + (index + 1) + "stock"]
                       }
                     </span>
                   </div>
@@ -336,18 +356,25 @@ export default function ShiftReportView({ navigation }) {
             </div>
           </div>
 
-
-
+          <div style="display:flex; flex-direction: column; text-align:center; width: 800px; height:100px;">
+         
+          <h1 style="text-decoration: underline;">CPP Shift Delays</h1>
+          </div>
           <div style="display:flex; flex-direction:row; width:800px; height:900px; border:2px solid black; margin-top:10px">
+
+          
               <div style=" flex-direction:row;height:900px;width:800px;float:left; border-bottom: 2px solid black; text-align:center;align-items:flex-start;">
-                <h2 style="text-decoration: underline; text-align:center;">Shift Delays</h2>
+                
                 
                 ${Array.from(
                   { length: shiftDelays.length },
                   (_, index) => `
                       <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
-                <p style="font-size: 20px; font-weight:bold">From   : ${shiftDelays[index]["fromTime"]}</p>
-                <p style="font-size: 20px; font-weight:bold">To     : ${shiftDelays[index]["toTime"]}</p>
+                <span style="font-size: 20px; font-weight:bold">From   : ${shiftDelays[index]["fromTime"]}</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span style="font-size: 20px; font-weight:bold">To     : ${shiftDelays[index]["toTime"]}</span>
                 <p style="font-size: 20px; font-weight:bold">Reason : ${shiftDelays[index]["reason"]}</p>
                 </div>
                 <hr class="custom-hr">
@@ -911,6 +938,44 @@ export default function ShiftReportView({ navigation }) {
                             {mbTopStock["coal" + item + "stock"] === "null"
                               ? "000"
                               : mbTopStock["coal" + item + "stock"]}
+                          </Text>
+                        </View>
+                      )
+                    )}
+
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
+                      mbTopStock["oldcoal" + item + "name"] === "" ||
+                      mbTopStock["oldcoal" + item + "stock"] === 0 ? null : (
+                        <View
+                          key={index}
+                          style={{
+                            marginBottom: 10,
+                            display: "flex",
+                            flexDirection: "row",
+                            marginLeft: wp(6),
+                            gap: hp(3),
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: wp(30),
+
+                              alignItems: "flex-end",
+                            }}
+                          >
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {mbTopStock[
+                                "oldcoal" + item + "name"
+                              ].toUpperCase()}
+                            </Text>
+                          </View>
+                          <Divider orientation="vertical" />
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {mbTopStock["oldcoal" + item + "stock"] === "null"
+                              ? "000"
+                              : mbTopStock["oldcoal" + item + "stock"]}
                           </Text>
                         </View>
                       )

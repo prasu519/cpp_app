@@ -245,7 +245,7 @@ export default function Review({ navigation }) {
     };
 
     setReclaimingData(updatedReclaiming);
-    console.log(reclaimingData);
+
     setEditReclaiming(false);
   };
 
@@ -349,7 +349,9 @@ export default function Review({ navigation }) {
     let totalMbtopStock = 0;
     for (let i = 0; i < coalNameCount; i++) {
       totalMbtopStock =
-        totalMbtopStock + parseInt(mbtopCoalData["coal" + (i + 1) + "stock"]);
+        totalMbtopStock +
+        parseInt(mbtopCoalData["coal" + (i + 1) + "stock"]) +
+        parseInt(mbtopCoalData["oldcoal" + (i + 1) + "stock"]);
     }
     const newMbtopData = { ...mbtopCoalData, total_stock: totalMbtopStock };
 
@@ -676,7 +678,9 @@ export default function Review({ navigation }) {
                 key={index}
                 label={item}
                 labelcolor={
-                  item === "stream1" || item === "stream1A"
+                  item === "stream1" ||
+                  item === "stream1A" ||
+                  item === "New_Stream"
                     ? "#e9c46a"
                     : "orange"
                 }
@@ -737,7 +741,7 @@ export default function Review({ navigation }) {
             </Text>
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
               reclaiming["coal" + item + "name"] === null ||
-              reclaiming["coal" + item + "recl"] === null ? null : (
+              reclaiming["coal" + item + "recl"] === 0 ? null : (
                 <AppTextBox
                   key={index}
                   label={reclaiming["coal" + item + "name"]}
@@ -932,7 +936,7 @@ export default function Review({ navigation }) {
                 </View>
               </View>
             ))}
-            {["49", "50", "126"].map((item, index) => (
+            {["50", "49", "126"].map((item, index) => (
               <View
                 style={{
                   flexDirection: "row",
@@ -1244,6 +1248,49 @@ export default function Review({ navigation }) {
                 maxLength={4}
               />
             ))}
+
+            {Array.from({ length: coalNameCount }, (_, index) => {
+              const oldcoalname =
+                mbtopCoalData["oldcoal" + (index + 1) + "name"].toString();
+              if (oldcoalname !== "")
+                return (
+                  <AppTextBox
+                    label={mbtopCoalData[
+                      "oldcoal" + (index + 1) + "name"
+                    ].toString()}
+                    labelcolor="orange"
+                    key={index}
+                    onChangeText={(value) => {
+                      if (value === "") {
+                        setUpdateMbtopStockButtVisible(true);
+                        setMbtopCoalData({
+                          ...mbtopCoalData,
+                          ["oldcoal" + (index + 1) + "stock"]: "",
+                        });
+                        return;
+                      }
+
+                      if (!/^[0-9]*$/.test(value)) {
+                        alert("Enter Numbers only...");
+                        setUpdateMbtopStockButtVisible(true);
+                        return;
+                      } else {
+                        setMbtopCoalData({
+                          ...mbtopCoalData,
+                          ["oldcoal" + (index + 1) + "stock"]: value,
+                        });
+                        setUpdateMbtopStockButtVisible(false);
+                      }
+                    }}
+                    keyboardType="number-pad"
+                    value={mbtopCoalData[
+                      "oldcoal" + (index + 1) + "stock"
+                    ].toString()}
+                    editable={editMbtopStock}
+                    maxLength={4}
+                  />
+                );
+            })}
             <View
               style={{
                 flexDirection: "row",

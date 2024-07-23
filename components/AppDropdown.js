@@ -17,7 +17,7 @@ export default function AppDropdown({
     <Picker
       id={id}
       style={{
-        width: wp(30),
+        width: wp(29),
       }}
       mode="dropdown"
       enabled={enable}

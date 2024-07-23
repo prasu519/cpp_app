@@ -101,6 +101,7 @@ export default function EnterFeeding({ navigation, route }) {
         ct3: "",
         stream1: "",
         stream1A: "",
+
         total_feeding: "",
       }}
       validationSchema={validationSchema}
