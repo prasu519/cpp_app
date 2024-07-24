@@ -166,6 +166,7 @@ export default function ShiftReportView({ navigation }) {
 
                 ${Array.from({ length: 8 }, (_, index) =>
                   mbTopStock["oldcoal" + (index + 1) + "name"] === "" ||
+                  mbTopStock["oldcoal" + (index + 1) + "name"] === undefined ||
                   mbTopStock["oldcoal" + (index + 1) + "stock"] === 0
                     ? null
                     : `
@@ -183,6 +184,7 @@ export default function ShiftReportView({ navigation }) {
                   </div>
                 `
                 ).join("")}
+               
 
 
                   <h3 style="text-decoration: underline; margin-top:20px">Total MB Top Stock</h3>
@@ -547,6 +549,7 @@ export default function ShiftReportView({ navigation }) {
       })
       .then((responce) => setMbTopStock(responce.data.data[0]))
       .catch((error) => console.log(error));
+    console.log(mbTopStock);
   };
 
   const getRunningHoursdata = async (date, shift) => {
@@ -945,6 +948,7 @@ export default function ShiftReportView({ navigation }) {
 
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
                       mbTopStock["oldcoal" + item + "name"] === "" ||
+                      mbTopStock["oldcoal" + item + "name"] === undefined ||
                       mbTopStock["oldcoal" + item + "stock"] === 0 ? null : (
                         <View
                           key={index}
