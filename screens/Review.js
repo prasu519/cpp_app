@@ -739,6 +739,7 @@ export default function Review({ navigation }) {
             >
               Reclaiming
             </Text>
+
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
               reclaiming["coal" + item + "name"] === null ||
               reclaiming["coal" + item + "recl"] === 0 ? null : (

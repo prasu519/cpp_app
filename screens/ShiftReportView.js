@@ -35,6 +35,8 @@ export default function ShiftReportView({ navigation }) {
   const [coalCount, setCoalCount] = useState(0);
   const [blendCount, setBlendCount] = useState(0);
   const [loadCard, setLoadCard] = useState(false);
+  const [clickSubmit, setClickSubmit] = useState(false);
+  const [latestRecord, setLatestRecord] = useState();
 
   useEffect(() => {
     if (reclaiming) {
@@ -47,6 +49,17 @@ export default function ShiftReportView({ navigation }) {
       setCoalCount(count);
     }
   }, [reclaiming]);
+
+  useEffect(() => {
+    axios
+      .get(BaseUrl + "/shiftreportenteredbylatest")
+      .then((response) => {
+        setLatestRecord(response.data.data);
+      })
+      .catch((error) => {
+        alert("latest record not found  " + error);
+      });
+  }, []);
 
   const generatePDF = async () => {
     try {
@@ -452,6 +465,7 @@ export default function ShiftReportView({ navigation }) {
   };
 
   const handleSubmit = () => {
+    setClickSubmit(true);
     //let date = day + "/" + month + "/" + year;
     let date = selectedDate.toISOString().split("T")[0];
     if (selectedShift === "" || selectedShift === "Select") {
@@ -549,7 +563,6 @@ export default function ShiftReportView({ navigation }) {
       })
       .then((responce) => setMbTopStock(responce.data.data[0]))
       .catch((error) => console.log(error));
-    console.log(mbTopStock);
   };
 
   const getRunningHoursdata = async (date, shift) => {
@@ -758,8 +771,25 @@ export default function ShiftReportView({ navigation }) {
           onPress={handleSubmit}
         />
       </View>
+      {latestRecord && !clickSubmit && !loadCard && (
+        <View
+          style={{
+            height: hp(20),
+            width: wp(100),
+
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ fontSize: hp(3) }}>Last Record uploaded on..</Text>
+          <Text style={{ fontSize: hp(3) }}>
+            {FormatDate(new Date(latestRecord.date))}
+          </Text>
+          <Text style={{ fontSize: hp(3) }}>{latestRecord.shift}</Text>
+        </View>
+      )}
       <ScrollView>
-        {loadCard && reclaiming && mbTopStock && coalCount > 0 && (
+        {loadCard && reclaiming && mbTopStock && coalCount > 0 ? (
           <View style={{ marginTop: hp(1), marginBottom: hp(2) }}>
             <Card>
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>
@@ -1487,6 +1517,34 @@ export default function ShiftReportView({ navigation }) {
               {/*data ? <Text>Data loaded</Text> : <Text>Loading data...</Text>*/}
             </View>
           </View>
+        ) : (
+          clickSubmit && (
+            <View
+              style={{
+                width: wp(100),
+                height: hp(20),
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <>
+                <Text
+                  style={{
+                    color: "red",
+                    fontWeight: "bold",
+                    fontSize: hp(4),
+                  }}
+                >
+                  No Data Available...
+                </Text>
+                <Text style={{ fontSize: hp(3) }}>Data available upto..</Text>
+                <Text style={{ fontSize: hp(3) }}>
+                  {FormatDate(new Date(latestRecord.date))}
+                </Text>
+                <Text style={{ fontSize: hp(3) }}>{latestRecord.shift}</Text>
+              </>
+            </View>
+          )
         )}
       </ScrollView>
     </View>

@@ -464,6 +464,20 @@ export default function ShiftReportEntry({ navigation }) {
               disabled={pushingScheduleData === undefined ? false : true}
             ></Button>
 
+            <Button
+              title="Enter Crushers Status"
+              buttonStyle={{ width: wp(70), height: hp(7) }}
+              radius={50}
+              color="#50C4ED"
+              titleStyle={{
+                color: "black",
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+              }}
+              onPress={() => navigation.navigate("CrusherStatus")}
+              disabled={pushingScheduleData === undefined ? false : true}
+            ></Button>
+
             <TouchableOpacity
               style={{
                 height: hp(7),

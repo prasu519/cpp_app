@@ -24,6 +24,7 @@ export default function ShiftReportAuthentication({
   const [presDataChecked, setPresDataChecked] = useState(false);
   const [prevDataChecked, setPrevDataChecked] = useState(false);
   const [presEntryFound, setPresEntryFound] = useState(true);
+  const [latestRecord, setLatestRecord] = useState();
 
   useEffect(() => {
     if (presDataChecked) {
@@ -46,7 +47,6 @@ export default function ShiftReportAuthentication({
         setPresDataChecked(false);
       }
     }
-
     if (prevDataChecked) {
       if (shiftReportEnteredBy === undefined) {
         alert("Please enter previous Shift report first..");
@@ -60,6 +60,17 @@ export default function ShiftReportAuthentication({
       setPrevDataChecked(false);
     }
   }, [presDataChecked, prevDataChecked]);
+
+  useEffect(() => {
+    axios
+      .get(BaseUrl + "/shiftreportenteredbylatest")
+      .then((response) => {
+        setLatestRecord(response.data.data);
+      })
+      .catch((error) => {
+        alert("latest record not found  " + error);
+      });
+  }, []);
 
   const getPresShiftReportEntryDetails = async (date, shift) => {
     await axios
@@ -179,10 +190,9 @@ export default function ShiftReportAuthentication({
           <TextInput
             style={{
               width: "100%",
-              padding: 10,
+              padding: wp(2),
               borderWidth: 1,
               borderRadius: 5,
-              marginBottom: 15,
             }}
             placeholder="Type here..."
             onChangeText={setEmpnum}
@@ -191,7 +201,6 @@ export default function ShiftReportAuthentication({
 
           <Text
             style={{
-              marginTop: hp(3),
               textAlign: "center",
               fontSize: 18,
               fontWeight: "bold",
@@ -243,7 +252,7 @@ export default function ShiftReportAuthentication({
               alignItems: "center",
               height: hp(5),
               width: wp(63),
-              marginBottom: hp(4),
+              marginBottom: hp(2),
             }}
           >
             <Text
@@ -278,6 +287,27 @@ export default function ShiftReportAuthentication({
               ))}
             </Picker>
           </View>
+
+          {latestRecord && (
+            <View
+              style={{
+                height: hp(10),
+                width: wp(60),
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: wp(3),
+              }}
+            >
+              <Text style={{ fontSize: hp(2), color: "red" }}>
+                Last Record uploaded on..
+              </Text>
+              <Text style={{ fontSize: hp(2) }}>
+                {FormatDate(new Date(latestRecord.date))}
+              </Text>
+              <Text style={{ fontSize: hp(2) }}>{latestRecord.shift}</Text>
+            </View>
+          )}
+
           <View
             style={{
               flexDirection: "row",

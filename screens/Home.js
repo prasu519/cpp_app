@@ -104,12 +104,13 @@ export default function Home({ navigation }) {
       >
         <Button
           title={"Enter Shift Reports"}
-          buttonStyle={{ width: 200, height: 100 }}
+          buttonStyle={{ width: 200, height: 100, elevation: 20 }}
           titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
           color="#E3E587"
           onPress={handleEnterShiftReport}
         />
+
         <ShiftReportAuthentication
           onClose={handleAuthModelClose}
           visible={authModelVisible}
@@ -134,6 +135,13 @@ export default function Home({ navigation }) {
           titleStyle={{ fontSize: 25, color: "white" }}
           radius={25}
           onPress={() => navigation.navigate("ViewReports")}
+        ></Button>
+        <Button
+          title={"Crushers Data Entry"}
+          buttonStyle={{ width: 200, height: 100 }}
+          titleStyle={{ fontSize: 25, color: "white" }}
+          radius={25}
+          onPress={() => navigation.navigate("CrushersDataEntry")}
         ></Button>
       </View>
     </View>

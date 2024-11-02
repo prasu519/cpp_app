@@ -16,6 +16,7 @@ export const GlobalProvider = ({ children }) => {
   const [pushingScheduleData, setPushingScheduleData] = useState();
   const [globalDate, setGlobalDate] = useState();
   const [globalShift, setGlobalShift] = useState();
+  const [allCrushersData, setAllCrushersData] = useState([]);
 
   return (
     <GlobalContext.Provider
@@ -42,6 +43,8 @@ export const GlobalProvider = ({ children }) => {
         setGlobalDate,
         globalShift,
         setGlobalShift,
+        allCrushersData,
+        setAllCrushersData,
       }}
     >
       {children}
