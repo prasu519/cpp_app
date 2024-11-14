@@ -136,13 +136,13 @@ export default function Home({ navigation }) {
           radius={25}
           onPress={() => navigation.navigate("ViewReports")}
         ></Button>
-        <Button
-          title={"Crushers Data Entry"}
+        {/* <Button
+          title={"Crushers Report"}
           buttonStyle={{ width: 200, height: 100 }}
           titleStyle={{ fontSize: 25, color: "white" }}
           radius={25}
           onPress={() => navigation.navigate("CrushersDataEntry")}
-        ></Button>
+        ></Button> */}
       </View>
     </View>
   );
