@@ -36,7 +36,7 @@ export default function CrusherComponent({
           style={{
             width: wp(40),
             height: hp(6),
-            backgroundColor: "blue",
+            backgroundColor: "#E17564",
             alignSelf: "center",
             alignItems: "center",
             justifyContent: "center",
@@ -51,8 +51,8 @@ export default function CrusherComponent({
         </View>
         <View style={{ width: wp(90), borderBottomWidth: wp(0.2) }}></View>
 
-        <View style={{ alignItems: "center", marginTop: wp(10) }}>
-          <View style={{ flexDirection: "row" }}>
+        <View style={{ alignItems: "center", marginTop: wp(10), gap: wp(5) }}>
+          <View style={{ flexDirection: "row", gap: wp(7) }}>
             <View
               style={{
                 width: wp(30),
@@ -102,7 +102,7 @@ export default function CrusherComponent({
             label={"Current"}
             labelcolor="#e9c46a"
             tbSize="30%"
-            lbSize={wp(7)}
+            lbSize={wp(8)}
             onChangeText={onChangeCurrent}
             value={valueCurrent}
             maxLength={4}
@@ -111,7 +111,7 @@ export default function CrusherComponent({
             label={"RPM"}
             labelcolor="#e9c46a"
             tbSize="30%"
-            lbSize={wp(7)}
+            lbSize={wp(8)}
             onChangeText={onChangeRpm}
             //onBlur={() => setFieldTouched(item)}
             value={valueRpm}
@@ -138,10 +138,10 @@ export default function CrusherComponent({
         </View>
 
         <View style={{ alignItems: "center", gap: wp(7) }}>
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", gap: wp(6) }}>
             <View
               style={{
-                width: wp(30),
+                width: wp(35),
                 backgroundColor: "#e9c46a",
                 height: hp(6),
                 justifyContent: "center",
@@ -163,7 +163,7 @@ export default function CrusherComponent({
             <Picker
               id={1}
               style={{
-                width: wp(30),
+                width: wp(32),
                 backgroundColor: "white",
                 marginLeft: wp(7),
               }}
@@ -186,16 +186,16 @@ export default function CrusherComponent({
             label={"oil Pressure"}
             labelcolor="#e9c46a"
             tbSize="30%"
-            lbSize={wp(7)}
+            lbSize={wp(9)}
             onChangeText={onChangeTcop}
             value={valueTcop}
             maxLength={4}
           />
           <AppTextBox
-            label={"oil        Temp"}
+            label={"oil Temp"}
             labelcolor="#e9c46a"
             tbSize="30%"
-            lbSize={wp(7)}
+            lbSize={wp(9)}
             onChangeText={onChangeTcot}
             Value={valueTcot}
             maxLength={4}
@@ -218,10 +218,10 @@ export default function CrusherComponent({
         </View>
 
         <View style={{ alignItems: "center", gap: wp(7) }}>
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", gap: wp(6) }}>
             <View
               style={{
-                width: wp(30),
+                width: wp(35),
                 backgroundColor: "#e9c46a",
                 height: hp(6),
                 justifyContent: "center",
@@ -243,7 +243,7 @@ export default function CrusherComponent({
             <Picker
               id={1}
               style={{
-                width: wp(30),
+                width: wp(32),
                 backgroundColor: "white",
                 marginLeft: wp(7),
               }}
@@ -266,16 +266,16 @@ export default function CrusherComponent({
             label={"oil Pressure"}
             labelcolor="#e9c46a"
             tbSize="30%"
-            lbSize={wp(7)}
+            lbSize={wp(9)}
             onChangeText={onChangeGbop}
             value={valueGbop}
             maxLength={4}
           />
           <AppTextBox
-            label={"oil        Temp"}
+            label={"oil Temp"}
             labelcolor="#e9c46a"
             tbSize="30%"
-            lbSize={wp(7)}
+            lbSize={wp(9)}
             onChangeText={onChangeGbot}
             value={valueGbot}
             maxLength={4}

@@ -18,7 +18,7 @@ const AppTextBox = ({
         flexDirection: "row",
         width: wp(85),
         height: hp(6),
-        gap: hp(3),
+        gap: hp(7),
         marginBottom: hp(1),
         marginTop: hp(1),
         justifyContent: "center",

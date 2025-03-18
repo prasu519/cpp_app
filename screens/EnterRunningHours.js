@@ -92,7 +92,7 @@ export default function EnterRunningHours({ navigation }) {
             >
               <View
                 style={{
-                  paddingTop: hp(5),
+                  paddingTop: hp(2),
                   paddingLeft: hp(2),
                   flexDirection: "row",
                   alignItems: "center",
