@@ -10,6 +10,9 @@ import FieldSet from "react-native-fieldset";
 
 export default function CrusherComponent({
   number,
+  colour,
+  onChangeStatus,
+  selectedStatus = "",
   onChangeFeeder,
   selectedFeeder = "",
   onChangeCurrent,
@@ -36,7 +39,7 @@ export default function CrusherComponent({
           style={{
             width: wp(40),
             height: hp(6),
-            backgroundColor: "#E17564",
+            backgroundColor: colour,
             alignSelf: "center",
             alignItems: "center",
             justifyContent: "center",
@@ -49,14 +52,60 @@ export default function CrusherComponent({
             {"Crusher-" + number}
           </Text>
         </View>
-        <View style={{ width: wp(90), borderBottomWidth: wp(0.2) }}></View>
 
+        <View style={{ width: wp(83), borderBottomWidth: wp(0.1) }}></View>
         <View style={{ alignItems: "center", marginTop: wp(10), gap: wp(5) }}>
+          <View style={{ flexDirection: "row", marginLeft: wp(3) }}>
+            <View
+              style={{
+                width: wp(30),
+                backgroundColor: colour,
+                height: hp(6),
+                justifyContent: "center",
+                borderRadius: 25,
+                paddingLeft: wp(3),
+                marginBottom: wp(5),
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: wp(4.5),
+                  fontWeight: "bold",
+                  color: "black",
+                  textAlign: "left",
+                }}
+              >
+                STATUS
+              </Text>
+            </View>
+            <Picker
+              id={1}
+              style={{
+                width: wp(40),
+                height: hp(2),
+                backgroundColor: "white",
+                marginLeft: wp(7),
+              }}
+              mode="dropdown"
+              enabled={true}
+              onValueChange={onChangeStatus}
+              selectedValue={selectedStatus}
+            >
+              {["", "InUse", "StandBy", "Repair"].map((status) => (
+                <Picker.Item
+                  key={status}
+                  label={status.toString()}
+                  value={status}
+                  style={{ fontSize: hp(2) }}
+                />
+              ))}
+            </Picker>
+          </View>
           <View style={{ flexDirection: "row", gap: wp(7) }}>
             <View
               style={{
                 width: wp(30),
-                backgroundColor: "#e9c46a",
+                backgroundColor: colour,
                 height: hp(6),
                 justifyContent: "center",
                 borderRadius: 25,
@@ -98,6 +147,7 @@ export default function CrusherComponent({
               ))}
             </Picker>
           </View>
+          {/*
           <AppTextBox
             label={"Current"}
             labelcolor="#e9c46a"
@@ -118,8 +168,9 @@ export default function CrusherComponent({
             maxLength={4}
             //placeholder={item === "ci" ? "%" : ""}
           />
+          */}
         </View>
-
+        {/*
         <View
           style={{
             width: wp(50),
@@ -280,7 +331,7 @@ export default function CrusherComponent({
             value={valueGbot}
             maxLength={4}
           />
-        </View>
+        </View>*/}
       </View>
     </FieldSet>
   );

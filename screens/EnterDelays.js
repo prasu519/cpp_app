@@ -239,7 +239,8 @@ export default function EnterDelays({ navigation }) {
                     }
                     if (
                       parseInt(value) >
-                      parseInt(delayComponent["tohr" + index] && shift !== "C")
+                        parseInt(delayComponent["tohr" + index]) &&
+                      shift !== "C"
                     ) {
                       alert("From time should not be more than To time..");
                       return;
@@ -301,9 +302,8 @@ export default function EnterDelays({ navigation }) {
                     }
                     if (
                       parseInt(value) <
-                      parseInt(
-                        delayComponent["fromhr" + index] && shift !== "C"
-                      )
+                        parseInt(delayComponent["fromhr" + index]) &&
+                      shift !== "C"
                     ) {
                       alert("To time should not be less than From time..");
                       return;

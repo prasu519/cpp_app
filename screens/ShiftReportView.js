@@ -1,3 +1,4 @@
+//date
 import { View, ScrollView, Alert } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState, useEffect } from "react";
@@ -30,6 +31,7 @@ export default function ShiftReportView({ navigation }) {
   const [shiftDelays, setShiftDelays] = useState();
   const [coalAnalysisData, setCoalAnalysisData] = useState();
   const [pushingSchedule, setPushingSchedule] = useState();
+  const [crusherStatus, setCrusherStatus] = useState();
   const [shiftReportEnteredBy, setShiftReportEnteredBy] = useState();
 
   const [coalCount, setCoalCount] = useState(0);
@@ -37,6 +39,7 @@ export default function ShiftReportView({ navigation }) {
   const [loadCard, setLoadCard] = useState(false);
   const [clickSubmit, setClickSubmit] = useState(false);
   const [latestRecord, setLatestRecord] = useState();
+  const [loadLatestRecord, setLoadLatestRecord] = useState(false);
 
   useEffect(() => {
     if (reclaiming) {
@@ -51,14 +54,18 @@ export default function ShiftReportView({ navigation }) {
   }, [reclaiming]);
 
   useEffect(() => {
-    axios
-      .get(BaseUrl + "/shiftreportenteredbylatest")
-      .then((response) => {
-        setLatestRecord(response.data.data);
-      })
-      .catch((error) => {
-        alert("latest record not found  " + error);
-      });
+    const getLatestRecord = async () => {
+      await axios
+        .get(BaseUrl + "/shiftreportenteredbylatest")
+        .then((response) => {
+          setLatestRecord(response.data.data);
+          setLoadLatestRecord(true);
+        })
+        .catch((error) => {
+          alert("latest record not found  " + error);
+        });
+    };
+    getLatestRecord();
   }, []);
 
   const generatePDF = async () => {
@@ -66,342 +73,401 @@ export default function ShiftReportView({ navigation }) {
       const htmlContent = `
           <html>
             <body>
-            <div style="display:flex; flex-direction: column; text-align:center; width: 800px; height:100px;">
-              <h1 style="text-decoration: underline;">CPP Shift Report</h1>
-              <div style=" flex-direction: row; gap:40px">
-                <span style="font-size: 20px; font-weight:bold; margin-left:10px">
+              <div style="flex-direction: column;align-items: center;justify-content: center; text-align:center; width: 800px; height:100px;">
+                <h1 style="text-decoration: underline;">CPP Shift Report</h1>
+                <div style=" flex-direction: row; gap:30px">
+                  <span style="font-size: 20px; font-weight:bold; margin-left:10px">
                     Date : ${selectedDate.toISOString().split("T")[0]}
-                </span>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
+                  </span>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
                     Shift : ${selectedShift}
-                </span>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
+                  </span>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
                     Name : ${shiftReportEnteredBy.name}
-                </span>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
+                  </span>
+                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span style="font-size: 20px; font-weight:bold; text-align:right; margin-right:10px">
                     Emp No : ${shiftReportEnteredBy.empnum}
-                </span>
-              </div>
-            </div>
-     
-            <div style="display:flex; flex-direction:row; width:800px; height:900px; border:2px solid black; margin-top:10px">
-              <div style=" flex-direction:column;width:200px;float:left; border-right: 2px solid black; text-align:center;align-items:flex-start;">
-                <h2 style="text-decoration: underline;">Reclaiming Data</h2>
-                <h3 style="text-decoration: underline; margin-top:20px ">Coal-wise Reclm</h3>
-                ${Array.from({ length: 8 }, (_, index) =>
-                  reclaiming["coal" + (index + 1) + "name"] === "" &&
-                  reclaiming["coal" + (index + 1) + "recl"] === 0
-                    ? null
-                    : `
-                  <div style="margin-bottom: 10px;  flex-direction: row; ">
-                    <span style="font-size: 20px; font-weight:bold">
+                  </span>
+                </div>
+             </div>
+             <div style= "display:flex; flex-direction:row; width:780px; height:930px;  margin-top:5px;border:2px solid black;align-self: center;margin-left:10px;margin-right:10px">
+               <div style=" flex-direction:column;  display: inline-block; float: left; width:400px;float:left; border-right: 2px solid black; text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px">
+                 <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Reclaiming Data</p>              
+                 ${Array.from({ length: 8 }, (_, index) =>
+                   reclaiming["coal" + (index + 1) + "name"] === "" &&
+                   reclaiming["coal" + (index + 1) + "recl"] === 0
+                     ? null
+                     : `
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                    <span style="font-size: 18px; font-weight:bold">
                       ${reclaiming["coal" + (index + 1) + "name"].toUpperCase()}
                     </span>
-                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                    <span style=" margin-left: 20px;font-size: 18px; font-weight:bold">
                       ${
                         reclaiming["coal" + (index + 1) + "recl"] === 0
                           ? "000"
                           : reclaiming["coal" + (index + 1) + "recl"]
                       }
                     </span>
+                    </p>
                   </div>
-                `
-                ).join("")}
+                  `
+                 ).join("")}
 
-                ${Array.from({ length: 8 }, (_, index) =>
-                  reclaiming["excoal" + (index + 1) + "name"] === "" &&
-                  reclaiming["excoal" + (index + 1) + "recl"] === 0
-                    ? null
-                    : `
+                  ${Array.from({ length: 8 }, (_, index) =>
+                    reclaiming["excoal" + (index + 1) + "name"] === "" &&
+                    reclaiming["excoal" + (index + 1) + "recl"] === 0
+                      ? null
+                      : `
                   <div style="margin-bottom: 10px;  flex-direction: row; ">
-                    <span style="font-size: 20px; font-weight:bold">
+                    <p style=" display: flex; justify-content: space-between;">
+                      <span style="font-size: 18px; font-weight:bold">
                       ${reclaiming[
                         "excoal" + (index + 1) + "name"
                       ].toUpperCase()}
-                    </span>
-                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                      </span>
+                      <span style=" margin-left: 20px;font-size: 18px; font-weight:bold">
                       ${
                         reclaiming["excoal" + (index + 1) + "recl"] === 0
                           ? "000"
                           : reclaiming["excoal" + (index + 1) + "recl"]
                       }
-                    </span>
+                      </span>
+                    </p>
                   </div>
-                `
-                ).join("")}
-                <h3 style="text-decoration: underline; margin-top:20px ">Stream-wise Reclm</h3>
-                ${["cc49", "cc50", "cc126"]
-                  .map(
-                    (item, index) =>
-                      `
-                  <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
-                    <span style="font-size: 20px; font-weight:bold">${item.toUpperCase()}</span>
-                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                  `
+                  ).join("")}
+                  <p style="font-size: 25px; font-weight:bold"> 
+                    Total 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   
+                    ${reclaiming.total_reclaiming}
+                  </p> 
+                  ${["cc49", "cc50", "cc126"]
+                    .map(
+                      (item, index) =>
+                        `
+                  <div style="margin: 10px; flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;"> 
+                      <span style="font-size: 18px; font-weight:bold">${item.toUpperCase()}</span>
+                      <span style=" margin-left: 20px;font-size: 18px; font-weight:bold">
                       ${
                         reclaiming[item + "recl"] === 0
                           ? "000"
                           : reclaiming[item + "recl"]
                       }
-                    </span> 
+                      </span> 
+                    </p>
                   </div>
-                `
-                  )
-                  .join("")}
-                  <h3 style="text-decoration: underline; margin-top:20px">Total Reclaiming</h3>
-                  <span style="font-size: 20px; font-weight:bold">${
-                    reclaiming.total_reclaiming
-                  }</span>
-
-
-                  <h3 style="text-decoration: underline; margin-top:20px">MB-Top coal stock</h3>
-                ${Array.from({ length: 8 }, (_, index) =>
-                  mbTopStock["coal" + (index + 1) + "name"] === undefined ||
-                  mbTopStock["coal" + (index + 1) + "stock"] === 0
-                    ? null
-                    : `
-                  <div style="margin-bottom: 10px;  flex-direction: row; ">
-                    <span style="font-size: 20px; font-weight:bold">
+                  `
+                    )
+                    .join("")}
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>
+                    MB-Top Stock
+                  </p>
+                  ${Array.from({ length: 8 }, (_, index) =>
+                    mbTopStock["coal" + (index + 1) + "name"] === undefined ||
+                    mbTopStock["coal" + (index + 1) + "stock"] === 0
+                      ? null
+                      : `
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                    <span style="font-size: 18px; font-weight:bold">
                       ${mbTopStock["coal" + (index + 1) + "name"].toUpperCase()}
                     </span>
-                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                    <span style=" margin-left: 20px;font-size: 18px; font-weight:bold">
                       ${
                         mbTopStock["coal" + (index + 1) + "stock"] === null
                           ? "000"
                           : mbTopStock["coal" + (index + 1) + "stock"]
                       }
                     </span>
+                    </p>
                   </div>
-                `
-                ).join("")}
-
-                ${Array.from({ length: 8 }, (_, index) =>
-                  mbTopStock["oldcoal" + (index + 1) + "name"] === "" ||
-                  mbTopStock["oldcoal" + (index + 1) + "name"] === undefined ||
-                  mbTopStock["oldcoal" + (index + 1) + "stock"] === 0
-                    ? null
-                    : `
-                  <div style="margin-bottom: 10px;  flex-direction: row; ">
-                    <span style="font-size: 20px; font-weight:bold">
+                  `
+                  ).join("")}
+                  ${Array.from({ length: 8 }, (_, index) =>
+                    mbTopStock["oldcoal" + (index + 1) + "name"] === "" ||
+                    mbTopStock["oldcoal" + (index + 1) + "name"] ===
+                      undefined ||
+                    mbTopStock["oldcoal" + (index + 1) + "stock"] === 0
+                      ? null
+                      : `
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                      <span style="font-size: 18px; font-weight:bold">
                       ${mbTopStock["coal" + (index + 1) + "name"].toUpperCase()}
-                    </span>
-                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                      </span>
+                      <span style=" margin-left: 20px;font-size: 18px; font-weight:bold">
                       ${
                         mbTopStock["oldcoal" + (index + 1) + "stock"] === 0
                           ? "000"
                           : mbTopStock["oldcoal" + (index + 1) + "stock"]
                       }
-                    </span>
+                      </span>
+                    </p>
                   </div>
-                `
-                ).join("")}
-               
-
-
-                  <h3 style="text-decoration: underline; margin-top:20px">Total MB Top Stock</h3>
-                  <span style="font-size: 25px; font-weight:bold">${
-                    mbTopStock.total_stock
-                  }</span>
-              </div>  
-         
-  
-              <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
-                <h2 style="text-decoration: underline; margin-top:20px">Feeding Data</h2>
-                ${["ct1", "ct2", "ct3"]
-                  .map(
-                    (item, index) =>
-                      `
+                  `
+                  ).join("")}
+                  <p style="font-size: 25px; font-weight:bold">
+                    Total 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    ${mbTopStock.total_stock}
+                  </p>
+                </div>        
+                <div style=" flex-direction:column;  display: inline-block;float: left; width:400px;float:left;  text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px; margin-left:10px">
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Feeding Data</p>             
+                  ${["ct1", "ct2", "ct3"]
+                    .map(
+                      (item, index) =>
+                        `
                   <div style="margin-bottom: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;"> 
                     <span style="font-size: 20px; font-weight:bold">
                       ${item.toUpperCase()}
                     </span>
                     <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
                       ${feeding[item] === 0 ? "000" : feeding[item]}
                     </span>
+                    </p>
                   </div>
-                `
-                  )
-                  .join("")}
-                <h3 style="text-decoration: underline; margin-top:20px">Stream-wise Feeding</h3>
-                ${["stream1", "stream1A"]
-                  .map(
-                    (item, index) =>
-                      `
+                  `
+                    )
+                    .join("")}
+
+                  <p style="font-size: 25px; font-weight:bold">
+                    Total 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    ${feeding.total_feeding}
+                  </p>
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>
+                    Stream-wise Feeding
+                  </p>
+                  ${["stream1", "stream1A"]
+                    .map(
+                      (item, index) =>
+                        `
                   <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
-                    <span style="font-size: 18px; font-weight:bold">${item.toUpperCase()}</span>
-                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                      ${feeding[item] === 0 ? "0000" : feeding[item]}
-                    </span> 
+                    <p style=" display: flex; justify-content: space-between;"> 
+                      <span style="font-size: 20px; font-weight:bold">${item.toUpperCase()}</span>
+                      <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                        ${feeding[item] === 0 ? "0000" : feeding[item]}
+                      </span> 
+                    </p>
                   </div>
-                `
-                  )
-                  .join("")}
-                  <h3 style="text-decoration: underline; margin-top:20px">Total Feeding</h3>
-                  <span style="font-size: 20px; font-weight:bold">${
-                    feeding.total_feeding
-                  }</span>
-
-                  <h3 style="text-decoration: underline; margin-top:20px">Coal-Tower Stock</h3>
-                ${["ct1", "ct2", "ct3"]
-                  .map(
-                    (item, index) =>
-                      `
+                  `
+                    )
+                    .join("")}
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>
+                    Coal-tower Stocks
+                  </p>
+                  ${["ct1", "ct2", "ct3"]
+                    .map(
+                      (item, index) =>
+                        `
                   <div style="margin-bottom: 10px;  flex-direction: row; ">
-                    <span style="font-size: 20px; font-weight:bold">
-                      ${item.toUpperCase()}
-                    </span>
-                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                      ${coalTowerStock[item + "stock"]}
-                    </span>
+                    <p style=" display: flex; justify-content: space-between;"> 
+                      <span style="font-size: 20px; font-weight:bold">
+                        ${item.toUpperCase()}
+                      </span>
+                      <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                        ${coalTowerStock[item + "stock"]}
+                      </span>
+                    </p>
                   </div>
-                `
-                  )
-                  .join("")}
-
-
-                  <h3 style="text-decoration: underline; margin-top:20px">Total Coal-Tower Stock</h3>
-                  <span style="font-size: 25px; font-weight:bold">${
-                    coalTowerStock.total_stock
-                  }</span>
-              </div>  
-  
-  
-              <div style=" flex-direction:column;width:190px;float:left; border-right: 2px solid black; text-align:center;align-items:flex-start;">
-                <h2 style="text-decoration: underline; margin-top:20px">Coal-Analysis</h2>
+                  `
+                    )
+                    .join("")}
+                  <p style="font-size: 25px; font-weight:bold">
+                    Total 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    ${coalTowerStock.total_stock}
+                  </p>
+                  
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Crusher Status</p>             
+                  ${["cr34", "cr35", "cr36", "cr37", "cr38"]
+                    .map(
+                      (item, index) =>
+                        `
+                      <div style="margin-bottom: 10px;  flex-direction: row; ">
+                        <p style=" display: flex; justify-content: space-between;"> 
+                          <span style="font-size: 20px; font-weight:bold">
+                            ${item.toUpperCase()}
+                          </span>
+                          <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                            ${
+                              crusherStatus[item + "status"] === ""
+                                ? "N/A"
+                                : crusherStatus[item + "status"]
+                            }
+                          </span>
+                          <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                            F-${
+                              crusherStatus[item + "feeder"] === ""
+                                ? "N/A"
+                                : crusherStatus[item + "feeder"]
+                            }
+                          </span>
+                        </p>
+                      </div>
+                      `
+                    )
+                    .join("")}
+                </div>
+              </div>
+     
+              <div style= "display:flex; flex-direction:row; width:780px; height:930px;  margin-top:50px;border:2px solid black;align-self: center;margin-left:10px;margin-right:10px">
+                <div style=" flex-direction:column;  display: inline-block; float: left; width:400px;float:left; border-right: 2px solid black; text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px">
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Coal Analysis</p>
                   ${["ci", "ash", "vm", "fc", "tm"]
                     .map(
                       (item, index) =>
                         `
-                      <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
-                        <span style="font-size: 20px; font-weight:bold">${item.toUpperCase()}</span>
-                        <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                          ${
-                            item === "ci"
-                              ? coalAnalysisData[item] + "%"
-                              : coalAnalysisData[item]
-                          }
-                        </span> 
-                      </div>
-                    `
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                    <span style="font-size: 20px; font-weight:bold">${item.toUpperCase()}</span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                      ${
+                        item === "ci"
+                          ? coalAnalysisData[item] + "%"
+                          : coalAnalysisData[item]
+                      }
+                    </span> 
+                    </p>
+                  </div>
+                  `
                     )
                     .join("")}
-                <h2 style="text-decoration: underline; margin-top:20px">Blend-Ratio</h2>
-                ${Array.from(
-                  { length: blendCount },
-                  (_, index) => `
-                  <div style="margin-bottom: 10px;  flex-direction: row; ">
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>
+                    Blend Ratio
+                  </p>
+                  ${Array.from(
+                    { length: blendCount },
+                    (_, index) => `
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
                     <span style="font-size: 20px; font-weight:bold">
-                      ${blend["cn" + (index + 1)].toUpperCase()}
+                    ${blend["cn" + (index + 1)].toUpperCase()}
                     </span>
                     <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                      ${blend["cp" + (index + 1)] + "%"}
+                    ${blend["cp" + (index + 1)] + "%"}
                     </span>
+                    </p>
                   </div>
-                `
-                ).join("")}
-                <h2 style="text-decoration: underline; margin-top:20px">Blend Start Date</h2>
-                <div style="margin-bottom: 10px;  flex-direction: row; ">
-                  <span style="font-size: 20px; font-weight:bold">
+                  `
+                  ).join("")}
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>
+                    Blend Start Date
+                  </p>
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                    <span style="font-size: 20px; font-weight:bold">
                     ${FormatDate(new Date(blend.date))}
-                  </span>
-                  <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                      ${blend.shift}
-                  </span>
+                    </span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                    ${blend.shift}
+                    </span>
+                    </p>
+                  </div>
                 </div>
-              </div>
-  
-            <div style=" flex-direction:column;width:210px;float:left; text-align:center;align-items:flex-start;">
-            <h2 style="text-decoration: underline; margin-top:20px">Pushing-Schedule</h2>
-              ${[1, 2, 3, 4, 5]
-                .map(
-                  (item, index) =>
-                    `
-                <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
-                  <span style="font-size: 20px; font-weight:bold">Battery-${item}</span>
-                  <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                <div style=" flex-direction:column;  display: inline-block;float: left; width:400px;float:left;  text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px; margin-left:10px">
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Pushing Schedule</p>
+                  ${[1, 2, 3, 4, 5]
+                    .map(
+                      (item, index) =>
+                        `
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                    <span style="font-size: 20px; font-weight:bold">Battery-${item}</span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
                     ${pushingSchedule["bat" + item]}
-                  </span> 
+                    </span> 
+                    </p>
+                  </div>
+                  `
+                    )
+                    .join("")}
+                  <p style="font-size: 25px; font-weight:bold">
+                    Total 
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    ${pushingSchedule.total_pushings}
+                  </p>
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>
+                    Running Hours
+                  </p>
+                  ${[2, 3, 4]
+                    .map(
+                      (item, index) =>
+                        `
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                    <span style="font-size: 20px; font-weight:bold">Stream-${item}</span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                    ${
+                      runningHours["str" + item + "hrs"] +
+                      " : " +
+                      runningHours["str" + item + "min"]
+                    }
+                    </span>
+                    </p> 
+                  </div>
+                  `
+                    )
+                    .join("")}
+                  </br>
+                  ${[49, 50, 126]
+                    .map(
+                      (item, index) =>
+                        `
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                    <span style="font-size: 20px; font-weight:bold">CC-${item}</span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                    ${
+                      runningHours["cc" + item + "hrs"] +
+                      " : " +
+                      runningHours["cc" + item + "min"]
+                    }
+                    </span>
+                    </p> 
+                  </div>
+                  `
+                    )
+                    .join("")}       
                 </div>
-              `
-                )
-                .join("")}
-                <h3 style="text-decoration: underline; margin-top:20px">Total Pushigs</h3>
-                <span style="font-size: 20px; font-weight:bold">${
-                  pushingSchedule.total_pushings
-                }</span>
-                
-              <h2 style="text-decoration: underline; margin-top:20px">Running-Hours</h2>
-              ${[2, 3, 4]
-                .map(
-                  (item, index) =>
-                    `
-                <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
-                  <span style="font-size: 20px; font-weight:bold">Stream-${item}</span>
-                  <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                  ${
-                    runningHours["str" + item + "hrs"] +
-                    " : " +
-                    runningHours["str" + item + "min"]
-                  }
-                  </span> 
-                </div>
-              `
-                )
-                .join("")}
-                <h3 style="text-decoration: underline;margin-top:20px">Chp-Hours</h2>
-                ${[49, 50, 126]
-                  .map(
-                    (item, index) =>
-                      `
-              <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
-                <span style="font-size: 20px; font-weight:bold">CC-${item}</span>
-                <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                ${
-                  runningHours["cc" + item + "hrs"] +
-                  " : " +
-                  runningHours["cc" + item + "min"]
-                }
-                </span> 
               </div>
-            `
-                  )
-                  .join("")}
-            </div>
-          </div>
 
-          <div style="display:flex; flex-direction: column; text-align:center; width: 800px; height:100px;">
-         
-          <h1 style="text-decoration: underline;">CPP Shift Delays</h1>
-          </div>
-          <div style="display:flex; flex-direction:row; width:800px; height:900px; border:2px solid black; margin-top:10px">
-
-          
-              <div style=" flex-direction:row;height:900px;width:800px;float:left; border-bottom: 2px solid black; text-align:center;align-items:flex-start;">
-                
-                
-                ${Array.from(
-                  { length: shiftDelays.length },
-                  (_, index) => `
-                      <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
-                <span style="font-size: 20px; font-weight:bold">From   : ${shiftDelays[index]["fromTime"]}</span>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <span style="font-size: 20px; font-weight:bold">To     : ${shiftDelays[index]["toTime"]}</span>
-                <p style="font-size: 20px; font-weight:bold">Reason : ${shiftDelays[index]["reason"]}</p>
-                </div>
-                <hr class="custom-hr">
-                `
-                ).join("")}
-                </div>
-
-             
-             
-          </div>
-          
-          </body>
+              <div style="display:flex; flex-direction: column; text-align:center; width: 800px; height:100px;margin-top:60px">
+                <h1 style="text-decoration: underline;">CPP Shift Delays</h1>
+              </div>
+              <div style="display:flex; flex-direction:row; width:800px; height:900px; border:2px solid black; margin-top:10px">
+                <div style=" flex-direction:row;height:900px;width:800px;float:left; border-bottom: 2px solid black; text-align:center;align-items:flex-start;">             
+                  ${Array.from(
+                    { length: shiftDelays.length },
+                    (_, index) =>
+                      `
+                    <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
+                      <span style="font-size: 20px; font-weight:bold">From   : ${shiftDelays[index]["fromTime"]}</span>
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      <span style="font-size: 20px; font-weight:bold">To     : ${shiftDelays[index]["toTime"]}</span>
+                      <p style="font-size: 20px; font-weight:bold">Reason : ${shiftDelays[index]["reason"]}</p>
+                    </div>
+                    <hr class="custom-hr">
+                  `
+                  ).join("")}
+                </div>       
+              </div>
+            </body>
           </html>
         `;
 
@@ -484,6 +550,7 @@ export default function ShiftReportView({ navigation }) {
     getShiftDelayData(date, shift);
     getCoalAnalysisData(date, shift);
     getPushingScheduleData(date, shift);
+    getCrusherStatusData(date, shift);
 
     setLoadCard(true);
   };
@@ -610,6 +677,18 @@ export default function ShiftReportView({ navigation }) {
         },
       })
       .then((responce) => setPushingSchedule(responce.data.data[0]))
+      .catch((error) => console.log(error));
+  };
+
+  const getCrusherStatusData = async (date, shift) => {
+    await axios
+      .get(BaseUrl + "/crusher", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => setCrusherStatus(responce.data.data[0]))
       .catch((error) => console.log(error));
   };
 
@@ -769,6 +848,7 @@ export default function ShiftReportView({ navigation }) {
             fontWeight: "600",
           }}
           onPress={handleSubmit}
+          disabled={!loadLatestRecord}
         />
       </View>
       {latestRecord && !clickSubmit && !loadCard && (
@@ -1461,6 +1541,60 @@ export default function ShiftReportView({ navigation }) {
                       <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
                         {pushingSchedule["bat" + item]}
                       </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
+            </Card>
+            <Card>
+              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                Crusher Status
+              </Card.Title>
+              <Card.Divider />
+              {crusherStatus && (
+                <View style={{ marginTop: 10 }}>
+                  {[34, 35, 36, 37, 38].map((item, index) => (
+                    <View
+                      key={index}
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(20),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          Cr-{item}
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(20),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {crusherStatus["cr" + item + "status"]}
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(10),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          F-{crusherStatus["cr" + item + "feeder"]}
+                        </Text>
+                      </View>
                     </View>
                   ))}
                 </View>

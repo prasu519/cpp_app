@@ -1,5 +1,5 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import AppTextBox from "../components/AppTextBox";
 import { AntDesign } from "@expo/vector-icons";
 import AppFormButton from "../components/AppFormButton";
@@ -47,63 +47,142 @@ export default function CrusherStatus({ navigation, route }) {
     const minutes = date.getMinutes().toString().padStart(2, "0");
     return `${hours}:${minutes}`;
   };
-  const handleSaveCr34 = () => {
-    const currentTime = getCurrentTime();
+
+  useEffect(() => {
+    const initAllCrushersData = () => {
+      const allCrushersDatatemp = {
+        date: currentDate,
+        shift: currentShift,
+      };
+      setAllCrushersData(allCrushersDatatemp);
+    };
+
+    initAllCrushersData();
+  }, []);
+
+  const handleSaveCr34 = async () => {
+    if (
+      cr34Data.status === undefined ||
+      cr34Data.feeder === undefined ||
+      cr34Data.status === "" ||
+      cr34Data.feeder === ""
+    ) {
+      alert("Enter all values..");
+      return;
+    }
     const cr34temp = {
-      ...cr34Data,
-      ["crusher"]: 34,
-      ["date"]: currentDate,
-      ["time"]: currentTime,
-      ["shift"]: currentShift,
+      cr34status: cr34Data.status,
+      cr34feeder: cr34Data.feeder,
     };
-    setAllCrushersData([...allCrushersData, cr34temp]);
+    const updatedData = {
+      ...allCrushersData,
+      ...cr34temp,
+    };
+    await setAllCrushersData(updatedData);
     setCr34Data("");
-    console.log(allCrushersData);
   };
 
-  const handleSaveCr35 = () => {
-    const currentTime = getCurrentTime();
+  const handleSaveCr35 = async () => {
+    if (
+      cr35Data.status === undefined ||
+      cr35Data.feeder === undefined ||
+      cr35Data.status === "" ||
+      cr35Data.feeder === ""
+    ) {
+      alert("Enter all values..");
+      return;
+    }
     const cr35temp = {
-      ...cr35Data,
-      ["crusher"]: 35,
-      ["date"]: currentDate,
-      ["time"]: currentTime,
-      ["shift"]: currentShift,
+      cr35status: cr35Data.status,
+      cr35feeder: cr35Data.feeder,
     };
-    setAllCrushersData([...allCrushersData, cr35temp]);
-    setCr35Data(undefined);
-    console.log(allCrushersData);
+    const updatedData = {
+      ...allCrushersData,
+      ...cr35temp,
+    };
+    await setAllCrushersData(updatedData);
+    setCr35Data("");
   };
 
-  const handleSaveCr36 = () => {
-    const currentTime = getCurrentTime();
-    setCr36Data({
-      ...cr36Data,
-      ["crusher"]: 36,
-      ["date"]: currentDate,
-      ["time"]: currentTime,
-      ["shift"]: currentShift,
-    });
+  const handleSaveCr36 = async () => {
+    if (
+      cr36Data.status === undefined ||
+      cr36Data.feeder === undefined ||
+      cr36Data.status === "" ||
+      cr36Data.feeder === ""
+    ) {
+      alert("Enter all values..");
+      return;
+    }
+    const cr36temp = {
+      cr36status: cr36Data.status,
+      cr36feeder: cr36Data.feeder,
+    };
+    const updatedData = {
+      ...allCrushersData,
+      ...cr36temp,
+    };
+    await setAllCrushersData(updatedData);
+    setCr36Data("");
   };
-  const handleSaveCr37 = () => {
-    const currentTime = getCurrentTime();
-    setCr37Data({
-      ...cr37Data,
-      ["crusher"]: 37,
-      ["date"]: currentDate,
-      ["time"]: currentTime,
-      ["shift"]: currentShift,
-    });
+
+  const handleSaveCr37 = async () => {
+    if (
+      cr37Data.status === undefined ||
+      cr37Data.feeder === undefined ||
+      cr37Data.status === "" ||
+      cr37Data.feeder === ""
+    ) {
+      alert("Enter all values..");
+      return;
+    }
+    const cr37temp = {
+      cr37status: cr37Data.status,
+      cr37feeder: cr37Data.feeder,
+    };
+    const updatedData = {
+      ...allCrushersData,
+      ...cr37temp,
+    };
+    await setAllCrushersData(updatedData);
+    setCr37Data("");
   };
-  const handleSaveCr38 = () => {
-    const currentTime = getCurrentTime();
-    setCr38Data({
-      ...cr38Data,
-      ["crusher"]: 38,
-      ["date"]: currentDate,
-      ["time"]: currentTime,
-      ["shift"]: currentShift,
-    });
+
+  const handleSaveCr38 = async () => {
+    if (
+      cr38Data.status === undefined ||
+      cr38Data.feeder === undefined ||
+      cr38Data.status === "" ||
+      cr38Data.feeder === ""
+    ) {
+      5;
+      alert("Enter all values..");
+      return;
+    }
+    const cr38temp = {
+      cr38status: cr38Data.status,
+      cr38feeder: cr38Data.feeder,
+    };
+    const updatedData = {
+      ...allCrushersData,
+      ...cr38temp,
+    };
+    await setAllCrushersData(updatedData);
+    setCr38Data("");
+  };
+  const onPressBackButton = () => {
+    if (
+      cr34Data === "" &&
+      cr35Data === "" &&
+      cr36Data === "" &&
+      cr37Data === "" &&
+      cr38Data === ""
+    ) {
+      navigation.goBack();
+    } else {
+      alert("Enter all crushers data..");
+      return;
+    }
   };
 
   return (
@@ -152,7 +231,7 @@ export default function CrusherStatus({ navigation, route }) {
                 name="leftcircle"
                 size={40}
                 color="black"
-                onPress={() => navigation.goBack()}
+                onPress={onPressBackButton}
               />
               <Text
                 style={{
@@ -216,7 +295,7 @@ export default function CrusherStatus({ navigation, route }) {
                 marginHorizontal: wp(1.25),
               }}
               radius={60}
-              color="orange"
+              color="#FFD586"
               titleStyle={{
                 color: "black",
                 fontSize: hp(2.5),
@@ -229,7 +308,7 @@ export default function CrusherStatus({ navigation, route }) {
                   setCr37Visible(false),
                   setCr38Visible(false);
               }}
-              //disabled={pushingScheduleData === undefined ? false : true}
+              disabled={cr34Data === "" ? true : false}
             ></Button>
 
             <Button
@@ -240,7 +319,7 @@ export default function CrusherStatus({ navigation, route }) {
                 marginHorizontal: wp(1.25),
               }}
               radius={60}
-              color="orange"
+              color="#FF9898"
               titleStyle={{
                 color: "black",
                 fontSize: hp(2.5),
@@ -253,7 +332,7 @@ export default function CrusherStatus({ navigation, route }) {
                   setCr37Visible(false),
                   setCr38Visible(false);
               }}
-              //disabled={pushingScheduleData === undefined ? false : true}
+              disabled={cr35Data === "" ? true : false}
             ></Button>
 
             <Button
@@ -264,7 +343,7 @@ export default function CrusherStatus({ navigation, route }) {
                 marginHorizontal: wp(1.25),
               }}
               radius={60}
-              color="orange"
+              color="#7965C1"
               titleStyle={{
                 color: "black",
                 fontSize: hp(2.5),
@@ -277,7 +356,7 @@ export default function CrusherStatus({ navigation, route }) {
                   setCr37Visible(false),
                   setCr38Visible(false);
               }}
-              //disabled={pushingScheduleData === undefined ? false : true}
+              disabled={cr36Data === "" ? true : false}
             ></Button>
 
             <Button
@@ -288,7 +367,7 @@ export default function CrusherStatus({ navigation, route }) {
                 marginHorizontal: wp(1.25),
               }}
               radius={60}
-              color="orange"
+              color="#129990"
               titleStyle={{
                 color: "black",
                 fontSize: hp(2.5),
@@ -301,7 +380,7 @@ export default function CrusherStatus({ navigation, route }) {
                   setCr34Visible(false),
                   setCr38Visible(false);
               }}
-              //disabled={pushingScheduleData === undefined ? false : true}
+              disabled={cr37Data === "" ? true : false}
             ></Button>
             <Button
               title={"38"}
@@ -311,7 +390,7 @@ export default function CrusherStatus({ navigation, route }) {
                 marginHorizontal: wp(1.25),
               }}
               radius={60}
-              color="orange"
+              color="#DC8BE0"
               titleStyle={{
                 color: "black",
                 fontSize: hp(2.5),
@@ -324,7 +403,7 @@ export default function CrusherStatus({ navigation, route }) {
                   setCr37Visible(false),
                   setCr34Visible(false);
               }}
-              //disabled={pushingScheduleData === undefined ? false : true}
+              disabled={cr38Data === "" ? true : false}
             ></Button>
           </View>
 
@@ -339,6 +418,11 @@ export default function CrusherStatus({ navigation, route }) {
               <View style={{ flex: 1, gap: wp(5) }}>
                 <CrusherComponent
                   number={34}
+                  colour="#FFD586"
+                  onChangeStatus={(value) =>
+                    setCr34Data({ ...cr34Data, ["status"]: value })
+                  }
+                  selectedStatus={cr34Data.status}
                   onChangeFeeder={(value) =>
                     setCr34Data({ ...cr34Data, ["feeder"]: value })
                   }
@@ -387,6 +471,11 @@ export default function CrusherStatus({ navigation, route }) {
               <View style={{ flex: 1, gap: wp(5) }}>
                 <CrusherComponent
                   number={35}
+                  colour="#FF9898"
+                  onChangeStatus={(value) =>
+                    setCr35Data({ ...cr35Data, ["status"]: value })
+                  }
+                  selectedStatus={cr35Data.status}
                   onChangeFeeder={(value) =>
                     setCr35Data({ ...cr35Data, ["feeder"]: value })
                   }
@@ -431,6 +520,11 @@ export default function CrusherStatus({ navigation, route }) {
               <View style={{ flex: 1, gap: wp(5) }}>
                 <CrusherComponent
                   number={36}
+                  colour="#7965C1"
+                  onChangeStatus={(value) =>
+                    setCr36Data({ ...cr36Data, ["status"]: value })
+                  }
+                  selectedStatus={cr36Data.status}
                   onChangeFeeder={(value) =>
                     setCr36Data({ ...cr36Data, ["feeder"]: value })
                   }
@@ -475,6 +569,11 @@ export default function CrusherStatus({ navigation, route }) {
               <View style={{ flex: 1, gap: wp(5) }}>
                 <CrusherComponent
                   number={37}
+                  colour="#129990"
+                  onChangeStatus={(value) =>
+                    setCr37Data({ ...cr37Data, ["status"]: value })
+                  }
+                  selectedStatus={cr37Data.status}
                   onChangeFeeder={(value) =>
                     setCr37Data({ ...cr37Data, ["feeder"]: value })
                   }
@@ -519,6 +618,11 @@ export default function CrusherStatus({ navigation, route }) {
               <View style={{ flex: 1, gap: wp(5) }}>
                 <CrusherComponent
                   number={38}
+                  colour="#DC8BE0"
+                  onChangeStatus={(value) =>
+                    setCr38Data({ ...cr38Data, ["status"]: value })
+                  }
+                  selectedStatus={cr38Data.status}
                   onChangeFeeder={(value) =>
                     setCr38Data({ ...cr38Data, ["feeder"]: value })
                   }

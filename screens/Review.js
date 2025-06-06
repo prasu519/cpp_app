@@ -17,6 +17,8 @@ import {
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
 import { FormatDate } from "../utils/FormatDate";
+import CrusherEdit from "../components/CrusherEdit";
+
 export default function Review({ navigation }) {
   const [feeding, setFeeding] = useState();
   const [reclaiming, setReclaiming] = useState();
@@ -29,6 +31,7 @@ export default function Review({ navigation }) {
   const [coalTowerStock, setCoalTowerStock] = useState();
   const [coalAnalysis, setCoalAnalysis] = useState();
   const [pushingSchedule, setPushingSchedule] = useState();
+  const [crusherStatus, setCrusherStatus] = useState();
 
   const [editFeeding, setEditFeeding] = useState(false);
   const [editReclaiming, setEditReclaiming] = useState(false);
@@ -38,6 +41,7 @@ export default function Review({ navigation }) {
   const [editCoalTowerStock, setEditCoalTowerStock] = useState(false);
   const [editCoalAnalysis, setEditCoalAnalysis] = useState(false);
   const [editPushingSchedule, setEditPushingSchedule] = useState(false);
+  const [editCrusherStatus, setEditCrusherStatus] = useState(false);
 
   const [isLoaded, setIsLoaded] = useState(true);
   const [isDataLoaded, setIsDataLoaded] = useState(false);
@@ -60,6 +64,8 @@ export default function Review({ navigation }) {
     updatePushingScheduleButtVisible,
     setUpdatePushingScheduleButtVisible,
   ] = useState(false);
+  const [updateCrusherStatusButtVisible, setUpdateCrusherStatusButtVisible] =
+    useState(false);
   const {
     reclaimingData,
     setReclaimingData,
@@ -77,6 +83,8 @@ export default function Review({ navigation }) {
     setCoalAnalysisData,
     pushingScheduleData,
     setPushingScheduleData,
+    allCrushersData,
+    setAllCrushersData,
     globalDate,
     globalShift,
   } = useContext(GlobalContext);
@@ -96,6 +104,7 @@ export default function Review({ navigation }) {
       getCoalTowerStock();
       getCoalAnalysisData();
       getPushingScheduleData();
+      getCrusherStatusData();
     }
   }, []);
 
@@ -201,6 +210,11 @@ export default function Review({ navigation }) {
 
   const getPushingScheduleData = async () => {
     setPushingSchedule(pushingScheduleData);
+    setIsLoaded(false);
+  };
+
+  const getCrusherStatusData = async () => {
+    setCrusherStatus(allCrushersData);
     setIsLoaded(false);
   };
 
@@ -403,6 +417,13 @@ export default function Review({ navigation }) {
     setEditPushingSchedule(false);
   };
 
+  const onUpdateCrusherStatus = async () => {
+    console.log(allCrushersData);
+    setAllCrushersData(crusherStatus);
+    setEditCrusherStatus(false);
+    console.log(allCrushersData);
+  };
+
   const toggleSwitchFeeding = () => {
     setEditFeeding((previousState) => !previousState);
   };
@@ -427,6 +448,9 @@ export default function Review({ navigation }) {
   const toggleSwitchPushingSchedule = () => {
     setEditPushingSchedule((previousState) => !previousState);
   };
+  const toggleSwitchCrusherStatus = () => {
+    setEditCrusherStatus((previousState) => !previousState);
+  };
 
   if (
     isLoaded ||
@@ -438,7 +462,8 @@ export default function Review({ navigation }) {
     coalTowerStock == undefined ||
     coalNames == undefined ||
     coalAnalysis == undefined ||
-    pushingSchedule == undefined
+    pushingSchedule == undefined ||
+    crusherStatus == undefined
   ) {
     return (
       <View style={{ flex: 1 }}>
@@ -573,6 +598,13 @@ export default function Review({ navigation }) {
               style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
             >
               pushingSchedule Report not entered
+            </Text>
+          )}
+          {!crusherStatus && (
+            <Text
+              style={{ alignSelf: "center", fontSize: hp(2), color: "red" }}
+            >
+              crusherStatus Report not entered
             </Text>
           )}
         </View>
@@ -1536,6 +1568,81 @@ export default function Review({ navigation }) {
                 }
                 disabled={updatePushingScheduleButtVisible}
                 onPress={onUpdatePushingSchedule}
+              />
+            )}
+          </>
+        </FieldSet>
+
+        <FieldSet label="Crusher Status">
+          <>
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(3.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+              }}
+            >
+              Crusher Status
+            </Text>
+            {[34, 35, 36, 37, 38].map((num, index) => (
+              <CrusherEdit
+                key={index}
+                labelcolor="orange"
+                label={num}
+                onChangeStatus={(value) => {
+                  if (value === "") {
+                    alert("select cr-" + num + " status..");
+                    setUpdateCrusherStatusButtVisible(true);
+                    return;
+                  }
+                  setCrusherStatus({
+                    ...crusherStatus,
+                    ["cr" + num + "status"]: value,
+                  });
+                  setUpdateCrusherStatusButtVisible(false);
+                }}
+                onChangeFeeder={(value) => {
+                  if (value === "") {
+                    alert("select cr-" + num + " feeder..");
+                    setUpdateCrusherStatusButtVisible(true);
+                    return;
+                  }
+                  setCrusherStatus({
+                    ...crusherStatus,
+                    ["cr" + num + "feeder"]: value,
+                  });
+                  setUpdateCrusherStatusButtVisible(false);
+                }}
+                selectedStatus={allCrushersData["cr" + num + "status"]}
+                selectedFeeder={allCrushersData["cr" + num + "feeder"]}
+                editable={editCrusherStatus}
+              />
+            ))}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              <Text style={{ fontSize: hp(4) }}>Edit</Text>
+              <Switch
+                onValueChange={toggleSwitchCrusherStatus}
+                value={editCrusherStatus}
+              />
+            </View>
+            {editCrusherStatus && (
+              <AppButton
+                buttonName="Update Crusher-Status"
+                buttonColour={
+                  updateCrusherStatusButtVisible ? "#C7B7A3" : "#fc5c65"
+                }
+                disabled={updateCrusherStatusButtVisible}
+                onPress={onUpdateCrusherStatus}
               />
             )}
           </>

@@ -1,3 +1,4 @@
+//date
 import React, { useState, useEffect } from "react";
 import { Modal, View, Text, TextInput, Button } from "react-native";
 import {
@@ -25,8 +26,9 @@ export default function ShiftReportAuthentication({
   const [prevDataChecked, setPrevDataChecked] = useState(false);
   const [presEntryFound, setPresEntryFound] = useState(true);
   const [latestRecord, setLatestRecord] = useState();
+  const [latestRecordLoaded, setLatestRecordLoaded] = useState(false);
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (presDataChecked) {
       setPresDataChecked(false);
       if (shiftReportEnteredBy === undefined) {
@@ -51,7 +53,17 @@ export default function ShiftReportAuthentication({
       if (shiftReportEnteredBy === undefined) {
         alert("Please enter previous Shift report first..");
       } else {
-        onSubmit(empnum, selectedDate, selectedShift);
+        let nextdate = new Date(latestRecord.date);
+        nextdate.setDate(nextdate.getDate() + 1);
+
+        if (latestRecord.shift === "C") {
+          onSubmit(empnum, nextdate, "A");
+        } else if (latestRecord.shift === "B") {
+          onSubmit(empnum, latestRecord.date, "C");
+        } else {
+          onSubmit(empnum, latestRecord.date, "B");
+        }
+
         setSelectedDate(null);
         setSelectedShift(null);
         setEmpnum(null);
@@ -59,17 +71,21 @@ export default function ShiftReportAuthentication({
       }
       setPrevDataChecked(false);
     }
-  }, [presDataChecked, prevDataChecked]);
+  }, [presDataChecked, prevDataChecked]);*/
 
   useEffect(() => {
-    axios
-      .get(BaseUrl + "/shiftreportenteredbylatest")
-      .then((response) => {
-        setLatestRecord(response.data.data);
-      })
-      .catch((error) => {
-        alert("latest record not found  " + error);
-      });
+    const getLatestRecord = async () => {
+      await axios
+        .get(BaseUrl + "/shiftreportenteredbylatest")
+        .then((response) => {
+          setLatestRecord(response.data.data);
+          setLatestRecordLoaded(true);
+        })
+        .catch((error) => {
+          alert("latest record not found  " + error);
+        });
+    };
+    getLatestRecord();
   }, []);
 
   const getPresShiftReportEntryDetails = async (date, shift) => {
@@ -111,16 +127,33 @@ export default function ShiftReportAuthentication({
   };
 
   const handleSubmit = async () => {
-    if (empnum && selectedDate && selectedShift != null) {
+    if (empnum != null) {
       setLoading(true);
 
-      let fdate;
+      let presdate = new Date(latestRecord.date);
+      presdate.setDate(presdate.getDate());
+      let nextdate = new Date(latestRecord.date);
+      nextdate.setDate(nextdate.getDate() + 1);
+
+      if (latestRecord.shift === "C") {
+        onSubmit(empnum, nextdate, "A");
+      } else if (latestRecord.shift === "B") {
+        onSubmit(empnum, presdate, "C");
+      } else {
+        onSubmit(empnum, presdate, "B");
+      }
+
+      setSelectedDate(null);
+      setSelectedShift(null);
+      setEmpnum(null);
+      onClose();
+
+      /* let fdate;
       let previousDate;
       fdate = new Date(selectedDate).toISOString().split("T")[0];
       await getPresShiftReportEntryDetails(fdate, selectedShift);
 
       if (!presEntryFound) {
-        console.log("called");
         if (selectedShift === "A") {
           fdate = new Date(selectedDate);
           fdate.setDate(fdate.getDate() - 1);
@@ -133,9 +166,9 @@ export default function ShiftReportAuthentication({
           fdate = new Date(selectedDate).toISOString().split("T")[0];
           await getPrevShiftReportEntryDetails(fdate, "B");
         }
-      }
+      }*/
       setLoading(false);
-    } else alert("Select Employee number , Date & Shift");
+    } else alert("Enter Employee number.. ");
   };
   const handleCancel = () => {
     setSelectedDate(null);
@@ -193,100 +226,12 @@ export default function ShiftReportAuthentication({
               padding: wp(2),
               borderWidth: 1,
               borderRadius: 5,
+              marginBottom: hp(2),
             }}
             placeholder="Type here..."
             onChangeText={setEmpnum}
             keyboardType="number-pad"
           />
-
-          <Text
-            style={{
-              textAlign: "center",
-              fontSize: 18,
-              fontWeight: "bold",
-              marginBottom: hp(2),
-              borderBottomWidth: 1,
-              color: "brown",
-            }}
-          >
-            Select Report Date and Shift:
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              gap: wp(6),
-              alignItems: "center",
-              height: hp(5),
-              width: wp(55),
-              marginBottom: hp(1),
-            }}
-          >
-            <Button
-              title="Select date"
-              buttonStyle={{ width: wp(23), height: hp(5) }}
-              titleStyle={{
-                fontSize: hp(1.6),
-                color: "white",
-                borderBottomWidth: 2,
-                borderBottomColor: "white",
-              }}
-              radius={25}
-              onPress={() => setShowDatePicker(true)}
-            />
-
-            {showDatePicker && (
-              <DateTimePicker
-                value={selectedDate || new Date()}
-                mode="date"
-                display="spinner"
-                onChange={handleDateChange}
-              />
-            )}
-
-            <Text style={{ fontSize: hp(2) }}>{FormatDate(selectedDate)}</Text>
-          </View>
-          <View
-            style={{
-              flexDirection: "row",
-              gap: wp(5),
-              alignItems: "center",
-              height: hp(5),
-              width: wp(63),
-              marginBottom: hp(2),
-            }}
-          >
-            <Text
-              style={{
-                fontSize: wp(5),
-                alignSelf: "left",
-                fontWeight: "bold",
-                color: "#0074B7",
-                marginLeft: hp(2),
-              }}
-            >
-              Select Shift
-            </Text>
-
-            <Picker
-              id="Shift"
-              style={{
-                width: wp(25),
-              }}
-              mode="dropdown"
-              enabled={true}
-              onValueChange={setSelectedShift}
-              selectedValue={selectedShift}
-            >
-              {[" ", "A", "B", "C"].map((shift) => (
-                <Picker.Item
-                  key={shift}
-                  label={shift.toString()}
-                  value={shift}
-                  style={{ fontSize: hp(2) }}
-                />
-              ))}
-            </Picker>
-          </View>
 
           {latestRecord && (
             <View
@@ -319,7 +264,7 @@ export default function ShiftReportAuthentication({
             <Button
               title="Enter Report"
               onPress={handleSubmit}
-              disabled={loading}
+              disabled={!latestRecordLoaded}
             />
           </View>
         </View>

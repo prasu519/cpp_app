@@ -22,6 +22,7 @@ import DayReportView from "../screens/DayReportView";
 import BlendReportView from "../screens/BlendReportView";
 import CrusherStatus from "../screens/CrusherStatus";
 import CrushersDataEntry from "../screens/CrushersDataEntry";
+import CrusherEdit from "../components/CrusherEdit";
 
 const stack = createNativeStackNavigator();
 
@@ -37,6 +38,7 @@ function AppNavigator(props) {
         name="ShiftReportAuthentication"
         component={ShiftReportAuthentication}
       />
+      <stack.Screen name="CrusherEdit" component={CrusherEdit} />
       <stack.Screen name="ShiftReportEntry" component={ShiftReportEntry} />
       <stack.Screen name="EnterReclaiming" component={EnterReclaiming} />
       <stack.Screen name="EnterFeeding" component={EnterFeeding} />

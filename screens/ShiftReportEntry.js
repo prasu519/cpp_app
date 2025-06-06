@@ -35,6 +35,8 @@ export default function ShiftReportEntry({ navigation }) {
     setCoalAnalysisData,
     pushingScheduleData,
     setPushingScheduleData,
+    allCrushersData,
+    setAllCrushersData,
     globalDate,
     globalShift,
   } = useContext(GlobalContext);
@@ -52,6 +54,7 @@ export default function ShiftReportEntry({ navigation }) {
   let coalAnalysisStatus = false;
   let pushingScheduleStatus = false;
   let credentialsStatus = false;
+  let crusherDataStatus = false;
 
   let name = credentials.name;
   let empnum = credentials.empnum;
@@ -65,6 +68,17 @@ export default function ShiftReportEntry({ navigation }) {
   };
 
   const handleFinalReport = async () => {
+    console.log(
+      reclaimingData,
+      feedingData,
+      runningHoursData,
+      shiftDelaysData,
+      mbTopStockData,
+      coalTowerStockData,
+      coalAnalysisData,
+      pushingScheduleData,
+      allCrushersData
+    );
     if (
       reclaimingData &&
       feedingData &&
@@ -73,7 +87,8 @@ export default function ShiftReportEntry({ navigation }) {
       mbTopStockData &&
       coalTowerStockData &&
       coalAnalysisData &&
-      pushingScheduleData
+      pushingScheduleData &&
+      allCrushersData
     ) {
       setProgress(0);
       setDoneScreen(true);
@@ -185,6 +200,19 @@ export default function ShiftReportEntry({ navigation }) {
           alert("Could not save Pushing schedule data..");
         });
 
+      await axios
+        .post(BaseUrl + "/crusher", allCrushersData)
+        .then((response) => {
+          crusherDataStatus = true;
+
+          setProgress(0.85);
+        })
+        .catch((error) => {
+          crusherDataStatus = false;
+          console.log(error);
+          alert("Could not save crusher status data..");
+        });
+
       if (
         reclaimingStatus &&
         feedingStatus &&
@@ -193,7 +221,8 @@ export default function ShiftReportEntry({ navigation }) {
         mbTopStockStatus &&
         coalTowerStockStatus &&
         coalAnalysisStatus &&
-        pushingScheduleStatus
+        pushingScheduleStatus &&
+        crusherDataStatus
       ) {
         await axios
           .post(BaseUrl + "/shiftreportenteredby", shiftReportEnteredBy)
@@ -221,6 +250,7 @@ export default function ShiftReportEntry({ navigation }) {
     setCoalTowerStockData(undefined);
     setCoalAnalysisData(undefined);
     setPushingScheduleData(undefined);
+    setAllCrushersData(undefined);
     setTimeout(() => {
       navigation.navigate("Home");
     }, 1000);
@@ -268,6 +298,7 @@ export default function ShiftReportEntry({ navigation }) {
                 setCoalTowerStockData(undefined);
                 setCoalAnalysisData(undefined);
                 setPushingScheduleData(undefined);
+                setAllCrushersData(undefined);
                 navigation.goBack();
               }}
             />
@@ -475,7 +506,7 @@ export default function ShiftReportEntry({ navigation }) {
                 fontWeight: "bold",
               }}
               onPress={() => navigation.navigate("CrusherStatus")}
-              disabled={pushingScheduleData === undefined ? false : true}
+              disabled={false}
             ></Button>
 
             <TouchableOpacity

@@ -42,6 +42,18 @@ export default function EnterRunningHours({ navigation }) {
       alert("Make sure to enter all values..");
       return;
     }
+    if (values.str2hrs < values.cc50hrs) {
+      alert("Correct CC50 and Stream2 running hours.. ");
+      return;
+    }
+    if (values.str3hrs < values.cc49hrs) {
+      alert("Correct CC49 and Strm3 running hours.. ");
+      return;
+    }
+    if (values.str4hrs < values.cc126hrs) {
+      alert("Correct CC126 and Strm4 running hours.. ");
+      return;
+    }
     setProgress(0);
     setDoneScreen(true);
     setRunningHoursData(values);

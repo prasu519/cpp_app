@@ -21,31 +21,31 @@ import { FormatDate } from "../utils/FormatDate";
 const validationSchema = Yup.object().shape({
   ct1: Yup.number()
     .typeError("Feeding must be number")
-    .required()
+    //.required()
     .integer()
     .max(3000)
     .label("Ct-1"),
   ct2: Yup.number()
     .typeError("Feeding must be number")
-    .required()
+    //.required()
     .integer()
     .max(3000)
     .label("Ct-2"),
   ct3: Yup.number()
     .typeError("Feeding must be number")
-    .required()
+    //.required()
     .integer()
     .max(3000)
     .label("Ct-3"),
   stream1: Yup.number()
     .typeError("Feeding must be number")
-    .required()
+    //.required()
     .integer()
     .max(5000)
     .label("Stream1"),
   stream1A: Yup.number()
     .typeError("Feeding must be number")
-    .required()
+    //.required()
     .integer()
     .max(5000)
     .label("Stream1A"),
@@ -62,6 +62,22 @@ export default function EnterFeeding({ navigation, route }) {
   const currentShift = globalShift; //shift(new Date().getHours());
 
   const handleSubmit = async (values, { resetForm }) => {
+    if (values.ct1 === "") {
+      values["ct1"] = 0;
+    }
+    if (values.ct2 === "") {
+      values["ct2"] = 0;
+    }
+    if (values.ct3 === "") {
+      values["ct3"] = 0;
+    }
+    if (values.stream1 === "") {
+      values["stream1"] = 0;
+    }
+    if (values.stream1A === "") {
+      values["stream1A"] = 0;
+    }
+
     const totalFeeding =
       parseInt(values.ct1) + parseInt(values.ct2) + parseInt(values.ct3);
     const streamTotal = parseInt(values.stream1) + parseInt(values.stream1A);
@@ -69,6 +85,7 @@ export default function EnterFeeding({ navigation, route }) {
       alert("Coal Tower total and Stream total should be equal..");
       return;
     }
+
     const newValues = {
       ...values,
       total_feeding: totalFeeding,
