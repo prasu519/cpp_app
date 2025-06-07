@@ -59,6 +59,9 @@ export default function CrusherStatus({ navigation, route }) {
 
     initAllCrushersData();
   }, []);
+  useEffect(() => {
+    setCr34Visible(!cr34Visible);
+  }, []);
 
   const handleSaveCr34 = async () => {
     if (
@@ -80,6 +83,11 @@ export default function CrusherStatus({ navigation, route }) {
     };
     await setAllCrushersData(updatedData);
     setCr34Data("");
+    setCr35Visible(!cr35Visible);
+    setCr34Visible(false),
+      setCr36Visible(false),
+      setCr37Visible(false),
+      setCr38Visible(false);
   };
 
   const handleSaveCr35 = async () => {
@@ -102,6 +110,11 @@ export default function CrusherStatus({ navigation, route }) {
     };
     await setAllCrushersData(updatedData);
     setCr35Data("");
+    setCr36Visible(!cr36Visible);
+    setCr34Visible(false),
+      setCr35Visible(false),
+      setCr37Visible(false),
+      setCr38Visible(false);
   };
 
   const handleSaveCr36 = async () => {
@@ -124,6 +137,11 @@ export default function CrusherStatus({ navigation, route }) {
     };
     await setAllCrushersData(updatedData);
     setCr36Data("");
+    setCr37Visible(!cr37Visible);
+    setCr34Visible(false),
+      setCr35Visible(false),
+      setCr36Visible(false),
+      setCr38Visible(false);
   };
 
   const handleSaveCr37 = async () => {
@@ -146,6 +164,11 @@ export default function CrusherStatus({ navigation, route }) {
     };
     await setAllCrushersData(updatedData);
     setCr37Data("");
+    setCr38Visible(!cr38Visible);
+    setCr34Visible(false),
+      setCr35Visible(false),
+      setCr36Visible(false),
+      setCr37Visible(false);
   };
 
   const handleSaveCr38 = async () => {
@@ -169,14 +192,15 @@ export default function CrusherStatus({ navigation, route }) {
     };
     await setAllCrushersData(updatedData);
     setCr38Data("");
+    setCr38Visible(false);
+    onPressBackButton();
   };
   const onPressBackButton = () => {
     if (
       cr34Data === "" &&
       cr35Data === "" &&
       cr36Data === "" &&
-      cr37Data === "" &&
-      cr38Data === ""
+      cr37Data === ""
     ) {
       navigation.goBack();
     } else {

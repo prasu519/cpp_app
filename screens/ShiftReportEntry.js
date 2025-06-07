@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
 import { Button } from "@rneui/base";
@@ -506,7 +506,7 @@ export default function ShiftReportEntry({ navigation }) {
                 fontWeight: "bold",
               }}
               onPress={() => navigation.navigate("CrusherStatus")}
-              disabled={false}
+              disabled={allCrushersData === undefined ? false : true}
             ></Button>
 
             <TouchableOpacity

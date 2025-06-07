@@ -376,6 +376,29 @@ export default function ShiftReportView({ navigation }) {
                     </span>
                     </p>
                   </div>
+                  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>
+                    Auto group Feeding
+                  </p>
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                    <span style="font-size: 20px; font-weight:bold">
+                    Auto
+                    </span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                    ${feeding.auto}
+                    </span>
+                    </p>
+                  </div>
+                  <div style="margin: 10px;  flex-direction: row; ">
+                    <p style=" display: flex; justify-content: space-between;">
+                    <span style="font-size: 20px; font-weight:bold">
+                    Non-Auto
+                    </span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                    ${feeding.nonauto}
+                    </span>
+                    </p>
+                  </div>
                 </div>
                 <div style=" flex-direction:column;  display: inline-block;float: left; width:400px;float:left;  text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px; margin-left:10px">
                   <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Pushing Schedule</p>
@@ -1247,6 +1270,80 @@ export default function ShiftReportView({ navigation }) {
                       >
                         <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
                           {feeding["total_feeding"]}
+                        </Text>
+                      </View>
+                    </View>
+                    <Card.Divider />
+                    <View
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(38),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(5.9),
+                            fontWeight: "bold",
+                            marginRight: wp(-1),
+                          }}
+                        >
+                          Auto Feeding
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(25),
+                        }}
+                      >
+                        <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
+                          {feeding["auto"]}
+                        </Text>
+                      </View>
+                    </View>
+                    <Card.Divider />
+                    <View
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(38),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(5.9),
+                            fontWeight: "bold",
+                            marginRight: wp(-1),
+                          }}
+                        >
+                          Non-Auto Feeding
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(25),
+                        }}
+                      >
+                        <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
+                          {feeding["nonauto"]}
                         </Text>
                       </View>
                     </View>

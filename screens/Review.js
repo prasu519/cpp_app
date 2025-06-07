@@ -222,8 +222,15 @@ export default function Review({ navigation }) {
     const totalFeeding =
       parseInt(feeding.ct1) + parseInt(feeding.ct2) + parseInt(feeding.ct3);
     const streamTotal = parseInt(feeding.stream1) + parseInt(feeding.stream1A);
+    const autoTotal = parseInt(feeding.auto) + parseInt(feeding.nonauto);
+
     if (totalFeeding !== streamTotal) {
       alert("Coal Tower total and Stream total should be equal..");
+      return;
+    }
+
+    if (totalFeeding !== autoTotal) {
+      alert("Coal Tower total and Auto group should be equal..");
       return;
     }
     const updatedFeeding = {
@@ -357,6 +364,7 @@ export default function Review({ navigation }) {
 
     setShiftDelaysData(shiftDelays);
     setEditShiftDelays(false);
+    console.log(shiftDelaysData);
   };
 
   const onUpdateMbtopStock = async () => {
@@ -705,13 +713,23 @@ export default function Review({ navigation }) {
               Feeding
             </Text>
 
-            {["ct1", "ct2", "ct3", "stream1", "stream1A"].map((item, index) => (
+            {[
+              "ct1",
+              "ct2",
+              "ct3",
+              "stream1",
+              "stream1A",
+              "auto",
+              "nonauto",
+            ].map((item, index) => (
               <AppTextBox
                 key={index}
                 label={item}
                 labelcolor={
                   item === "stream1" ||
                   item === "stream1A" ||
+                  item === "auto" ||
+                  item === "nonauto" ||
                   item === "New_Stream"
                     ? "#e9c46a"
                     : "orange"
@@ -735,6 +753,21 @@ export default function Review({ navigation }) {
                 maxLength={4}
               />
             ))}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: wp(30),
+                marginTop: wp(10),
+                marginBottom: wp(10),
+              }}
+            >
+              <Text style={{ fontSize: hp(3) }}>Total Feeding</Text>
+              <Text style={{ fontSize: hp(4) }}>
+                {feedingData.total_feeding.toString()}
+              </Text>
+            </View>
             <View
               style={{
                 flexDirection: "row",
@@ -865,6 +898,23 @@ export default function Review({ navigation }) {
                 editable={editReclaiming}
               />
             ))}
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: wp(15),
+                marginTop: wp(10),
+                marginBottom: wp(10),
+              }}
+            >
+              <Text style={{ fontSize: hp(3) }}>Total Reclaiming</Text>
+              <Text style={{ fontSize: hp(4) }}>
+                {reclaimingData.total_reclaiming.toString()}
+              </Text>
+            </View>
+
             <View
               style={{
                 flexDirection: "row",
@@ -1324,6 +1374,23 @@ export default function Review({ navigation }) {
                   />
                 );
             })}
+
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: wp(15),
+                marginTop: wp(10),
+                marginBottom: wp(10),
+              }}
+            >
+              <Text style={{ fontSize: hp(3) }}>Total MBT Stock</Text>
+              <Text style={{ fontSize: hp(4) }}>
+                {mbTopStockData.total_stock.toString()}
+              </Text>
+            </View>
+
             <View
               style={{
                 flexDirection: "row",
@@ -1389,7 +1456,21 @@ export default function Review({ navigation }) {
                 maxLength={4}
               />
             ))}
-
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: wp(20),
+                marginTop: wp(10),
+                marginBottom: wp(10),
+              }}
+            >
+              <Text style={{ fontSize: hp(3) }}>Total CT Stock</Text>
+              <Text style={{ fontSize: hp(4) }}>
+                {coalTowerStockData.total_stock.toString()}
+              </Text>
+            </View>
             <View
               style={{
                 flexDirection: "row",
@@ -1546,6 +1627,22 @@ export default function Review({ navigation }) {
                 editable={editPushingSchedule}
               />
             ))}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: wp(20),
+                marginTop: wp(10),
+                marginBottom: wp(10),
+              }}
+            >
+              <Text style={{ fontSize: hp(3) }}>Total Pushings</Text>
+              <Text style={{ fontSize: hp(4) }}>
+                {pushingScheduleData.total_pushings.toString()}
+              </Text>
+            </View>
+
             <View
               style={{
                 flexDirection: "row",

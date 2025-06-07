@@ -49,6 +49,18 @@ const validationSchema = Yup.object().shape({
     .integer()
     .max(5000)
     .label("Stream1A"),
+  auto: Yup.number()
+    .typeError("Auto group must be number")
+    //.required()
+    .integer()
+    .max(5000)
+    .label("Auto group"),
+  nonauto: Yup.number()
+    .typeError("Non-Auto must be number")
+    //.required()
+    .integer()
+    .max(5000)
+    .label("Non-Auto"),
 });
 
 export default function EnterFeeding({ navigation, route }) {
@@ -77,12 +89,25 @@ export default function EnterFeeding({ navigation, route }) {
     if (values.stream1A === "") {
       values["stream1A"] = 0;
     }
+    if (values.auto === "") {
+      values["auto"] = 0;
+    }
+    if (values.nonauto === "") {
+      values["nonauto"] = 0;
+    }
 
     const totalFeeding =
       parseInt(values.ct1) + parseInt(values.ct2) + parseInt(values.ct3);
     const streamTotal = parseInt(values.stream1) + parseInt(values.stream1A);
+    const autoTotal = parseInt(values.auto) + parseInt(values.nonauto);
+
     if (totalFeeding !== streamTotal) {
       alert("Coal Tower total and Stream total should be equal..");
+      return;
+    }
+
+    if (totalFeeding !== autoTotal) {
+      alert("Coal Tower total and Auto group should be equal..");
       return;
     }
 
@@ -118,7 +143,8 @@ export default function EnterFeeding({ navigation, route }) {
         ct3: "",
         stream1: "",
         stream1A: "",
-
+        auto: "",
+        nonauto: "",
         total_feeding: "",
       }}
       validationSchema={validationSchema}
@@ -346,6 +372,46 @@ export default function EnterFeeding({ navigation, route }) {
                   <ErrorMessage
                     error={errors.stream1A}
                     visible={touched.stream1A}
+                  />
+                </>
+              </FieldSet>
+
+              <FieldSet>
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: hp(3),
+                    }}
+                  >
+                    Enter Auto group details
+                  </Text>
+                  <AppTextBox
+                    label="Auto group"
+                    labelcolor="#e9c46a"
+                    onChangeText={handleChange("auto")}
+                    onBlur={() => setFieldTouched("auto")}
+                    value={values["auto"].toString()}
+                    maxLength={4}
+                    lbSize={45}
+                  />
+                  <ErrorMessage error={errors.auto} visible={touched.auto} />
+                  <AppTextBox
+                    label="Non-Auto"
+                    labelcolor="#e9c46a"
+                    onChangeText={handleChange("nonauto")}
+                    onBlur={() => setFieldTouched("nonauto")}
+                    value={values["nonauto"].toString()}
+                    maxLength={4}
+                    lbSize={45}
+                  />
+                  <ErrorMessage
+                    error={errors.nonauto}
+                    visible={touched.nonauto}
                   />
                 </>
               </FieldSet>
