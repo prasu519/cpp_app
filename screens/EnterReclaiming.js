@@ -125,6 +125,7 @@ export default function EnterReclaiming({ navigation }) {
     setExtraCoal(updatedExtraCoal);
     setEcCount(ecCount - 1);
   };
+
   const handleSubmit = (values) => {
     const reclaimRegex = /^[0-9]*$/;
     let coaltotal = 0;

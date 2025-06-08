@@ -495,7 +495,6 @@ export default function ShiftReportView({ navigation }) {
         `;
 
       const { uri } = await Print.printToFileAsync({ html: htmlContent });
-      console.log("PDF generated at:", uri);
 
       // Save the PDF to the file system
       const fileUri = `${FileSystem.documentDirectory}cpp_shift_report.pdf`;
@@ -503,7 +502,6 @@ export default function ShiftReportView({ navigation }) {
         from: uri,
         to: fileUri,
       });
-      console.log("PDF saved at:", fileUri);
 
       // Share the PDF
       if (await Sharing.isAvailableAsync()) {
@@ -512,7 +510,6 @@ export default function ShiftReportView({ navigation }) {
         Alert.alert("PDF Generated", `PDF has been saved to: ${fileUri}`);
       }
     } catch (error) {
-      console.error("Error generating PDF", error);
       Alert.alert("Error", "An error occurred while generating the PDF.");
     }
   };

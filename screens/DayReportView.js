@@ -24,6 +24,7 @@ export default function DayReportView({ navigation }) {
   const [mergedReclaimingData, setMergedReclaimingData] = useState({});
   const [mergedFeedingData, setMergedFeedingData] = useState({});
   const [mergedPushingData, setMergedPushingData] = useState({});
+  const [mergedTimingData, setMergedTimingData] = useState({});
   let reclaimingA;
   let reclaimingB;
   let reclaimingC;
@@ -36,7 +37,7 @@ export default function DayReportView({ navigation }) {
               <div style="display:flex; flex-direction: column; text-align:center; width: 800px; height:100px;">
                 <h1 style="text-decoration: underline;">CPP Day Report</h1>
                 <div style=" flex-direction: row">
-                  <span style="font-size: 20px; font-weight:bold; margin-left:10px">
+                  <span style="font-size: 30px; font-weight:bold; margin-left:10px">
                     Date : ${selectedDate.toISOString().split("T")[0]}
                   </span>               
                 </div>
@@ -91,7 +92,7 @@ export default function DayReportView({ navigation }) {
                   )
                   .join("")}
                   <h3 style="text-decoration: underline; margin-top:30px">Total Reclaiming</h3>
-                  <span style="font-size: 20px; font-weight:bold">${
+                  <span style="font-size: 30px; font-weight:bold">${
                     mergedReclaimingData.total_reclaiming
                   }</span>
               </div>  
@@ -135,7 +136,7 @@ export default function DayReportView({ navigation }) {
                   )
                   .join("")}
                   <h3 style="text-decoration: underline; margin-top:30px">Total Feeding</h3>
-                  <span style="font-size: 20px; font-weight:bold">${
+                  <span style="font-size: 30px; font-weight:bold">${
                     mergedFeedingData.total_feeding
                   }</span>
               </div> 
@@ -159,9 +160,53 @@ export default function DayReportView({ navigation }) {
                   )
                   .join("")}
                   <h3 style="text-decoration: underline; margin-top:30px">Total Pushings</h3>
-                  <span style="font-size: 20px; font-weight:bold">${
+                  <span style="font-size: 30px; font-weight:bold">${
                     mergedPushingData.total_pushings
                   }</span>
+              </div>
+
+              <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
+                <h2 style="text-decoration: underline; margin-top:30px">Running hours</h2>
+                ${[2, 3, 4]
+                  .map(
+                    (item, index) =>
+                      `
+                  <div style="margin-bottom: 10px;  flex-direction: row; ">
+                    <span style="font-size: 20px; font-weight:bold">
+                      Stream-${item}
+                    </span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                      ${
+                        mergedTimingData["str" + item + "hrs"] +
+                        " : " +
+                        mergedTimingData["str" + item + "min"]
+                      }
+                    </span>
+                  </div>
+                `
+                  )
+                  .join("")}
+                 </br>
+                 ${[49, 50, 126]
+                   .map(
+                     (item, index) =>
+                       `
+                 <div style="margin-bottom: 10px;  flex-direction: row; ">
+                   <span style="font-size: 20px; font-weight:bold">
+                     CC-${item}
+                   </span>
+                   <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                     ${
+                       mergedTimingData["cc" + item + "hrs"] +
+                       " : " +
+                       mergedTimingData["cc" + item + "min"]
+                     }
+                   </span>
+                 </div>
+               `
+                   )
+                   .join("")}
+
               </div>
               
             </body>
@@ -387,6 +432,128 @@ export default function DayReportView({ navigation }) {
     }
   };
 
+  const getTotalTimings = async (date) => {
+    try {
+      const response = await axios.get(BaseUrl + "/runningHours/daywise", {
+        params: {
+          date: date,
+        },
+      });
+      // Extract and set the data
+      if (
+        response.data.data[0] &&
+        response.data.data[1] &&
+        response.data.data[2]
+      ) {
+        const data = response.data.data;
+
+        let newTotalTimings = {};
+        newTotalTimings["str2hrs"] =
+          data[0].str2hrs + data[1].str2hrs + data[2].str2hrs;
+        newTotalTimings["str2min"] =
+          data[0].str2min + data[1].str2min + data[2].str2min;
+        newTotalTimings["str3hrs"] =
+          data[0].str3hrs + data[1].str3hrs + data[2].str3hrs;
+        newTotalTimings["str3min"] =
+          data[0].str3min + data[1].str3min + data[2].str3min;
+        newTotalTimings["str4hrs"] =
+          data[0].str4hrs + data[1].str4hrs + data[2].str4hrs;
+        newTotalTimings["str4min"] =
+          data[0].str4min + data[1].str4min + data[2].str4min;
+
+        newTotalTimings["cc49hrs"] =
+          data[0].cc49hrs + data[1].cc49hrs + data[2].cc49hrs;
+        newTotalTimings["cc49min"] =
+          data[0].cc49min + data[1].cc49min + data[2].cc49min;
+        newTotalTimings["cc50hrs"] =
+          data[0].cc50hrs + data[1].cc50hrs + data[2].cc50hrs;
+        newTotalTimings["cc50min"] =
+          data[0].cc50min + data[1].cc50min + data[2].cc50min;
+        newTotalTimings["cc126hrs"] =
+          data[0].cc126hrs + data[1].cc126hrs + data[2].cc126hrs;
+        newTotalTimings["cc126min"] =
+          data[0].cc126min + data[1].cc126min + data[2].cc126min;
+
+        if (newTotalTimings.cc49min >= 60) {
+          let rm1 = newTotalTimings.cc49min - 60;
+          if (rm1 >= 60) {
+            let rm2 = newTotalTimings.cc49min - 60;
+            newTotalTimings["cc49hrs"] = newTotalTimings.cc49hrs + 2;
+            newTotalTimings["cc49min"] = rm2;
+          } else {
+            newTotalTimings["cc49hrs"] = newTotalTimings.cc49hrs + 1;
+            newTotalTimings["cc49min"] = rm1;
+          }
+        }
+        if (newTotalTimings.cc50min >= 60) {
+          let rm1 = newTotalTimings.cc50min - 60;
+          if (rm1 >= 60) {
+            let rm2 = newTotalTimings.cc50min - 60;
+            newTotalTimings["cc50hrs"] = newTotalTimings.cc50hrs + 2;
+            newTotalTimings["cc50min"] = rm2;
+          } else {
+            newTotalTimings["cc50hrs"] = newTotalTimings.cc50hrs + 1;
+            newTotalTimings["cc50min"] = rm1;
+          }
+        }
+        if (newTotalTimings.cc126min >= 60) {
+          let rm1 = newTotalTimings.cc126min - 60;
+          if (rm1 >= 60) {
+            let rm2 = newTotalTimings.cc126min - 60;
+            newTotalTimings["cc126hrs"] = newTotalTimings.cc126hrs + 2;
+            newTotalTimings["cc126min"] = rm2;
+          } else {
+            newTotalTimings["cc126hrs"] = newTotalTimings.cc126hrs + 1;
+            newTotalTimings["cc126min"] = rm1;
+          }
+        }
+
+        if (newTotalTimings.str2min >= 60) {
+          let rm1 = newTotalTimings.str2min - 60;
+          if (rm1 >= 60) {
+            let rm2 = newTotalTimings.str2min - 60;
+            newTotalTimings["str2hrs"] = newTotalTimings.str2hrs + 2;
+            newTotalTimings["str2min"] = rm2;
+          } else {
+            newTotalTimings["str2hrs"] = newTotalTimings.str2hrs + 1;
+            newTotalTimings["str2min"] = rm1;
+          }
+        }
+
+        if (newTotalTimings.str3min >= 60) {
+          let rm1 = newTotalTimings.str3min - 60;
+          if (rm1 >= 60) {
+            let rm2 = newTotalTimings.str3min - 60;
+            newTotalTimings["str3hrs"] = newTotalTimings.str3hrs + 2;
+            newTotalTimings["str3min"] = rm2;
+          } else {
+            newTotalTimings["str3hrs"] = newTotalTimings.str3hrs + 1;
+            newTotalTimings["str3min"] = rm1;
+          }
+        }
+
+        if (newTotalTimings.str4min >= 60) {
+          let rm1 = newTotalTimings.str4min - 60;
+          if (rm1 >= 60) {
+            let rm2 = newTotalTimings.str4min - 60;
+            newTotalTimings["str4hrs"] = newTotalTimings.str4hrs + 2;
+            newTotalTimings["str4min"] = rm2;
+          } else {
+            newTotalTimings["str4hrs"] = newTotalTimings.str4hrs + 1;
+            newTotalTimings["str4min"] = rm1;
+          }
+        }
+
+        setLoadData(true);
+        return newTotalTimings;
+      } else {
+        setLoadData(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleSubmit = async () => {
     let date = new Date(selectedDate).toISOString().split("T")[0];
 
@@ -411,6 +578,11 @@ export default function DayReportView({ navigation }) {
     let pushingData = await getTotalPushings(date);
     if (pushingData !== undefined) {
       setMergedPushingData(pushingData);
+    }
+
+    let timingsData = await getTotalTimings(date);
+    if (timingsData !== undefined) {
+      setMergedTimingData(timingsData);
     }
 
     setLoadCard(true);
@@ -891,6 +1063,95 @@ export default function DayReportView({ navigation }) {
                       </View>
                     </View>
                     <Card.Divider />
+                  </View>
+                </View>
+              )}
+            </Card>
+
+            <Card>
+              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                Total Running Hours
+              </Card.Title>
+              <Card.Divider />
+
+              {mergedTimingData && (
+                <View
+                  style={{
+                    width: wp(85),
+
+                    flexDirection: "row",
+                  }}
+                >
+                  <View
+                    style={{
+                      width: wp(45),
+                      marginBottom: 10,
+                      display: "flex",
+                      gap: wp(5),
+                    }}
+                  >
+                    {[2, 3, 4].map((num, index) => (
+                      <View
+                        key={num}
+                        style={{
+                          width: wp(50),
+                          alignItems: "flex-start",
+                          flexDirection: "row",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(5),
+                            fontWeight: "bold",
+                            marginRight: wp(3),
+                          }}
+                        >
+                          Stream-{num} :
+                        </Text>
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {mergedTimingData["str" + num + "hrs"]}:
+                          {mergedTimingData["str" + num + "min"]}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                  <Divider orientation="vertical" />
+                  <View
+                    style={{
+                      width: wp(40),
+                      marginBottom: 10,
+                      display: "flex",
+                      gap: wp(5),
+                    }}
+                  >
+                    {[50, 49, 126].map((num, index) => (
+                      <View
+                        key={num}
+                        style={{ marginLeft: wp(1), flexDirection: "row" }}
+                      >
+                        <View
+                          style={{
+                            width: wp(23),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(5),
+                              fontWeight: "bold",
+                              marginRight: wp(2),
+                            }}
+                          >
+                            CC-{num} :
+                          </Text>
+                        </View>
+
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {mergedTimingData["cc" + num + "hrs"]}:
+                          {mergedTimingData["cc" + num + "min"]}
+                        </Text>
+                      </View>
+                    ))}
                   </View>
                 </View>
               )}
