@@ -446,7 +446,7 @@ export default function ShiftReportView({ navigation }) {
                     )
                     .join("")}
                   </br>
-                  ${[49, 50, 126]
+                  ${[50, 49, 126]
                     .map(
                       (item, index) =>
                         `

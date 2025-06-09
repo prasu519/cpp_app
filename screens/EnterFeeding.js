@@ -53,13 +53,13 @@ const validationSchema = Yup.object().shape({
     .typeError("Auto group must be number")
     //.required()
     .integer()
-    .max(5000)
+    .max(7000)
     .label("Auto group"),
   nonauto: Yup.number()
     .typeError("Non-Auto must be number")
     //.required()
     .integer()
-    .max(5000)
+    .max(7000)
     .label("Non-Auto"),
 });
 
