@@ -477,7 +477,7 @@ export default function DayReportView({ navigation }) {
         if (newTotalTimings.cc49min >= 60) {
           let rm1 = newTotalTimings.cc49min - 60;
           if (rm1 >= 60) {
-            let rm2 = newTotalTimings.cc49min - 60;
+            let rm2 = rm1 - 60;
             newTotalTimings["cc49hrs"] = newTotalTimings.cc49hrs + 2;
             newTotalTimings["cc49min"] = rm2;
           } else {
@@ -488,7 +488,7 @@ export default function DayReportView({ navigation }) {
         if (newTotalTimings.cc50min >= 60) {
           let rm1 = newTotalTimings.cc50min - 60;
           if (rm1 >= 60) {
-            let rm2 = newTotalTimings.cc50min - 60;
+            let rm2 = rm1 - 60;
             newTotalTimings["cc50hrs"] = newTotalTimings.cc50hrs + 2;
             newTotalTimings["cc50min"] = rm2;
           } else {
@@ -499,7 +499,7 @@ export default function DayReportView({ navigation }) {
         if (newTotalTimings.cc126min >= 60) {
           let rm1 = newTotalTimings.cc126min - 60;
           if (rm1 >= 60) {
-            let rm2 = newTotalTimings.cc126min - 60;
+            let rm2 = rm1 - 60;
             newTotalTimings["cc126hrs"] = newTotalTimings.cc126hrs + 2;
             newTotalTimings["cc126min"] = rm2;
           } else {
@@ -509,12 +509,16 @@ export default function DayReportView({ navigation }) {
         }
 
         if (newTotalTimings.str2min >= 60) {
+          console.log(newTotalTimings.str2min);
           let rm1 = newTotalTimings.str2min - 60;
+          console.log(rm1);
           if (rm1 >= 60) {
-            let rm2 = newTotalTimings.str2min - 60;
+            console.log("inside");
+            let rm2 = rm1 - 60;
             newTotalTimings["str2hrs"] = newTotalTimings.str2hrs + 2;
             newTotalTimings["str2min"] = rm2;
           } else {
+            console.log("outside");
             newTotalTimings["str2hrs"] = newTotalTimings.str2hrs + 1;
             newTotalTimings["str2min"] = rm1;
           }
@@ -523,7 +527,7 @@ export default function DayReportView({ navigation }) {
         if (newTotalTimings.str3min >= 60) {
           let rm1 = newTotalTimings.str3min - 60;
           if (rm1 >= 60) {
-            let rm2 = newTotalTimings.str3min - 60;
+            let rm2 = rm1 - 60;
             newTotalTimings["str3hrs"] = newTotalTimings.str3hrs + 2;
             newTotalTimings["str3min"] = rm2;
           } else {
@@ -535,7 +539,7 @@ export default function DayReportView({ navigation }) {
         if (newTotalTimings.str4min >= 60) {
           let rm1 = newTotalTimings.str4min - 60;
           if (rm1 >= 60) {
-            let rm2 = newTotalTimings.str4min - 60;
+            let rm2 = rm1 - 60;
             newTotalTimings["str4hrs"] = newTotalTimings.str4hrs + 2;
             newTotalTimings["str4min"] = rm2;
           } else {
