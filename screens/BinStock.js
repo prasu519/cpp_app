@@ -393,6 +393,126 @@ export default function BinStock({ navigation }) {
               </FieldSet>
               <FieldSet>
                 <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: 20,
+                    }}
+                  >
+                    CPP-3 Coal Stocks
+                  </Text>
+                  <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
+                    {oldCoal.map((item, index) => {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            flexDirection: "row",
+                            borderRadius: 25,
+                            width: wp(30),
+                            height: hp(6),
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: 20,
+                            gap: wp(10),
+                          }}
+                        >
+                          <TextInput
+                            selectionColor={"black"}
+                            style={{
+                              height: hp(6),
+                              width: wp(40),
+                              paddingLeft: wp(2),
+                              fontSize: hp(3),
+                              fontFamily: "Roboto",
+                              borderWidth: wp(0.3),
+                              borderRadius: 10,
+                              borderColor: "#0c0c0c",
+                              backgroundColor: "white",
+                            }}
+                            placeholder="Coal Name"
+                            onChangeText={(value) => {
+                              if (/^[0-9]*$/.test(value)) {
+                                return alert("Coal Name must be alphabets...");
+                              } else {
+                                setFieldValue(
+                                  "oldcoal" + (index + 1) + "name",
+                                  value
+                                );
+                              }
+                            }}
+                          />
+                          <TextInput
+                            selectionColor={"black"}
+                            style={{
+                              height: hp(6),
+                              width: wp(30),
+                              paddingLeft: wp(2),
+                              fontSize: hp(3),
+                              fontFamily: "Roboto",
+                              borderWidth: wp(0.3),
+                              borderRadius: 10,
+                              borderColor: "#0c0c0c",
+                              backgroundColor: "white",
+                            }}
+                            keyboardType="number-pad"
+                            placeholder="Value"
+                            onChangeText={(value) => {
+                              if (!/^[0-9]*$/.test(value)) {
+                                alert("Enter Numbers only...");
+                                return;
+                              } else {
+                                setFieldValue(
+                                  "oldcoal" + (index + 1) + "stock",
+                                  value
+                                );
+
+                                const oldStockTot = [...oldTotalValues];
+                                oldStockTot[index] = value;
+                                setOldTotalValues(oldStockTot);
+                                const total = oldStockTot.reduce(
+                                  (sum, val) => sum + (parseInt(val) || 0),
+                                  0
+                                );
+                                setOldTotalReclaiming(total);
+                              }
+                            }}
+                          />
+                        </View>
+                      );
+                    })}
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        borderRadius: 25,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 20,
+                        gap: wp(10),
+                      }}
+                    >
+                      <AppButton
+                        buttonName="Add Coal"
+                        buttonColour={"#87A922"}
+                        width="30%"
+                        onPress={handleAddCoal}
+                      />
+                      <AppButton
+                        buttonName="Del Coal"
+                        buttonColour={"brown"}
+                        width="30%"
+                        onPress={() => handleDelCoal(oldCount)}
+                      />
+                    </View>
+                  </View>
+                </>
+              </FieldSet>
+              <FieldSet>
+                <>
                   <View style={{ flexDirection: "row" }}>
                     <Text
                       style={{

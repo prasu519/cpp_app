@@ -68,17 +68,6 @@ export default function ShiftReportEntry({ navigation }) {
   };
 
   const handleFinalReport = async () => {
-    console.log(
-      reclaimingData,
-      feedingData,
-      runningHoursData,
-      shiftDelaysData,
-      mbTopStockData,
-      coalTowerStockData,
-      coalAnalysisData,
-      pushingScheduleData,
-      allCrushersData
-    );
     if (
       reclaimingData &&
       feedingData &&
@@ -252,7 +241,7 @@ export default function ShiftReportEntry({ navigation }) {
     setPushingScheduleData(undefined);
     setAllCrushersData(undefined);
     setTimeout(() => {
-      navigation.navigate("Home");
+      navigation.navigate("ViewReports");
     }, 1000);
   };
 
@@ -426,20 +415,6 @@ export default function ShiftReportEntry({ navigation }) {
             ></Button>
 
             <Button
-              title={"Enter Delays"}
-              buttonStyle={{ width: wp(40), height: hp(7) }}
-              titleStyle={{
-                fontSize: hp(2.5),
-                color: "black",
-                fontWeight: "bold",
-              }}
-              radius={25}
-              color="#50C4ED"
-              onPress={() => navigation.navigate("EnterDelays")}
-              disabled={shiftDelaysData === undefined ? false : true}
-            ></Button>
-
-            <Button
               title={"Enter MB-Top Stock"}
               buttonStyle={{ width: wp(60), height: hp(7) }}
               titleStyle={{
@@ -507,6 +482,20 @@ export default function ShiftReportEntry({ navigation }) {
               }}
               onPress={() => navigation.navigate("CrusherStatus")}
               disabled={allCrushersData === undefined ? false : true}
+            ></Button>
+
+            <Button
+              title={"Enter Delays"}
+              buttonStyle={{ width: wp(40), height: hp(7) }}
+              titleStyle={{
+                fontSize: hp(2.5),
+                color: "black",
+                fontWeight: "bold",
+              }}
+              radius={25}
+              color="#50C4ED"
+              onPress={() => navigation.navigate("EnterDelays")}
+              disabled={shiftDelaysData === undefined ? false : true}
             ></Button>
 
             <TouchableOpacity

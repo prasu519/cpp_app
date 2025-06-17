@@ -373,6 +373,19 @@ export default function EnterFeeding({ navigation, route }) {
                     error={errors.stream1A}
                     visible={touched.stream1A}
                   />
+                  <AppTextBox
+                    label="Path-C(cpp3)"
+                    labelcolor="#e9c46a"
+                    onChangeText={handleChange("stream1A")}
+                    onBlur={() => setFieldTouched("stream1A")}
+                    value={values["stream1A"].toString()}
+                    maxLength={4}
+                    lbSize={45}
+                  />
+                  <ErrorMessage
+                    error={errors.stream1A}
+                    visible={touched.stream1A}
+                  />
                 </>
               </FieldSet>
 

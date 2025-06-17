@@ -123,8 +123,8 @@ export default function ShiftReportView({ navigation }) {
                     reclaiming["excoal" + (index + 1) + "recl"] === 0
                       ? null
                       : `
-                  <div style="margin-bottom: 10px;  flex-direction: row; ">
-                    <p style=" display: flex; justify-content: space-between;">
+                      <div style="margin: 10px;  flex-direction: row; ">
+                      <p style=" display: flex; justify-content: space-between;">
                       <span style="font-size: 18px; font-weight:bold">
                       ${reclaiming[
                         "excoal" + (index + 1) + "name"
@@ -200,7 +200,9 @@ export default function ShiftReportView({ navigation }) {
                   <div style="margin: 10px;  flex-direction: row; ">
                     <p style=" display: flex; justify-content: space-between;">
                       <span style="font-size: 18px; font-weight:bold">
-                      ${mbTopStock["coal" + (index + 1) + "name"].toUpperCase()}
+                      ${mbTopStock[
+                        "oldcoal" + (index + 1) + "name"
+                      ].toUpperCase()}
                       </span>
                       <span style=" margin-left: 20px;font-size: 18px; font-weight:bold">
                       ${
@@ -552,7 +554,6 @@ export default function ShiftReportView({ navigation }) {
 
   const handleSubmit = () => {
     setClickSubmit(true);
-    //let date = day + "/" + month + "/" + year;
     let date = selectedDate.toISOString().split("T")[0];
     if (selectedShift === "" || selectedShift === "Select") {
       alert("Select Shift..");
@@ -709,6 +710,166 @@ export default function ShiftReportView({ navigation }) {
         },
       })
       .then((responce) => setCrusherStatus(responce.data.data[0]))
+      .catch((error) => console.log(error));
+  };
+
+  const handleDeleteReport = () => {
+    let date = selectedDate.toISOString().split("T")[0];
+    let shift = selectedShift;
+    try {
+      Alert.alert(
+        "Confirm Delete",
+        "Are you sure you want to delete this shift record?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: () => {
+              // Your delete logic here
+              delShiftReportPersonDetails(date, shift);
+
+              /* delReclaimingData(date, shift);
+              delfeedingdata(date, shift);
+              delCoalTowerStock(date, shift);
+              delMbTopCoalData(date, shift);
+              delRunningHoursdata(date, shift);
+              delShiftDelayData(date, shift);
+              delCoalAnalysisData(date, shift);
+              delPushingScheduleData(date, shift);
+              delCrusherStatusData(date, shift);*/
+              console.log("Shift record deleted");
+              navigation.goBack();
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+    } catch (error) {
+      console.log("Error while delete shift report: ", error);
+    }
+  };
+
+  const delShiftReportPersonDetails = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/shiftreportenteredby", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
+      .catch((error) => console.log(error));
+  };
+
+  const delReclaimingData = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/reclaiming", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
+      .catch((error) => console.log(error));
+  };
+
+  const delfeedingdata = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/feeding", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
+      .catch((error) => console.log(error));
+  };
+
+  const delCoalTowerStock = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/coaltowerstock", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
+      .catch((error) => console.log(error));
+  };
+
+  const delMbTopCoalData = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/mbtopStock", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
+      .catch((error) => console.log(error));
+  };
+
+  const delRunningHoursdata = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/runningHours", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
+      .catch((error) => console.log(error));
+  };
+
+  const delShiftDelayData = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/shiftDelay", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
+      .catch((error) => console.log(error));
+  };
+
+  const delCoalAnalysisData = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/coalAnalysis", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
+      .catch((error) => console.log(error));
+  };
+
+  const delPushingScheduleData = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/pushings", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
+      .catch((error) => console.log(error));
+  };
+
+  const delCrusherStatusData = async (date, shift) => {
+    await axios
+      .delete(BaseUrl + "/crusher", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((responce) => console.log(responce))
       .catch((error) => console.log(error));
   };
 
@@ -1637,6 +1798,51 @@ export default function ShiftReportView({ navigation }) {
                       </Text>
                     </View>
                   ))}
+                  <Card.Divider />
+                  <View
+                    style={{
+                      marginBottom: 10,
+                      display: "flex",
+                      flexDirection: "row",
+
+                      gap: hp(3),
+                    }}
+                  >
+                    <View
+                      style={{
+                        width: wp(30),
+                        alignItems: "flex-end",
+                        marginRight: wp(5),
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: wp(5.9),
+                          fontWeight: "bold",
+                          marginRight: wp(-1),
+                          color: "red",
+                        }}
+                      >
+                        Total
+                      </Text>
+                    </View>
+                    <Divider orientation="vertical" />
+                    <View
+                      style={{
+                        width: wp(25),
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: wp(6),
+                          fontWeight: "bold",
+                          color: "red",
+                        }}
+                      >
+                        {pushingSchedule["total_pushings"]}
+                      </Text>
+                    </View>
+                  </View>
                 </View>
               )}
             </Card>
@@ -1742,7 +1948,19 @@ export default function ShiftReportView({ navigation }) {
                 }}
                 onPress={handleGeneratePdf}
               />
-              {/*data ? <Text>Data loaded</Text> : <Text>Loading data...</Text>*/}
+            </View>
+            <View>
+              <Button
+                title="Delete Report"
+                buttonStyle={{
+                  width: wp(50),
+                  borderRadius: 25,
+                  alignSelf: "center",
+                  margin: 10,
+                  backgroundColor: "red",
+                }}
+                onPress={handleDeleteReport}
+              />
             </View>
           </View>
         ) : (
