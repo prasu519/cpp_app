@@ -23,12 +23,17 @@ export default function EnterReclaiming({ navigation }) {
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
   const [extraCoal, setExtraCoal] = useState([""]);
-  const [ecCount, setEcCount] = useState(0);
+  const [cpp3Coal, setCpp3Coal] = useState([""]);
   const [exCount, setExCount] = useState(0);
+  const [cpp3Count, setCpp3Count] = useState(0);
+  const [ecCount, setEcCount] = useState(0);
+  const [cpp3CCount, setCpp3CCount] = useState(0);
   const [totalReclaiming, setTotalReclaiming] = useState(0);
   const [totalValues, setTotalValues] = useState(Array(count).fill(""));
   const [nbTotalReclaiming, setNbTotalReclaiming] = useState(0);
   const [nbTotalValues, setNbTotalValues] = useState(Array(count).fill(""));
+  const [cpp3TotalReclaiming, setCpp3TotalReclaiming] = useState(0);
+  const [cpp3TotalValues, setCpp3TotalValues] = useState(Array(count).fill(""));
 
   const { setReclaimingData, globalDate, globalShift } =
     useContext(GlobalContext);
@@ -124,6 +129,24 @@ export default function EnterReclaiming({ navigation }) {
     const updatedExtraCoal = extraCoal.filter((_, i) => i != index);
     setExtraCoal(updatedExtraCoal);
     setEcCount(ecCount - 1);
+    let delfromtot = nbTotalValues[index];
+    if (delfromtot !== undefined)
+      setNbTotalReclaiming(nbTotalReclaiming - delfromtot);
+    setNbTotalValues((prevItems) => prevItems.slice(0, -1));
+  };
+
+  const handleCpp3AddCoal = () => {
+    setCpp3Coal([...cpp3Coal, ""]);
+    setCpp3CCount(cpp3CCount + 1);
+  };
+  const handleCpp3DelCoal = (index) => {
+    const updatedCpp3Coal = cpp3Coal.filter((_, i) => i != index);
+    setCpp3Coal(updatedCpp3Coal);
+    setCpp3CCount(cpp3CCount - 1);
+    let delfromtot = cpp3TotalValues[index];
+    if (delfromtot !== undefined)
+      setCpp3TotalReclaiming(cpp3TotalReclaiming - delfromtot);
+    setCpp3TotalValues((prevItems) => prevItems.slice(0, -1));
   };
 
   const handleSubmit = (values) => {
@@ -140,6 +163,12 @@ export default function EnterReclaiming({ navigation }) {
       if (values["excoal" + i + "name"] === null) {
         return alert("Please enter only alphabets for coal name...");
       }
+      if (values["cpp3coal" + i + "recl"] === "") {
+        values["cpp3coal" + i + "recl"] = 0;
+      }
+      if (values["cpp3coal" + i + "name"] === null) {
+        return alert("Please enter only alphabets for coal name...");
+      }
 
       coaltotal =
         coaltotal +
@@ -151,10 +180,15 @@ export default function EnterReclaiming({ navigation }) {
     let cc50 = values.cc50recl;
     let cc126 = values.cc126recl;
 
+    let patha = values.patharecl;
+    let pathb = values.pathbrecl;
+
     if (
       !reclaimRegex.test(cc49) ||
       !reclaimRegex.test(cc50) ||
-      !reclaimRegex.test(cc126)
+      !reclaimRegex.test(cc126) ||
+      !reclaimRegex.test(patha) ||
+      !reclaimRegex.test(pathb)
     ) {
       return alert("Please enter only numbers in Stream-Wise...");
     }
@@ -168,6 +202,16 @@ export default function EnterReclaiming({ navigation }) {
     if (cc126 === "") {
       values["cc126recl"] = 0;
     }
+    if (patha === "") {
+      values["patharecl"] = 0;
+    }
+    if (pathb === "") {
+      values["pathbrecl"] = 0;
+    }
+    let pathABtotal = parseInt(values.patharecl) + parseInt(values.pathbrecl);
+    if (cpp3TotalReclaiming !== pathABtotal) {
+      return alert("Cpp3 total should be equal to PathA & PathB Total..");
+    }
 
     let streamtotal =
       parseInt(values.cc49recl) +
@@ -175,7 +219,6 @@ export default function EnterReclaiming({ navigation }) {
       parseInt(values.cc126recl);
 
     if (coaltotal !== streamtotal) {
-      console.log(coaltotal, streamtotal);
       return alert("CoalTotal and StreamTotal should be equal..");
     }
 
@@ -183,10 +226,13 @@ export default function EnterReclaiming({ navigation }) {
       for (let i = 1; i <= count; i++) {
         values["coal" + i + "recl"] = "";
         values["excoal" + i + "recl"] = "";
+        values["cpp3coal" + i + "recl"] = "";
       }
       values["cc49recl"] = "";
       values["cc50recl"] = "";
       values["cc126recl"] = "";
+      values["patharecl"] = "";
+      values["pathbrecl"] = "";
 
       return alert("Enter Reclaiming Data before submitting...");
     }
@@ -221,10 +267,18 @@ export default function EnterReclaiming({ navigation }) {
       excoal6name: coalNames.excn6 ? coalNames.excn6 : values.excoal6name,
       excoal7name: coalNames.excn7 ? coalNames.excn7 : values.excoal7name,
       excoal8name: coalNames.excn8 ? coalNames.excn8 : values.excoal8name,
+      /*cpp3coal1name: values.cpp3coal1name,
+      cpp3coal2name: values.cpp3coal2name,
+      cpp3coal3name: values.cpp3coal3name,
+      cpp3coal4name: values.cpp3coal4name,
+      cpp3coal5name: values.cpp3coal5name,
       cc49recl: values.cc49recl,
       cc50recl: values.cc50recl,
       cc126recl: values.cc126recl,
+      patharecl: values.patharecl,
+      pathbrecl: values.pathbrecl,*/
       total_reclaiming: streamtotal,
+      cpp3total_reclaiming: pathABtotal,
     };
 
     setProgress(0);
@@ -238,6 +292,8 @@ export default function EnterReclaiming({ navigation }) {
     values["cc49recl"] = "";
     values["cc50recl"] = "";
     values["cc126recl"] = "";
+    values["patharecl"] = "";
+    values["pathbrecl"] = "";
     setTimeout(() => navigation.goBack(), 1000);
   };
 
@@ -270,6 +326,12 @@ export default function EnterReclaiming({ navigation }) {
         excoal6name: "",
         excoal7name: "",
         excoal8name: "",
+        cpp3coal1name: "",
+        cpp3coal2name: "",
+        cpp3coal3name: "",
+        cpp3coal4name: "",
+        cpp3coal5name: "",
+        cpp3coal6name: "",
         excoal1recl: "",
         excoal2recl: "",
         excoal3recl: "",
@@ -278,11 +340,19 @@ export default function EnterReclaiming({ navigation }) {
         excoal6recl: "",
         excoal7recl: "",
         excoal8recl: "",
-
+        cpp3coal1recl: "",
+        cpp3coal2recl: "",
+        cpp3coal3recl: "",
+        cpp3coal4recl: "",
+        cpp3coal5recl: "",
+        cpp3coal6recl: "",
         cc49recl: "",
         cc50recl: "",
         cc126recl: "",
+        patharecl: "",
+        pathbrecl: "",
         total_reclaiming: 0,
+        cpp3total_reclaiming: 0,
       }}
       onSubmit={handleSubmit}
     >
@@ -424,38 +494,6 @@ export default function EnterReclaiming({ navigation }) {
 
                 <FieldSet>
                   <>
-                    <View style={{ flexDirection: "row" }}>
-                      <Text
-                        style={{
-                          alignSelf: "left",
-
-                          fontSize: hp(2.7),
-                          fontWeight: "bold",
-                          color: "black",
-                          marginBottom: 10,
-                        }}
-                      >
-                        Total Reclaiming :
-                      </Text>
-                      <Text
-                        style={{
-                          alignSelf: "left",
-
-                          fontSize: hp(2.7),
-                          fontWeight: "bold",
-                          color: "black",
-                          marginBottom: wp(3),
-                          marginLeft: wp(10),
-                        }}
-                      >
-                        {totalReclaiming + nbTotalReclaiming}
-                      </Text>
-                    </View>
-                  </>
-                </FieldSet>
-
-                <FieldSet>
-                  <>
                     <Text
                       style={{
                         alignSelf: "center",
@@ -500,9 +538,8 @@ export default function EnterReclaiming({ navigation }) {
                               placeholder="Coal Name"
                               onChangeText={(value) => {
                                 if (/^[0-9]*$/.test(value)) {
-                                  return alert(
-                                    "Coal Name must be alphabets..."
-                                  );
+                                  alert("Coal Name must be alphabets...");
+                                  return;
                                 } else {
                                   setCoalNames({
                                     ...coalNames,
@@ -567,11 +604,173 @@ export default function EnterReclaiming({ navigation }) {
                         />
                         <AppButton
                           buttonName="Del Coal"
-                          buttonColour={"brown"}
+                          buttonColour={ecCount + 1 !== 0 ? "brown" : "grey"}
                           width="30%"
                           onPress={() => handleDelCoal(ecCount)}
+                          disabled={ecCount + 1 !== 0 ? false : true}
                         />
                       </View>
+                    </View>
+                  </>
+                </FieldSet>
+
+                <FieldSet>
+                  <>
+                    <Text
+                      style={{
+                        alignSelf: "center",
+                        borderBottomWidth: 2,
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginBottom: 20,
+                      }}
+                    >
+                      CPP-3 Coal Reclaiming
+                    </Text>
+                    <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
+                      {cpp3Count !== undefined &&
+                        cpp3Coal.map((value, index) => {
+                          return (
+                            <View
+                              key={index}
+                              style={{
+                                flexDirection: "row",
+                                borderRadius: 25,
+                                width: wp(30),
+                                height: hp(6),
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: 20,
+                                gap: wp(10),
+                              }}
+                            >
+                              <TextInput
+                                selectionColor={"black"}
+                                style={{
+                                  height: hp(6),
+                                  width: wp(40),
+                                  paddingLeft: wp(2),
+                                  fontSize: hp(3),
+                                  fontFamily: "Roboto",
+                                  borderWidth: wp(0.3),
+                                  borderRadius: 10,
+                                  borderColor: "#0c0c0c",
+                                  backgroundColor: "white",
+                                }}
+                                placeholder="Coal Name"
+                                onChangeText={(value) => {
+                                  if (/^[0-9]*$/.test(value)) {
+                                    alert("Coal Name must be alphabets...");
+                                    return;
+                                  } else {
+                                    setFieldValue(
+                                      "cpp3coal" +
+                                        (cpp3Count + (index + 1)) +
+                                        "name",
+                                      value
+                                    );
+                                  }
+                                }}
+                              />
+                              <TextInput
+                                selectionColor={"black"}
+                                style={{
+                                  height: hp(6),
+                                  width: wp(30),
+                                  paddingLeft: wp(2),
+                                  fontSize: hp(3),
+                                  fontFamily: "Roboto",
+                                  borderWidth: wp(0.3),
+                                  borderRadius: 10,
+                                  borderColor: "#0c0c0c",
+                                  backgroundColor: "white",
+                                }}
+                                keyboardType="number-pad"
+                                placeholder="Tons"
+                                onChangeText={(value) => {
+                                  if (!/^[0-9]*$/.test(value)) {
+                                    alert("Enter Numbers only...");
+                                    return;
+                                  } else {
+                                    setFieldValue(
+                                      "cpp3coal" +
+                                        (cpp3Count + (index + 1)) +
+                                        "recl",
+                                      value
+                                    );
+                                    const cpp3CoalTotal = [...cpp3TotalValues];
+                                    cpp3CoalTotal[index] = value;
+                                    setCpp3TotalValues(cpp3CoalTotal);
+                                    const total = cpp3CoalTotal.reduce(
+                                      (sum, val) => sum + (parseInt(val) || 0),
+                                      0
+                                    );
+                                    setCpp3TotalReclaiming(total);
+                                  }
+                                }}
+                              />
+                            </View>
+                          );
+                        })}
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          borderRadius: 25,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: 20,
+                          gap: wp(10),
+                        }}
+                      >
+                        <AppButton
+                          buttonName="Add Coal"
+                          buttonColour={"#87A922"}
+                          width="30%"
+                          onPress={handleCpp3AddCoal}
+                        />
+                        <AppButton
+                          buttonName="Del Coal"
+                          buttonColour={cpp3CCount + 1 !== 0 ? "brown" : "grey"}
+                          width="30%"
+                          onPress={() => handleCpp3DelCoal(cpp3CCount)}
+                          disabled={cpp3CCount + 1 !== 0 ? false : true}
+                        />
+                      </View>
+                    </View>
+                  </>
+                </FieldSet>
+
+                <FieldSet>
+                  <>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text
+                        style={{
+                          alignSelf: "left",
+
+                          fontSize: hp(2.7),
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: 10,
+                        }}
+                      >
+                        Total Reclaiming :
+                      </Text>
+                      <Text
+                        style={{
+                          alignSelf: "left",
+
+                          fontSize: hp(2.7),
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: wp(3),
+                          marginLeft: wp(10),
+                        }}
+                      >
+                        {totalReclaiming +
+                          nbTotalReclaiming +
+                          cpp3TotalReclaiming}
+                      </Text>
                     </View>
                   </>
                 </FieldSet>
@@ -632,6 +831,34 @@ export default function EnterReclaiming({ navigation }) {
                         }
                       }}
                       value={values["cc126recl"].toString()}
+                      maxLength={4}
+                    />
+                    <AppTextBox
+                      label={"Path-A(CPP3)"}
+                      labelcolor={"#e9c46a"}
+                      onChangeText={(value) => {
+                        if (!/^[0-9]*$/.test(value)) {
+                          alert("Enter Numbers only...");
+                          return;
+                        } else {
+                          setFieldValue("patharecl", value);
+                        }
+                      }}
+                      value={values["patharecl"].toString()}
+                      maxLength={4}
+                    />
+                    <AppTextBox
+                      label={"Path-B(CPP3)"}
+                      labelcolor={"#e9c46a"}
+                      onChangeText={(value) => {
+                        if (!/^[0-9]*$/.test(value)) {
+                          alert("Enter Numbers only...");
+                          return;
+                        } else {
+                          setFieldValue("pathbrecl", value);
+                        }
+                      }}
+                      value={values["pathbrecl"].toString()}
                       maxLength={4}
                     />
                   </>
@@ -722,21 +949,22 @@ export default function EnterReclaiming({ navigation }) {
                                     if (!/^[0-9]*$/.test(value)) {
                                       alert("Enter Numbers only...");
                                       return;
+                                    } else {
+                                      setFieldValue(
+                                        "excoal" + item + "recl",
+                                        value
+                                      );
+                                      const newValues = [...totalValues];
+                                      newValues[index] = value;
+                                      setTotalValues(newValues);
+
+                                      const total = newValues.reduce(
+                                        (sum, val) =>
+                                          sum + (parseInt(val) || 0),
+                                        0
+                                      );
+                                      setTotalReclaiming(total);
                                     }
-
-                                    setFieldValue(
-                                      "excoal" + item + "recl",
-                                      value
-                                    );
-                                    const newValues = [...totalValues];
-                                    newValues[index] = value;
-                                    setTotalValues(newValues);
-
-                                    const total = newValues.reduce(
-                                      (sum, val) => sum + (parseInt(val) || 0),
-                                      0
-                                    );
-                                    setTotalReclaiming(total);
                                   }}
                                   keyboardType="number-pad"
                                   value={values[
@@ -767,12 +995,22 @@ export default function EnterReclaiming({ navigation }) {
                                     if (!/^[0-9]*$/.test(value)) {
                                       alert("Enter Numbers only...");
                                       return;
-                                    }
+                                    } else {
+                                      setFieldValue(
+                                        "excoal" + item + "recl",
+                                        value
+                                      );
+                                      const newValues = [...totalValues];
+                                      newValues[index] = value;
+                                      setTotalValues(newValues);
 
-                                    setFieldValue(
-                                      "excoal" + item + "recl",
-                                      value
-                                    );
+                                      const total = newValues.reduce(
+                                        (sum, val) =>
+                                          sum + (parseInt(val) || 0),
+                                        0
+                                      );
+                                      setTotalReclaiming(total);
+                                    }
                                   }}
                                   keyboardType="number-pad"
                                   value={values[
@@ -818,9 +1056,8 @@ export default function EnterReclaiming({ navigation }) {
                                 placeholder="Coal Name"
                                 onChangeText={(value) => {
                                   if (/^[0-9]*$/.test(value)) {
-                                    return alert(
-                                      "Coal Name must be alphabets..."
-                                    );
+                                    alert("Coal Name must be alphabets...");
+                                    return;
                                   } else {
                                     setFieldValue(
                                       "excoal" +
@@ -889,222 +1126,15 @@ export default function EnterReclaiming({ navigation }) {
                         />
                         <AppButton
                           buttonName="Del Coal"
-                          buttonColour={"brown"}
+                          buttonColour={ecCount + 1 !== 0 ? "brown" : "grey"}
                           width="30%"
                           onPress={() => handleDelCoal(ecCount)}
+                          disabled={ecCount + 1 !== 0 ? false : true}
                         />
                       </View>
                     </View>
                   </>
                 </FieldSet>
-
-                <FieldSet>
-                  <>
-                    <Text
-                      style={{
-                        alignSelf: "center",
-                        borderBottomWidth: 2,
-                        fontSize: hp(2.7),
-                        fontWeight: "bold",
-                        color: "black",
-                        marginBottom: 20,
-                      }}
-                    >
-                      CPP-3 Coal Reclaiming
-                    </Text>
-                    <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
-                      {currentShift === "B" &&
-                      reclaimingA !== undefined &&
-                      reclaimingA.excoal1name !== ""
-                        ? [1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
-                            const coalName =
-                              reclaimingA["excoal" + item + "name"];
-                            if (coalName !== "") {
-                              return (
-                                <AppTextBox
-                                  label={coalName}
-                                  labelcolor="orange"
-                                  key={index}
-                                  onChangeText={(value) => {
-                                    if (!/^[0-9]*$/.test(value)) {
-                                      alert("Enter Numbers only...");
-                                      return;
-                                    }
-
-                                    setFieldValue(
-                                      "excoal" + item + "recl",
-                                      value
-                                    );
-                                    const newValues = [...totalValues];
-                                    newValues[index] = value;
-                                    setTotalValues(newValues);
-
-                                    const total = newValues.reduce(
-                                      (sum, val) => sum + (parseInt(val) || 0),
-                                      0
-                                    );
-                                    setTotalReclaiming(total);
-                                  }}
-                                  keyboardType="number-pad"
-                                  value={values[
-                                    "excoal" + item + "recl"
-                                  ].toString()}
-                                  maxLength={4}
-                                />
-                              );
-                            }
-                            return null;
-                          })
-                        : null}
-
-                      {currentShift === "C" &&
-                      reclaimingB !== undefined &&
-                      reclaimingB.excoal1name !== ""
-                        ? [1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
-                            const coalName =
-                              reclaimingB["excoal" + item + "name"];
-
-                            if (coalName !== "") {
-                              return (
-                                <AppTextBox
-                                  label={coalName}
-                                  labelcolor="orange"
-                                  key={index}
-                                  onChangeText={(value) => {
-                                    if (!/^[0-9]*$/.test(value)) {
-                                      alert("Enter Numbers only...");
-                                      return;
-                                    }
-
-                                    setFieldValue(
-                                      "excoal" + item + "recl",
-                                      value
-                                    );
-                                  }}
-                                  keyboardType="number-pad"
-                                  value={values[
-                                    "excoal" + item + "recl"
-                                  ].toString()}
-                                  maxLength={4}
-                                />
-                              );
-                            }
-                            return null;
-                          })
-                        : null}
-
-                      {exCount !== undefined &&
-                        extraCoal.map((value, index) => {
-                          return (
-                            <View
-                              key={index}
-                              style={{
-                                flexDirection: "row",
-                                borderRadius: 25,
-                                width: wp(30),
-                                height: hp(6),
-                                alignItems: "center",
-                                justifyContent: "center",
-                                borderRadius: 20,
-                                gap: wp(10),
-                              }}
-                            >
-                              <TextInput
-                                selectionColor={"black"}
-                                style={{
-                                  height: hp(6),
-                                  width: wp(40),
-                                  paddingLeft: wp(2),
-                                  fontSize: hp(3),
-                                  fontFamily: "Roboto",
-                                  borderWidth: wp(0.3),
-                                  borderRadius: 10,
-                                  borderColor: "#0c0c0c",
-                                  backgroundColor: "white",
-                                }}
-                                placeholder="Coal Name"
-                                onChangeText={(value) => {
-                                  if (/^[0-9]*$/.test(value)) {
-                                    return alert(
-                                      "Coal Name must be alphabets..."
-                                    );
-                                  } else {
-                                    setFieldValue(
-                                      "excoal" +
-                                        (exCount + (index + 1)) +
-                                        "name",
-                                      value
-                                    );
-                                  }
-                                }}
-                              />
-                              <TextInput
-                                selectionColor={"black"}
-                                style={{
-                                  height: hp(6),
-                                  width: wp(30),
-                                  paddingLeft: wp(2),
-                                  fontSize: hp(3),
-                                  fontFamily: "Roboto",
-                                  borderWidth: wp(0.3),
-                                  borderRadius: 10,
-                                  borderColor: "#0c0c0c",
-                                  backgroundColor: "white",
-                                }}
-                                keyboardType="number-pad"
-                                placeholder="Tons"
-                                onChangeText={(value) => {
-                                  if (!/^[0-9]*$/.test(value)) {
-                                    alert("Enter Numbers only...");
-                                    return;
-                                  } else {
-                                    setFieldValue(
-                                      "excoal" +
-                                        (exCount + (index + 1)) +
-                                        "recl",
-                                      value
-                                    );
-                                    const nbCoalTotal = [...nbTotalValues];
-                                    nbCoalTotal[index] = value;
-                                    setNbTotalValues(nbCoalTotal);
-                                    const total = nbCoalTotal.reduce(
-                                      (sum, val) => sum + (parseInt(val) || 0),
-                                      0
-                                    );
-                                    setNbTotalReclaiming(total);
-                                  }
-                                }}
-                              />
-                            </View>
-                          );
-                        })}
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          borderRadius: 25,
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: 20,
-                          gap: wp(10),
-                        }}
-                      >
-                        <AppButton
-                          buttonName="Add Coal"
-                          buttonColour={"#87A922"}
-                          width="30%"
-                          onPress={handleAddCoal}
-                        />
-                        <AppButton
-                          buttonName="Del Coal"
-                          buttonColour={"brown"}
-                          width="30%"
-                          onPress={() => handleDelCoal(ecCount)}
-                        />
-                      </View>
-                    </View>
-                  </>
-                </FieldSet>
-
                 <FieldSet>
                   <>
                     <View style={{ flexDirection: "row" }}>
@@ -1132,6 +1162,165 @@ export default function EnterReclaiming({ navigation }) {
                         }}
                       >
                         {totalReclaiming + nbTotalReclaiming}
+                      </Text>
+                    </View>
+                  </>
+                </FieldSet>
+
+                <FieldSet>
+                  <>
+                    <Text
+                      style={{
+                        alignSelf: "center",
+                        borderBottomWidth: 2,
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginBottom: 20,
+                      }}
+                    >
+                      CPP-3 Coal Reclaiming
+                    </Text>
+                    <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
+                      {cpp3Count !== undefined &&
+                        cpp3Coal.map((value, index) => {
+                          return (
+                            <View
+                              key={index}
+                              style={{
+                                flexDirection: "row",
+                                borderRadius: 25,
+                                width: wp(30),
+                                height: hp(6),
+                                alignItems: "center",
+                                justifyContent: "center",
+                                borderRadius: 20,
+                                gap: wp(10),
+                              }}
+                            >
+                              <TextInput
+                                selectionColor={"black"}
+                                style={{
+                                  height: hp(6),
+                                  width: wp(40),
+                                  paddingLeft: wp(2),
+                                  fontSize: hp(3),
+                                  fontFamily: "Roboto",
+                                  borderWidth: wp(0.3),
+                                  borderRadius: 10,
+                                  borderColor: "#0c0c0c",
+                                  backgroundColor: "white",
+                                }}
+                                placeholder="Coal Name"
+                                onChangeText={(value) => {
+                                  if (/^[0-9]*$/.test(value)) {
+                                    alert("Coal Name must be alphabets...");
+                                    return;
+                                  } else {
+                                    setFieldValue(
+                                      "cpp3coal" +
+                                        (cpp3Count + (index + 1)) +
+                                        "name",
+                                      value
+                                    );
+                                  }
+                                }}
+                              />
+                              <TextInput
+                                selectionColor={"black"}
+                                style={{
+                                  height: hp(6),
+                                  width: wp(30),
+                                  paddingLeft: wp(2),
+                                  fontSize: hp(3),
+                                  fontFamily: "Roboto",
+                                  borderWidth: wp(0.3),
+                                  borderRadius: 10,
+                                  borderColor: "#0c0c0c",
+                                  backgroundColor: "white",
+                                }}
+                                keyboardType="number-pad"
+                                placeholder="Tons"
+                                onChangeText={(value) => {
+                                  if (!/^[0-9]*$/.test(value)) {
+                                    alert("Enter Numbers only...");
+                                    return;
+                                  } else {
+                                    setFieldValue(
+                                      "cpp3coal" +
+                                        (cpp3Count + (index + 1)) +
+                                        "recl",
+                                      value
+                                    );
+                                    const cpp3CoalTotal = [...cpp3TotalValues];
+                                    cpp3CoalTotal[index] = value;
+                                    setCpp3TotalValues(cpp3CoalTotal);
+                                    const total = cpp3CoalTotal.reduce(
+                                      (sum, val) => sum + (parseInt(val) || 0),
+                                      0
+                                    );
+                                    setCpp3TotalReclaiming(total);
+                                  }
+                                }}
+                              />
+                            </View>
+                          );
+                        })}
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          borderRadius: 25,
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: 20,
+                          gap: wp(10),
+                        }}
+                      >
+                        <AppButton
+                          buttonName="Add Coal"
+                          buttonColour={"#87A922"}
+                          width="30%"
+                          onPress={handleCpp3AddCoal}
+                        />
+                        <AppButton
+                          buttonName="Del Coal"
+                          buttonColour={cpp3CCount + 1 !== 0 ? "brown" : "grey"}
+                          width="30%"
+                          onPress={() => handleCpp3DelCoal(cpp3CCount)}
+                          disabled={cpp3CCount + 1 !== 0 ? false : true}
+                        />
+                      </View>
+                    </View>
+                  </>
+                </FieldSet>
+
+                <FieldSet>
+                  <>
+                    <View style={{ flexDirection: "row" }}>
+                      <Text
+                        style={{
+                          alignSelf: "left",
+
+                          fontSize: hp(2.7),
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: 10,
+                        }}
+                      >
+                        Total Reclaiming CPP3:
+                      </Text>
+                      <Text
+                        style={{
+                          alignSelf: "left",
+
+                          fontSize: hp(2.7),
+                          fontWeight: "bold",
+                          color: "black",
+                          marginBottom: wp(3),
+                          marginLeft: wp(10),
+                        }}
+                      >
+                        {cpp3TotalReclaiming}
                       </Text>
                     </View>
                   </>
@@ -1195,31 +1384,31 @@ export default function EnterReclaiming({ navigation }) {
                       maxLength={4}
                     />
                     <AppTextBox
-                      label={"path-a"}
+                      label={"Path-A(CPP3)"}
                       labelcolor={"#e9c46a"}
                       onChangeText={(value) => {
                         if (!/^[0-9]*$/.test(value)) {
                           alert("Enter Numbers only...");
                           return;
                         } else {
-                          setFieldValue("cc126recl", value);
+                          setFieldValue("patharecl", value);
                         }
                       }}
-                      value={values["cc126recl"].toString()}
+                      value={values["patharecl"].toString()}
                       maxLength={4}
                     />
                     <AppTextBox
-                      label={"path-b"}
+                      label={"Path-B(CPP3)"}
                       labelcolor={"#e9c46a"}
                       onChangeText={(value) => {
                         if (!/^[0-9]*$/.test(value)) {
                           alert("Enter Numbers only...");
                           return;
                         } else {
-                          setFieldValue("cc126recl", value);
+                          setFieldValue("pathbrecl", value);
                         }
                       }}
-                      value={values["cc126recl"].toString()}
+                      value={values["pathbrecl"].toString()}
                       maxLength={4}
                     />
                   </>

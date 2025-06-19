@@ -24,7 +24,7 @@ export default function AppButton({
         marginBottom: hp(4),
         alignSelf: "center",
       }}
-      {...otherProps} 
+      {...otherProps}
     >
       <Text
         style={{

@@ -221,7 +221,10 @@ export default function Review({ navigation }) {
   const onUpdateFeeding = async () => {
     const totalFeeding =
       parseInt(feeding.ct1) + parseInt(feeding.ct2) + parseInt(feeding.ct3);
-    const streamTotal = parseInt(feeding.stream1) + parseInt(feeding.stream1A);
+    const streamTotal =
+      parseInt(feeding.stream1) +
+      parseInt(feeding.stream1A) +
+      parseInt(feeding.pathc);
     const autoTotal = parseInt(feeding.auto) + parseInt(feeding.nonauto);
 
     if (totalFeeding !== streamTotal) {
@@ -256,13 +259,24 @@ export default function Review({ navigation }) {
         parseInt(reclaiming["excoal" + i + "recl"]);
     }
     if (coaltotal !== streamtotal) {
-      console.log(coaltotal, streamtotal);
-      alert("CoalTotal and StreamTotal should be equal..");
+      alert("CPP1 CoalTotal and StreamTotal should be equal..");
+      return;
+    }
+    const cpp3streamtotal =
+      parseInt(reclaiming.patharecl) + parseInt(reclaiming.pathbrecl);
+    let cpp3coaltotal = 0;
+    for (let i = 1; i <= 6; i++) {
+      cpp3coaltotal =
+        cpp3coaltotal + parseInt(reclaiming["cpp3coal" + i + "recl"]);
+    }
+    if (cpp3coaltotal !== cpp3streamtotal) {
+      alert("CPP3 CoalTotal and StreamTotal should be equal..");
       return;
     }
     const updatedReclaiming = {
       ...reclaiming,
       total_reclaiming: streamtotal,
+      cpp3total_reclaiming: cpp3streamtotal,
     };
 
     setReclaimingData(updatedReclaiming);
@@ -369,13 +383,23 @@ export default function Review({ navigation }) {
 
   const onUpdateMbtopStock = async () => {
     let totalMbtopStock = 0;
+    let cpp3totalMbtopStock = 0;
     for (let i = 0; i < coalNameCount; i++) {
       totalMbtopStock =
         totalMbtopStock +
         parseInt(mbtopCoalData["coal" + (i + 1) + "stock"]) +
         parseInt(mbtopCoalData["oldcoal" + (i + 1) + "stock"]);
     }
-    const newMbtopData = { ...mbtopCoalData, total_stock: totalMbtopStock };
+    for (let i = 0; i < 6; i++) {
+      cpp3totalMbtopStock =
+        cpp3totalMbtopStock +
+        parseInt(mbtopCoalData["cpp3coal" + (i + 1) + "stock"]);
+    }
+    const newMbtopData = {
+      ...mbtopCoalData,
+      total_stock: totalMbtopStock,
+      cpp3total_stock: cpp3totalMbtopStock,
+    };
 
     setMbTopStockData(newMbtopData);
     setEditMbtopStock(false);
@@ -719,6 +743,7 @@ export default function Review({ navigation }) {
               "ct3",
               "stream1",
               "stream1A",
+              "pathc",
               "auto",
               "nonauto",
             ].map((item, index) => (
@@ -728,6 +753,7 @@ export default function Review({ navigation }) {
                 labelcolor={
                   item === "stream1" ||
                   item === "stream1A" ||
+                  item === "pathc" ||
                   item === "auto" ||
                   item === "nonauto" ||
                   item === "New_Stream"
@@ -898,6 +924,80 @@ export default function Review({ navigation }) {
                 editable={editReclaiming}
               />
             ))}
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+                marginTop: hp(3),
+              }}
+            >
+              CPP3 Reclaiming
+            </Text>
+            {[1, 2, 3, 4, 5, 6].map((item, index) =>
+              reclaiming["cpp3coal" + item + "name"] === null ||
+              reclaiming["cpp3coal" + item + "recl"] === 0 ? null : (
+                <AppTextBox
+                  key={index}
+                  label={reclaiming["cpp3coal" + item + "name"]}
+                  labelcolor="orange"
+                  value={reclaiming["cpp3coal" + item + "recl"].toString()}
+                  onChangeText={(newValue) => {
+                    if (newValue === "") {
+                      setUpdateReclButtVisible(true);
+                      setReclaiming({
+                        ...reclaiming,
+                        ["cpp3coal" + item + "recl"]: "",
+                      });
+                      return;
+                    }
+                    if (!/^[0-9]*$/.test(newValue)) {
+                      alert("Enter Numbers only...");
+                      return;
+                    } else {
+                      setUpdateReclButtVisible(false);
+                      setReclaiming({
+                        ...reclaiming,
+                        ["cpp3coal" + item + "recl"]: newValue,
+                      });
+                    }
+                  }}
+                  editable={editReclaiming}
+                />
+              )
+            )}
+            {["patha", "pathb"].map((item, index) => (
+              <AppTextBox
+                key={index}
+                label={item}
+                labelcolor="#e9c46a"
+                value={reclaiming[item + "recl"].toString()}
+                onChangeText={(newValue) => {
+                  if (newValue === "") {
+                    setUpdateReclButtVisible(true);
+                    setReclaiming({
+                      ...reclaiming,
+                      [item + "recl"]: "",
+                    });
+                    return;
+                  }
+                  if (!/^[0-9]*$/.test(newValue)) {
+                    alert("Enter Numbers only...");
+                    return;
+                  } else {
+                    setUpdateReclButtVisible(false);
+                    setReclaiming({
+                      ...reclaiming,
+                      [item + "recl"]: newValue,
+                    });
+                  }
+                }}
+                editable={editReclaiming}
+              />
+            ))}
 
             <View
               style={{
@@ -909,9 +1009,23 @@ export default function Review({ navigation }) {
                 marginBottom: wp(10),
               }}
             >
-              <Text style={{ fontSize: hp(3) }}>Total Reclaiming</Text>
+              <Text style={{ fontSize: hp(3) }}>Total CPP1 Reclaiming</Text>
               <Text style={{ fontSize: hp(4) }}>
                 {reclaimingData.total_reclaiming.toString()}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: wp(15),
+                marginBottom: wp(10),
+              }}
+            >
+              <Text style={{ fontSize: hp(3) }}>Total CPP3 Reclaiming</Text>
+              <Text style={{ fontSize: hp(4) }}>
+                {reclaimingData.cpp3total_reclaiming.toString()}
               </Text>
             </View>
 
@@ -1374,6 +1488,71 @@ export default function Review({ navigation }) {
                   />
                 );
             })}
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: wp(15),
+                marginTop: wp(10),
+                marginBottom: wp(10),
+              }}
+            >
+              <Text style={{ fontSize: hp(3) }}>CPP1 Total Stock</Text>
+              <Text style={{ fontSize: hp(4) }}>
+                {mbTopStockData.total_stock.toString()}
+              </Text>
+            </View>
+            <Text
+              style={{
+                alignSelf: "center",
+                borderBottomWidth: 2,
+                fontSize: hp(2.5),
+                fontWeight: "bold",
+                color: "black",
+                marginBottom: hp(3),
+                marginTop: hp(3),
+              }}
+            >
+              CPP3 Stock
+            </Text>
+            {[1, 2, 3, 4, 5, 6].map((item, index) =>
+              mbtopCoalData["cpp3coal" + (index + 1) + "name"] === null ||
+              mbtopCoalData["cpp3coal" + (index + 1) + "stock"] === 0 ? null : (
+                <AppTextBox
+                  key={index}
+                  label={mbtopCoalData["cpp3coal" + (index + 1) + "name"]}
+                  labelcolor="orange"
+                  value={mbtopCoalData[
+                    "cpp3coal" + (index + 1) + "stock"
+                  ].toString()}
+                  onChangeText={(newValue) => {
+                    if (newValue === "") {
+                      setUpdateMbtopStockButtVisible(true);
+                      setMbtopCoalData({
+                        ...mbtopCoalData,
+                        ["cpp3coal" + (index + 1) + "stock"]: "",
+                      });
+                      return;
+                    }
+                    if (!/^[0-9]*$/.test(newValue)) {
+                      alert("Enter Numbers only...");
+                      setUpdateMbtopStockButtVisible(true);
+                      return;
+                    } else {
+                      setMbtopCoalData({
+                        ...mbtopCoalData,
+                        ["cpp3coal" + (index + 1) + "stock"]: newValue,
+                      });
+                      setUpdateMbtopStockButtVisible(false);
+                    }
+                  }}
+                  keyboardType="number-pad"
+                  editable={editMbtopStock}
+                  maxLength={4}
+                />
+              )
+            )}
 
             <View
               style={{
@@ -1385,9 +1564,9 @@ export default function Review({ navigation }) {
                 marginBottom: wp(10),
               }}
             >
-              <Text style={{ fontSize: hp(3) }}>Total MBT Stock</Text>
+              <Text style={{ fontSize: hp(3) }}>CPP3 Total Stock</Text>
               <Text style={{ fontSize: hp(4) }}>
-                {mbTopStockData.total_stock.toString()}
+                {mbTopStockData.cpp3total_stock.toString()}
               </Text>
             </View>
 

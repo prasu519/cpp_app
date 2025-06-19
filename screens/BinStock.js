@@ -25,14 +25,22 @@ export default function BinStock({ navigation }) {
   const [progress, setProgress] = useState(0);
   const { mbTopStockData, setMbTopStockData, globalDate, globalShift } =
     useContext(GlobalContext);
+
   const [totalReclaiming, setTotalReclaiming] = useState(0);
-  const [oldTotalReclaiming, setOldTotalReclaiming] = useState(0);
   const [totalValues, setTotalValues] = useState(Array(count).fill(""));
+
+  const [oldCoal, setOldCoal] = useState([""]);
+  const [oldCount, setOldCount] = useState(0);
+  const [oldTotalReclaiming, setOldTotalReclaiming] = useState(0);
   const [oldTotalValues, setOldTotalValues] = useState(Array(count).fill(""));
+
+  const [cpp3Coal, setCpp3Coal] = useState([""]);
+  const [cpp3Count, setCpp3Count] = useState(0);
+  const [cpp3TotalReclaiming, setCpp3TotalReclaiming] = useState(0);
+  const [cpp3TotalValues, setCpp3TotalValues] = useState(Array(count).fill(""));
+
   const currentDate = new Date(globalDate).toISOString().split("T")[0];
   const currentShift = globalShift; //shift(new Date().getHours());
-  const [oldCount, setOldCount] = useState(0);
-  const [oldCoal, setOldCoal] = useState([""]);
 
   useEffect(() => {
     const getCoalNames = async () => {
@@ -57,15 +65,35 @@ export default function BinStock({ navigation }) {
     setOldCoal([...oldCoal, ""]);
     setOldCount(oldCount + 1);
   };
+
   const handleDelCoal = (index) => {
     const updatedOldCoal = oldCoal.filter((_, i) => i != index);
     setOldCoal(updatedOldCoal);
     setOldCount(oldCount - 1);
+    let delfromtot = oldTotalValues[index];
+    if (delfromtot !== undefined)
+      setOldTotalReclaiming(oldTotalReclaiming - delfromtot);
+    setOldTotalValues((prevItems) => prevItems.slice(0, -1));
+  };
+
+  const handleAddCpp3Coal = () => {
+    setCpp3Coal([...cpp3Coal, ""]);
+    setCpp3Count(cpp3Count + 1);
+  };
+
+  const handleDelCpp3Coal = (index) => {
+    const updatedCpp3Coal = cpp3Coal.filter((_, i) => i != index);
+    setCpp3Coal(updatedCpp3Coal);
+    setCpp3Count(cpp3Count - 1);
+    let delfromtot = cpp3TotalValues[index];
+    if (delfromtot !== undefined)
+      setCpp3TotalReclaiming(cpp3TotalReclaiming - delfromtot);
+    setCpp3TotalValues((prevItems) => prevItems.slice(0, -1));
   };
 
   const handleSubmit = async (values) => {
     let TotalStock = 0;
-
+    let Cpp3TotalStock = 0;
     for (let i = 1; i <= count; i++) {
       if (values["coal" + i + "stock"] === "") {
         alert("Enter all fields..");
@@ -75,6 +103,8 @@ export default function BinStock({ navigation }) {
           TotalStock +
           parseInt(values["coal" + i + "stock"]) +
           parseInt(values["oldcoal" + i + "stock"]);
+      Cpp3TotalStock =
+        Cpp3TotalStock + parseInt(values["cpp3coal" + i + "stock"]);
     }
     let newValues = {
       ...values,
@@ -88,8 +118,8 @@ export default function BinStock({ navigation }) {
       coal8name: coalNames.cn8,
 
       total_stock: TotalStock,
+      cpp3total_stock: Cpp3TotalStock,
     };
-
     setMbTopStockData(newValues);
     setProgress(0);
     setDoneScreen(true);
@@ -140,7 +170,21 @@ export default function BinStock({ navigation }) {
         oldcoal7stock: 0,
         oldcoal8name: "",
         oldcoal8stock: 0,
+
+        cpp3coal1name: "",
+        cpp3coal1stock: 0,
+        cpp3coal2name: "",
+        cpp3coal2stock: 0,
+        cpp3coal3name: "",
+        cpp3coal3stock: 0,
+        cpp3coal4name: "",
+        cpp3coal4stock: 0,
+        cpp3coal5name: "",
+        cpp3coal5stock: 0,
+        cpp3coal6name: "",
+        cpp3coal6stock: 0,
         total_stock: 0,
+        cpp3total_stock: 0,
       }}
       onSubmit={handleSubmit}
     >
@@ -283,7 +327,7 @@ export default function BinStock({ navigation }) {
                       marginBottom: 20,
                     }}
                   >
-                    Non-Blend Coal Stocks (if any..)
+                    Non-Blend Coal Stocks
                   </Text>
                   <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
                     {oldCoal.map((item, index) => {
@@ -383,129 +427,10 @@ export default function BinStock({ navigation }) {
                       />
                       <AppButton
                         buttonName="Del Coal"
-                        buttonColour={"brown"}
+                        buttonColour={oldCount + 1 !== 0 ? "brown" : "grey"}
                         width="30%"
                         onPress={() => handleDelCoal(oldCount)}
-                      />
-                    </View>
-                  </View>
-                </>
-              </FieldSet>
-              <FieldSet>
-                <>
-                  <Text
-                    style={{
-                      alignSelf: "center",
-                      borderBottomWidth: 2,
-                      fontSize: hp(2.7),
-                      fontWeight: "bold",
-                      color: "black",
-                      marginBottom: 20,
-                    }}
-                  >
-                    CPP-3 Coal Stocks
-                  </Text>
-                  <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
-                    {oldCoal.map((item, index) => {
-                      return (
-                        <View
-                          key={index}
-                          style={{
-                            flexDirection: "row",
-                            borderRadius: 25,
-                            width: wp(30),
-                            height: hp(6),
-                            alignItems: "center",
-                            justifyContent: "center",
-                            borderRadius: 20,
-                            gap: wp(10),
-                          }}
-                        >
-                          <TextInput
-                            selectionColor={"black"}
-                            style={{
-                              height: hp(6),
-                              width: wp(40),
-                              paddingLeft: wp(2),
-                              fontSize: hp(3),
-                              fontFamily: "Roboto",
-                              borderWidth: wp(0.3),
-                              borderRadius: 10,
-                              borderColor: "#0c0c0c",
-                              backgroundColor: "white",
-                            }}
-                            placeholder="Coal Name"
-                            onChangeText={(value) => {
-                              if (/^[0-9]*$/.test(value)) {
-                                return alert("Coal Name must be alphabets...");
-                              } else {
-                                setFieldValue(
-                                  "oldcoal" + (index + 1) + "name",
-                                  value
-                                );
-                              }
-                            }}
-                          />
-                          <TextInput
-                            selectionColor={"black"}
-                            style={{
-                              height: hp(6),
-                              width: wp(30),
-                              paddingLeft: wp(2),
-                              fontSize: hp(3),
-                              fontFamily: "Roboto",
-                              borderWidth: wp(0.3),
-                              borderRadius: 10,
-                              borderColor: "#0c0c0c",
-                              backgroundColor: "white",
-                            }}
-                            keyboardType="number-pad"
-                            placeholder="Value"
-                            onChangeText={(value) => {
-                              if (!/^[0-9]*$/.test(value)) {
-                                alert("Enter Numbers only...");
-                                return;
-                              } else {
-                                setFieldValue(
-                                  "oldcoal" + (index + 1) + "stock",
-                                  value
-                                );
-
-                                const oldStockTot = [...oldTotalValues];
-                                oldStockTot[index] = value;
-                                setOldTotalValues(oldStockTot);
-                                const total = oldStockTot.reduce(
-                                  (sum, val) => sum + (parseInt(val) || 0),
-                                  0
-                                );
-                                setOldTotalReclaiming(total);
-                              }
-                            }}
-                          />
-                        </View>
-                      );
-                    })}
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        borderRadius: 25,
-                        alignItems: "center",
-                        justifyContent: "center",
-                        borderRadius: 20,
-                        gap: wp(10),
-                      }}
-                    >
-                      <AppButton
-                        buttonName="Add Coal"
-                        buttonColour={"#87A922"}
-                        width="30%"
-                        onPress={handleAddCoal}
-                      />
-                      <AppButton
-                        buttonName="Del Coal"
-                        buttonColour={"brown"}
-                        width="30%"
-                        onPress={() => handleDelCoal(oldCount)}
+                        disabled={oldCount + 1 !== 0 ? false : true}
                       />
                     </View>
                   </View>
@@ -535,6 +460,155 @@ export default function BinStock({ navigation }) {
                       }}
                     >
                       {totalReclaiming + oldTotalReclaiming}
+                    </Text>
+                  </View>
+                </>
+              </FieldSet>
+              <FieldSet>
+                <>
+                  <Text
+                    style={{
+                      alignSelf: "center",
+                      borderBottomWidth: 2,
+                      fontSize: hp(2.7),
+                      fontWeight: "bold",
+                      color: "black",
+                      marginBottom: 20,
+                    }}
+                  >
+                    CPP-3 Coal Stocks
+                  </Text>
+                  <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
+                    {cpp3Coal.map((item, index) => {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            flexDirection: "row",
+                            borderRadius: 25,
+                            width: wp(30),
+                            height: hp(6),
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: 20,
+                            gap: wp(10),
+                          }}
+                        >
+                          <TextInput
+                            selectionColor={"black"}
+                            style={{
+                              height: hp(6),
+                              width: wp(40),
+                              paddingLeft: wp(2),
+                              fontSize: hp(3),
+                              fontFamily: "Roboto",
+                              borderWidth: wp(0.3),
+                              borderRadius: 10,
+                              borderColor: "#0c0c0c",
+                              backgroundColor: "white",
+                            }}
+                            placeholder="Coal Name"
+                            onChangeText={(value) => {
+                              if (/^[0-9]*$/.test(value)) {
+                                return alert("Coal Name must be alphabets...");
+                              } else {
+                                setFieldValue(
+                                  "cpp3coal" + (index + 1) + "name",
+                                  value
+                                );
+                              }
+                            }}
+                          />
+                          <TextInput
+                            selectionColor={"black"}
+                            style={{
+                              height: hp(6),
+                              width: wp(30),
+                              paddingLeft: wp(2),
+                              fontSize: hp(3),
+                              fontFamily: "Roboto",
+                              borderWidth: wp(0.3),
+                              borderRadius: 10,
+                              borderColor: "#0c0c0c",
+                              backgroundColor: "white",
+                            }}
+                            keyboardType="number-pad"
+                            placeholder="Value"
+                            onChangeText={(value) => {
+                              if (!/^[0-9]*$/.test(value)) {
+                                alert("Enter Numbers only...");
+                                return;
+                              } else {
+                                setFieldValue(
+                                  "cpp3coal" + (index + 1) + "stock",
+                                  value
+                                );
+
+                                const cpp3StockTot = [...cpp3TotalValues];
+                                cpp3StockTot[index] = value;
+                                setCpp3TotalValues(cpp3StockTot);
+                                const total = cpp3StockTot.reduce(
+                                  (sum, val) => sum + (parseInt(val) || 0),
+                                  0
+                                );
+                                setCpp3TotalReclaiming(total);
+                              }
+                            }}
+                          />
+                        </View>
+                      );
+                    })}
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        borderRadius: 25,
+                        alignItems: "center",
+                        justifyContent: "center",
+                        borderRadius: 20,
+                        gap: wp(10),
+                      }}
+                    >
+                      <AppButton
+                        buttonName="Add Coal"
+                        buttonColour={"#87A922"}
+                        width="30%"
+                        onPress={handleAddCpp3Coal}
+                      />
+                      <AppButton
+                        buttonName="Del Coal"
+                        buttonColour={cpp3Count + 1 !== 0 ? "brown" : "grey"}
+                        width="30%"
+                        onPress={() => handleDelCpp3Coal(cpp3Count)}
+                        disabled={cpp3Count + 1 !== 0 ? false : true}
+                      />
+                    </View>
+                  </View>
+                </>
+              </FieldSet>
+              <FieldSet>
+                <>
+                  <View style={{ flexDirection: "row" }}>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginLeft: wp(10),
+                      }}
+                    >
+                      CPP3 Total Stock :
+                    </Text>
+                    <Text
+                      style={{
+                        alignSelf: "left",
+                        fontSize: hp(2.7),
+                        fontWeight: "bold",
+                        color: "black",
+                        marginLeft: wp(10),
+                      }}
+                    >
+                      {cpp3TotalReclaiming}
                     </Text>
                   </View>
                 </>

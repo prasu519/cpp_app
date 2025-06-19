@@ -49,6 +49,12 @@ const validationSchema = Yup.object().shape({
     .integer()
     .max(5000)
     .label("Stream1A"),
+  pathc: Yup.number()
+    .typeError("Feeding must be number")
+    //.required()
+    .integer()
+    .max(5000)
+    .label("pathc"),
   auto: Yup.number()
     .typeError("Auto group must be number")
     //.required()
@@ -89,6 +95,9 @@ export default function EnterFeeding({ navigation, route }) {
     if (values.stream1A === "") {
       values["stream1A"] = 0;
     }
+    if (values.pathc === "") {
+      values["pathc"] = 0;
+    }
     if (values.auto === "") {
       values["auto"] = 0;
     }
@@ -98,7 +107,10 @@ export default function EnterFeeding({ navigation, route }) {
 
     const totalFeeding =
       parseInt(values.ct1) + parseInt(values.ct2) + parseInt(values.ct3);
-    const streamTotal = parseInt(values.stream1) + parseInt(values.stream1A);
+    const streamTotal =
+      parseInt(values.stream1) +
+      parseInt(values.stream1A) +
+      parseInt(values.pathc);
     const autoTotal = parseInt(values.auto) + parseInt(values.nonauto);
 
     if (totalFeeding !== streamTotal) {
@@ -143,6 +155,7 @@ export default function EnterFeeding({ navigation, route }) {
         ct3: "",
         stream1: "",
         stream1A: "",
+        pathc: "",
         auto: "",
         nonauto: "",
         total_feeding: "",
@@ -376,16 +389,13 @@ export default function EnterFeeding({ navigation, route }) {
                   <AppTextBox
                     label="Path-C(cpp3)"
                     labelcolor="#e9c46a"
-                    onChangeText={handleChange("stream1A")}
-                    onBlur={() => setFieldTouched("stream1A")}
-                    value={values["stream1A"].toString()}
+                    onChangeText={handleChange("pathc")}
+                    onBlur={() => setFieldTouched("pathc")}
+                    value={values["pathc"].toString()}
                     maxLength={4}
                     lbSize={45}
                   />
-                  <ErrorMessage
-                    error={errors.stream1A}
-                    visible={touched.stream1A}
-                  />
+                  <ErrorMessage error={errors.pathc} visible={touched.pcthc} />
                 </>
               </FieldSet>
 
