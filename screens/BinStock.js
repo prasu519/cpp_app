@@ -94,6 +94,16 @@ export default function BinStock({ navigation }) {
   const handleSubmit = async (values) => {
     let TotalStock = 0;
     let Cpp3TotalStock = 0;
+    for (let i = 1; i <= 8; i++) {
+      if (values["oldcoal" + i + "stock"] === "") {
+        values["oldcoal" + i + "stock"] = 0;
+      }
+    }
+    for (let i = 1; i <= 6; i++) {
+      if (values["cpp3coal" + i + "stock"] === "") {
+        values["cpp3coal" + i + "stock"] = 0;
+      }
+    }
     for (let i = 1; i <= count; i++) {
       if (values["coal" + i + "stock"] === "") {
         alert("Enter all fields..");
@@ -122,12 +132,14 @@ export default function BinStock({ navigation }) {
     };
     setMbTopStockData(newValues);
     setProgress(0);
+
     setDoneScreen(true);
     setProgress(1);
 
     for (let i = 1; i <= count; i++) {
-      values["coal" + i + "stock"] = 0;
-      values["oldcoal" + i + "stock"] = 0;
+      values["coal" + i + "stock"] = "";
+      values["oldcoal" + i + "stock"] = "";
+      values["cpp3coal" + i + "stock"] = "";
     }
     setTimeout(() => navigation.goBack(), 1000);
   };

@@ -15,13 +15,14 @@ import * as Print from "expo-print";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { FormatDate } from "../utils/FormatDate";
-
+console;
 export default function DayReportView({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [loadCard, setLoadCard] = useState(false);
   const [loadData, setLoadData] = useState(false);
   const [mergedReclaimingData, setMergedReclaimingData] = useState({});
+  const [cpp3MergedReclaimingData, setCpp3MergedReclaimingData] = useState({});
   const [mergedFeedingData, setMergedFeedingData] = useState({});
   const [mergedPushingData, setMergedPushingData] = useState({});
   const [mergedTimingData, setMergedTimingData] = useState({});
@@ -45,7 +46,7 @@ export default function DayReportView({ navigation }) {
      
               <div style="display:flex; flex-direction:row; width:800px; height:800px; border:2px solid black; margin-top:10px">
                 <div style=" flex-direction:column;width:200px;float:left; border-right: 2px solid black; text-align:center;align-items:flex-start;">
-                <h2 style="text-decoration: underline;">Reclaiming Data</h2>
+                <h2 style="text-decoration: underline;">CPP1 Reclaiming</h2>
                 ${Object.keys(mergedReclaimingData)
                   .map((key) =>
                     key === "cc49" ||
@@ -116,7 +117,7 @@ export default function DayReportView({ navigation }) {
                   )
                   .join("")}
                 <h3 style="text-decoration: underline; margin-top:30px">Stream-wise Feeding</h3>
-                ${["stream1", "stream1A"]
+                ${["stream1", "stream1A", "pathc"]
                   .map(
                     (item, index) =>
                       `
@@ -206,6 +207,56 @@ export default function DayReportView({ navigation }) {
                `
                    )
                    .join("")}
+                  </br>
+                   <h2 style="text-decoration: underline;">CPP3 Reclaiming</h2>
+                ${Object.keys(cpp3MergedReclaimingData)
+                  .map((key) =>
+                    key === "patha" ||
+                    key === "pathb" ||
+                    key === "cpp3total_reclaiming"
+                      ? null
+                      : `
+
+                      <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
+                      <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
+                        <span style="font-size: 20px; font-weight: bold;">
+                        ${key.toUpperCase()}
+                        </span>
+                      </div>
+                      
+                      <span style="font-size: 20px; font-weight: bold;">
+                      ${cpp3MergedReclaimingData[key]}
+                      </span>
+                    </div>
+                `
+                  )
+                  .join("")}
+
+               
+                <h3 style="text-decoration: underline; margin-top:30px ">Stream-wise Reclm</h3>
+                ${["patha", "pathb"]
+                  .map(
+                    (item, index) =>
+                      `
+
+                      <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
+                      <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
+                        <span style="font-size: 20px; font-weight: bold;">
+                        ${item.toUpperCase()}
+                        </span>
+                      </div>
+                      
+                      <span style="font-size: 20px; font-weight: bold;">
+                      ${cpp3MergedReclaimingData[item]}
+                      </span>
+                    </div>
+                `
+                  )
+                  .join("")}
+                  <h3 style="text-decoration: underline; margin-top:30px">Total Reclaiming</h3>
+                  <span style="font-size: 30px; font-weight:bold">${
+                    cpp3MergedReclaimingData.cpp3total_reclaiming
+                  }</span>
 
               </div>
               
@@ -272,9 +323,62 @@ export default function DayReportView({ navigation }) {
     }
   };
 
+  const getAShiftReclaimingDataCpp3 = async () => {
+    if (reclaimingA !== undefined) {
+      let cpp3newReclaimingCoalA = {};
+      for (let i = 1; i <= 6; i++) {
+        const cpp3coalName = reclaimingA[`cpp3coal${i}name`];
+        const cpp3coalRecl = reclaimingA[`cpp3coal${i}recl`];
+        if (cpp3coalName && cpp3coalRecl) {
+          cpp3newReclaimingCoalA[cpp3coalName] = cpp3coalRecl;
+        }
+      }
+      cpp3newReclaimingCoalA["patha"] = reclaimingA.patharecl;
+      cpp3newReclaimingCoalA["pathb"] = reclaimingA.pathbrecl;
+      cpp3newReclaimingCoalA["cpp3total_reclaiming"] =
+        reclaimingA.cpp3total_reclaiming;
+      return cpp3newReclaimingCoalA;
+    }
+  };
+  const getBShiftReclaimingDataCpp3 = async () => {
+    if (reclaimingB !== undefined) {
+      let cpp3newReclaimingCoalB = {};
+      for (let i = 1; i <= 6; i++) {
+        const cpp3coalName = reclaimingB[`cpp3coal${i}name`];
+        const cpp3coalRecl = reclaimingB[`cpp3coal${i}recl`];
+        if (cpp3coalName && cpp3coalRecl) {
+          cpp3newReclaimingCoalB[cpp3coalName] = cpp3coalRecl;
+        }
+      }
+      cpp3newReclaimingCoalB["patha"] = reclaimingB.patharecl;
+      cpp3newReclaimingCoalB["pathb"] = reclaimingB.pathbrecl;
+      cpp3newReclaimingCoalB["cpp3total_reclaiming"] =
+        reclaimingB.cpp3total_reclaiming;
+      return cpp3newReclaimingCoalB;
+    }
+  };
+  const getCShiftReclaimingDataCpp3 = async () => {
+    if (reclaimingC !== undefined) {
+      let cpp3newReclaimingCoalC = {};
+      for (let i = 1; i <= 6; i++) {
+        const cpp3coalName = reclaimingC[`cpp3coal${i}name`];
+        const cpp3coalRecl = reclaimingC[`cpp3coal${i}recl`];
+        if (cpp3coalName && cpp3coalRecl) {
+          cpp3newReclaimingCoalC[cpp3coalName] = cpp3coalRecl;
+        }
+      }
+      cpp3newReclaimingCoalC["patha"] = reclaimingC.patharecl;
+      cpp3newReclaimingCoalC["pathb"] = reclaimingC.pathbrecl;
+      cpp3newReclaimingCoalC["cpp3total_reclaiming"] =
+        reclaimingC.cpp3total_reclaiming;
+      return cpp3newReclaimingCoalC;
+    }
+  };
+
   const getAShiftReclaimingData = async () => {
     if (reclaimingA !== undefined) {
       let newReclaimingCoalA = {};
+      let cpp3newReclaimingCoalA = {};
       for (let i = 1; i <= 8; i++) {
         const coalName = reclaimingA[`coal${i}name`];
         const coalRecl = reclaimingA[`coal${i}recl`];
@@ -289,6 +393,7 @@ export default function DayReportView({ navigation }) {
           newReclaimingCoalA[excoalName] = excoalRecl;
         }
       }
+
       newReclaimingCoalA["cc49"] = reclaimingA.cc49recl;
       newReclaimingCoalA["cc50"] = reclaimingA.cc50recl;
       newReclaimingCoalA["cc126"] = reclaimingA.cc126recl;
@@ -384,9 +489,11 @@ export default function DayReportView({ navigation }) {
           data[0].stream1 + data[1].stream1 + data[2].stream1;
         newFeedingCoal["stream1A"] =
           data[0].stream1A + data[1].stream1A + data[2].stream1A;
+        newFeedingCoal["pathc"] = data[0].pathc + data[1].pathc + data[2].pathc;
         newFeedingCoal["total_feeding"] =
           data[0].total_feeding + data[1].total_feeding + data[2].total_feeding;
         setLoadData(true);
+
         return newFeedingCoal;
       } else {
         setLoadData(false);
@@ -509,16 +616,13 @@ export default function DayReportView({ navigation }) {
         }
 
         if (newTotalTimings.str2min >= 60) {
-          console.log(newTotalTimings.str2min);
           let rm1 = newTotalTimings.str2min - 60;
-          console.log(rm1);
+
           if (rm1 >= 60) {
-            console.log("inside");
             let rm2 = rm1 - 60;
             newTotalTimings["str2hrs"] = newTotalTimings.str2hrs + 2;
             newTotalTimings["str2min"] = rm2;
           } else {
-            console.log("outside");
             newTotalTimings["str2hrs"] = newTotalTimings.str2hrs + 1;
             newTotalTimings["str2min"] = rm1;
           }
@@ -565,13 +669,22 @@ export default function DayReportView({ navigation }) {
     let reclaimingCoalA = await getAShiftReclaimingData();
     let reclaimingCoalB = await getBShiftReclaimingData();
     let reclaimingCoalC = await getCShiftReclaimingData();
+    let cpp3reclaimingCoalA = await getAShiftReclaimingDataCpp3();
+    let cpp3reclaimingCoalB = await getBShiftReclaimingDataCpp3();
+    let cpp3reclaimingCoalC = await getCShiftReclaimingDataCpp3();
     if (reclaimingA && reclaimingB && reclaimingC) {
       let mergedReclData = mergeReclaiming(
         reclaimingCoalA,
         reclaimingCoalB,
         reclaimingCoalC
       );
+      let cpp3mergedReclData = mergeReclaiming(
+        cpp3reclaimingCoalA,
+        cpp3reclaimingCoalB,
+        cpp3reclaimingCoalC
+      );
       setMergedReclaimingData(mergedReclData);
+      setCpp3MergedReclaimingData(cpp3mergedReclData);
     }
 
     let feedingData = await getTotalFeeding(date);

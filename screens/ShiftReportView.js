@@ -332,7 +332,7 @@ export default function ShiftReportView({ navigation }) {
                  .map(
                    (item, index) =>
                      `
-               <div style="margin-bottom: 10px;  flex-direction: row; ">
+               <div style="margin: 10px;  flex-direction: row; ">
                  <p style=" display: flex; justify-content: space-between;"> 
                  <span style="font-size: 20px; font-weight:bold">
                    ${item.toUpperCase()}
@@ -355,15 +355,17 @@ export default function ShiftReportView({ navigation }) {
                <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>
                  Stream-wise Feeding
                </p>
-               ${["stream1", "stream1A"]
+               ${["stream1", "stream1A", "pathc"]
                  .map(
                    (item, index) =>
                      `
-               <div style="margin-bottom: 10px; margin-top: 10px; flex-direction: row; ">
+               <div style="margin: 10px; margin-top: 10px; flex-direction: row; ">
                  <p style=" display: flex; justify-content: space-between;"> 
                    <span style="font-size: 20px; font-weight:bold">${item.toUpperCase()}</span>
                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                     ${feeding[item] === 0 ? "0000" : feeding[item]}
+                     ${
+                       feeding[item] === 0 || undefined ? "0000" : feeding[item]
+                     }
                    </span> 
                  </p>
                </div>
@@ -377,7 +379,7 @@ export default function ShiftReportView({ navigation }) {
                  .map(
                    (item, index) =>
                      `
-               <div style="margin-bottom: 10px;  flex-direction: row; ">
+               <div style="margin: 10px;  flex-direction: row; ">
                  <p style=" display: flex; justify-content: space-between;"> 
                    <span style="font-size: 20px; font-weight:bold">
                      ${item.toUpperCase()}
@@ -397,35 +399,7 @@ export default function ShiftReportView({ navigation }) {
                  ${coalTowerStock.total_stock}
                </p>
                
-               <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Crusher Status</p>             
-               ${["cr34", "cr35", "cr36", "cr37", "cr38"]
-                 .map(
-                   (item, index) =>
-                     `
-                   <div style="margin-bottom: 10px;  flex-direction: row; ">
-                     <p style=" display: flex; justify-content: space-between;"> 
-                       <span style="font-size: 20px; font-weight:bold">
-                         ${item.toUpperCase()}
-                       </span>
-                       <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                         ${
-                           crusherStatus[item + "status"] === ""
-                             ? "N/A"
-                             : crusherStatus[item + "status"]
-                         }
-                       </span>
-                       <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                         F-${
-                           crusherStatus[item + "feeder"] === ""
-                             ? "N/A"
-                             : crusherStatus[item + "feeder"]
-                         }
-                       </span>
-                     </p>
-                   </div>
-                   `
-                 )
-                 .join("")}
+              
                </div>
                <div style=" flex-direction:column;  display: inline-block;float: left; width:400px;float:left;  text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px; margin-left:10px">
                <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Coal Analysis</p>
@@ -573,7 +547,35 @@ export default function ShiftReportView({ navigation }) {
                   .join("")}
                 </div>
                 <div style=" flex-direction:column;  display: inline-block;float: left; width:400px;float:left;  text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px; margin-left:10px">
-                         
+                <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Crusher Status</p>             
+                ${["cr34", "cr35", "cr36", "cr37", "cr38"]
+                  .map(
+                    (item, index) =>
+                      `
+                    <div style="margin-bottom: 10px;  flex-direction: row; ">
+                      <p style=" display: flex; justify-content: space-between;"> 
+                        <span style="font-size: 20px; font-weight:bold">
+                          ${item.toUpperCase()}
+                        </span>
+                        <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                          ${
+                            crusherStatus[item + "status"] === ""
+                              ? "N/A"
+                              : crusherStatus[item + "status"]
+                          }
+                        </span>
+                        <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                          F-${
+                            crusherStatus[item + "feeder"] === ""
+                              ? "N/A"
+                              : crusherStatus[item + "feeder"]
+                          }
+                        </span>
+                      </p>
+                    </div>
+                    `
+                  )
+                  .join("")}
                 </div>
               </div>
 
@@ -681,6 +683,7 @@ export default function ShiftReportView({ navigation }) {
     getCrusherStatusData(date, shift);
 
     setLoadCard(true);
+    console.log(mbTopStock);
   };
 
   const getShiftReportPersonDetails = async (date, shift) => {
