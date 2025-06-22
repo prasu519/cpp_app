@@ -16,7 +16,7 @@ import {
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
 import { FormatDate } from "../utils/FormatDate";
-
+console;
 export default function BinStock({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
   const [count, setCount] = useState();
@@ -28,6 +28,11 @@ export default function BinStock({ navigation }) {
 
   const [totalReclaiming, setTotalReclaiming] = useState(0);
   const [totalValues, setTotalValues] = useState(Array(count).fill(""));
+
+  const [latestRecord, setLatestRecord] = useState();
+  const [latestRecordLoaded, setLatestRecordLoaded] = useState(false);
+  const [lastShiftRecl, setLastShiftRecl] = useState();
+  const [excount, setExCount] = useState();
 
   const [oldCoal, setOldCoal] = useState([""]);
   const [oldCount, setOldCount] = useState(0);
@@ -61,6 +66,54 @@ export default function BinStock({ navigation }) {
     getCoalNames();
   }, []);
 
+  useEffect(() => {
+    const getLatestRecord = async () => {
+      await axios
+        .get(BaseUrl + "/shiftreportenteredbylatest")
+        .then((response) => {
+          setLatestRecord(response.data.data);
+        })
+        .catch((error) => {
+          alert("latest record not found  " + error);
+        });
+    };
+    getLatestRecord();
+  }, []);
+
+  useEffect(() => {
+    const getLastShiftRecl = async () => {
+      setLatestRecordLoaded(true);
+      if (latestRecord) {
+        let date = new Date(latestRecord.date);
+        let shift = latestRecord.shift;
+        date.setDate(date.getDate());
+        try {
+          const response = await axios.get(BaseUrl + "/reclaiming", {
+            params: {
+              date: date,
+              shift: shift,
+            },
+          });
+          setLastShiftRecl(response.data.data[0]);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    };
+    getLastShiftRecl();
+  }, [latestRecord]);
+
+  useEffect(() => {
+    const getExCoalCount = () => {
+      if (lastShiftRecl !== undefined) {
+        for (let i = 1; i <= 8; i++) {
+          if (lastShiftRecl["excoal" + i + "name"] !== "") setExCount(i);
+        }
+      }
+    };
+    getExCoalCount();
+  }, [lastShiftRecl]);
+
   const handleAddCoal = () => {
     setOldCoal([...oldCoal, ""]);
     setOldCount(oldCount + 1);
@@ -92,6 +145,19 @@ export default function BinStock({ navigation }) {
   };
 
   const handleSubmit = async (values) => {
+    if (
+      values["coal1stock"] === 0 &&
+      values["coal2stock"] === 0 &&
+      values["coal3stock"] === 0 &&
+      values["coal4stock"] === 0 &&
+      values["coal5stock"] === 0 &&
+      values["coal6stock"] === 0 &&
+      values["coal7stock"] === 0 &&
+      values["coal8stock"] === 0
+    ) {
+      return alert("Make sure to enter all stocks..");
+    }
+
     let TotalStock = 0;
     let Cpp3TotalStock = 0;
     for (let i = 1; i <= 8; i++) {
@@ -342,6 +408,49 @@ export default function BinStock({ navigation }) {
                     Non-Blend Coal Stocks
                   </Text>
                   <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
+                    {/*} {latestRecord &&
+                    lastShiftRecl &&
+                    lastShiftRecl.excoal1name !== ""
+                      ? [1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
+                          const coalName =
+                            lastShiftRecl["excoal" + item + "name"];
+                          if (coalName !== "") {
+                            return (
+                              <AppTextBox
+                                label={coalName}
+                                labelcolor="orange"
+                                key={index}
+                                onChangeText={(value) => {
+                                  if (!/^[0-9]*$/.test(value)) {
+                                    alert("Enter Numbers only...");
+                                    return;
+                                  } else {
+                                    setFieldValue(
+                                      "oldcoal" + (index + 1) + "stock",
+                                      value
+                                    );
+                                    const oldStockTot = [...oldTotalValues];
+                                    oldStockTot[index] = value;
+                                    setOldTotalValues(oldStockTot);
+                                    const total = oldStockTot.reduce(
+                                      (sum, val) => sum + (parseInt(val) || 0),
+                                      0
+                                    );
+                                    setOldTotalReclaiming(total);
+                                  }
+                                }}
+                                keyboardType="number-pad"
+                                value={values[
+                                  "oldcoal" + item + "stock"
+                                ].toString()}
+                                maxLength={4}
+                              />
+                            );
+                          }
+                          return null;
+                        })
+                      : null}*/}
+
                     {oldCoal.map((item, index) => {
                       return (
                         <View
@@ -403,7 +512,7 @@ export default function BinStock({ navigation }) {
                                 return;
                               } else {
                                 setFieldValue(
-                                  "oldcoal" + (index + 1) + "stock",
+                                  "oldcoal" + (excount + (index + 1)) + "stock",
                                   value
                                 );
 

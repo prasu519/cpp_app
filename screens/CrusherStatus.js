@@ -65,9 +65,10 @@ export default function CrusherStatus({ navigation, route }) {
       date: currentDate,
       shift: currentShift,
     };
-    await setAllCrushersData(allCrushersDatatemp);
 
     const crData = {
+      date: currentDate,
+      shift: currentShift,
       cr34status: cr34Data.status,
       cr34feeder: cr34Data.feeder,
       cr35status: cr35Data.status,

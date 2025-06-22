@@ -26,6 +26,7 @@ export default function DayReportView({ navigation }) {
   const [mergedFeedingData, setMergedFeedingData] = useState({});
   const [mergedPushingData, setMergedPushingData] = useState({});
   const [mergedTimingData, setMergedTimingData] = useState({});
+  const [clickSubmit, setClickSubmit] = useState(false);
   let reclaimingA;
   let reclaimingB;
   let reclaimingC;
@@ -663,6 +664,7 @@ export default function DayReportView({ navigation }) {
   };
 
   const handleSubmit = async () => {
+    setClickSubmit(true);
     let date = new Date(selectedDate).toISOString().split("T")[0];
 
     await getReclaimingDataDaywise(date);
@@ -843,7 +845,7 @@ export default function DayReportView({ navigation }) {
         />
       </View>
       <ScrollView>
-        {loadData && loadCard && (
+        {loadData && loadCard ? (
           <View style={{ marginTop: hp(1), marginBottom: hp(2) }}>
             <Card>
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>
@@ -964,7 +966,121 @@ export default function DayReportView({ navigation }) {
                         </Text>
                       </View>
                     </View>
-                    <Card.Divider />
+                  </View>
+                  <Card.Divider />
+                  <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                    CPP3-Reclaiming
+                  </Card.Title>
+                  <Card.Divider />
+                  {Object.keys(cpp3MergedReclaimingData).map((key) => {
+                    if (
+                      key !== "patha" &&
+                      key !== "pathb" &&
+                      key != "cpp3total_reclaiming"
+                    ) {
+                      return (
+                        <View
+                          key={key}
+                          style={{
+                            marginBottom: 10,
+                            display: "flex",
+                            flexDirection: "row",
+                            marginLeft: wp(5),
+                            gap: hp(3),
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: wp(30),
+                              alignItems: "flex-end",
+                            }}
+                          >
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {key.toUpperCase()}
+                            </Text>
+                          </View>
+                          <Divider orientation="vertical" />
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {cpp3MergedReclaimingData[key]}
+                          </Text>
+                        </View>
+                      );
+                    }
+                  })}
+                  <Card.Divider />
+                  {["patha", "pathb"].map((item, index) => (
+                    <View
+                      key={index}
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+                        marginLeft: wp(5),
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(30),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {item.toUpperCase()}
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+
+                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                        {cpp3MergedReclaimingData[item]}
+                      </Text>
+                    </View>
+                  ))}
+                  <Card.Divider />
+                  <View>
+                    <View
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(40),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(5),
+                            fontWeight: "bold",
+                            color: "red",
+                          }}
+                        >
+                          Total Reclaiming
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(25),
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(6),
+                            fontWeight: "bold",
+                            color: "red",
+                          }}
+                        >
+                          {cpp3MergedReclaimingData.cpp3total_reclaiming}
+                        </Text>
+                      </View>
+                    </View>
                   </View>
                 </View>
               )}
@@ -1288,6 +1404,29 @@ export default function DayReportView({ navigation }) {
               {/*data ? <Text>Data loaded</Text> : <Text>Loading data...</Text>*/}
             </View>
           </View>
+        ) : (
+          clickSubmit && (
+            <View
+              style={{
+                width: wp(100),
+                height: hp(20),
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <>
+                <Text
+                  style={{
+                    color: "red",
+                    fontWeight: "bold",
+                    fontSize: hp(4),
+                  }}
+                >
+                  Loading...
+                </Text>
+              </>
+            </View>
+          )
         )}
       </ScrollView>
     </View>

@@ -112,7 +112,7 @@ export default function ShiftReportEntry({ navigation }) {
         .post(BaseUrl + "/runningHours", runningHoursData)
         .then((responce) => {
           runningHoursStatus = true;
-          console.log(responce.data);
+
           setProgress(0.3);
         })
         .catch((error) => {

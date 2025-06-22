@@ -683,7 +683,6 @@ export default function ShiftReportView({ navigation }) {
     getCrusherStatusData(date, shift);
 
     setLoadCard(true);
-    console.log(mbTopStock);
   };
 
   const getShiftReportPersonDetails = async (date, shift) => {
@@ -1164,6 +1163,16 @@ export default function ShiftReportView({ navigation }) {
           <View style={{ marginTop: hp(1), marginBottom: hp(2) }}>
             <Card>
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                <Text style={{ fontSize: hp(3) }}>
+                  {shiftReportEnteredBy.name} -
+                </Text>
+                <Text style={{ fontSize: hp(3) }}>
+                  {shiftReportEnteredBy.empnum}
+                </Text>
+              </Card.Title>
+            </Card>
+            <Card>
+              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
                 Reclaiming
               </Card.Title>
               <Card.Divider />
@@ -1434,6 +1443,213 @@ export default function ShiftReportView({ navigation }) {
                 </View>
               )}
             </Card>
+
+            <Card>
+              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                CPP3 Reclaiming
+              </Card.Title>
+              <Card.Divider />
+              {reclaiming && mbTopStock && (
+                <View>
+                  {Array.from({ length: 6 }, (_, index) =>
+                    reclaiming["cpp3coal" + (index + 1) + "name"] === "" &&
+                    reclaiming["cpp3coal" + (index + 1) + "recl"] ===
+                      0 ? null : (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(6),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {reclaiming[
+                              "cpp3coal" + (index + 1) + "name"
+                            ].toUpperCase()}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {reclaiming["cpp3coal" + (index + 1) + "recl"] === "0"
+                            ? "000"
+                            : reclaiming["cpp3coal" + (index + 1) + "recl"]}
+                        </Text>
+                      </View>
+                    )
+                  )}
+
+                  <Card.Divider />
+                  {["patha", "pathb"].map((item, index) => (
+                    <View
+                      key={index}
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+                        marginLeft: wp(6),
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(30),
+
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {item.toUpperCase()}
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                        {reclaiming[item + "recl"] === 0
+                          ? "000"
+                          : reclaiming[item + "recl"]}
+                      </Text>
+                    </View>
+                  ))}
+                  <Card.Divider />
+                  <View>
+                    <View
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+                        marginLeft: wp(1),
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(44),
+
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(5.8),
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Total Reclaiming
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(25),
+                        }}
+                      >
+                        <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
+                          {reclaiming["cpp3total_reclaiming"]}
+                        </Text>
+                      </View>
+                    </View>
+                    <Card.Divider />
+                    <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                      CPP3 MB-Top Stock
+                    </Card.Title>
+                    <Card.Divider />
+                    {[1, 2, 3, 4, 5, 6].map((item, index) =>
+                      mbTopStock["cpp3coal" + item + "name"] === "" ||
+                      mbTopStock["cpp3coal" + item + "stock"] === 0 ? null : (
+                        <View
+                          key={index}
+                          style={{
+                            marginBottom: 10,
+                            display: "flex",
+                            flexDirection: "row",
+                            marginLeft: wp(6),
+                            gap: hp(3),
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: wp(30),
+
+                              alignItems: "flex-end",
+                            }}
+                          >
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {mbTopStock[
+                                "cpp3coal" + item + "name"
+                              ].toUpperCase()}
+                            </Text>
+                          </View>
+                          <Divider orientation="vertical" />
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {mbTopStock["cpp3coal" + item + "stock"] === "null"
+                              ? "000"
+                              : mbTopStock["cpp3coal" + item + "stock"]}
+                          </Text>
+                        </View>
+                      )
+                    )}
+
+                    <Card.Divider />
+                    <View
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+                        marginLeft: wp(1),
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(44),
+
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(5.9),
+                            fontWeight: "bold",
+
+                            color: "red",
+                          }}
+                        >
+                          Total MB Stock
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(25),
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(6),
+                            fontWeight: "bold",
+                            color: "red",
+                          }}
+                        >
+                          {mbTopStock["cpp3total_stock"]}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              )}
+            </Card>
+
             <Card>
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>
                 Feeding
@@ -1475,7 +1691,7 @@ export default function ShiftReportView({ navigation }) {
                     </View>
                   ))}
                   <Card.Divider />
-                  {["stream1", "stream1A"].map((item, index) => (
+                  {["stream1", "stream1A", "pathc"].map((item, index) => (
                     <View
                       key={index}
                       style={{
@@ -1595,7 +1811,7 @@ export default function ShiftReportView({ navigation }) {
                       >
                         <Text
                           style={{
-                            fontSize: wp(5.9),
+                            fontSize: wp(4.5),
                             fontWeight: "bold",
                             marginRight: wp(-1),
                           }}

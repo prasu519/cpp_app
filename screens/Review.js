@@ -1004,13 +1004,13 @@ export default function Review({ navigation }) {
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: wp(15),
+                gap: wp(5),
                 marginTop: wp(10),
                 marginBottom: wp(10),
               }}
             >
-              <Text style={{ fontSize: hp(3) }}>Total CPP1 Reclaiming</Text>
-              <Text style={{ fontSize: hp(4) }}>
+              <Text style={{ fontSize: wp(6) }}>Total CPP1 Reclaiming</Text>
+              <Text style={{ fontSize: wp(7) }}>
                 {reclaimingData.total_reclaiming.toString()}
               </Text>
             </View>
@@ -1019,12 +1019,12 @@ export default function Review({ navigation }) {
                 flexDirection: "row",
                 alignItems: "center",
                 justifyContent: "center",
-                gap: wp(15),
+                gap: wp(5),
                 marginBottom: wp(10),
               }}
             >
-              <Text style={{ fontSize: hp(3) }}>Total CPP3 Reclaiming</Text>
-              <Text style={{ fontSize: hp(4) }}>
+              <Text style={{ fontSize: wp(6) }}>Total CPP3 Reclaiming</Text>
+              <Text style={{ fontSize: wp(7) }}>
                 {reclaimingData.cpp3total_reclaiming.toString()}
               </Text>
             </View>

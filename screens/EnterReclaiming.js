@@ -933,7 +933,7 @@ export default function EnterReclaiming({ navigation }) {
                       Non-Blend Coal Reclaiming
                     </Text>
                     <View style={{ flex: 1, alignItems: "center", gap: hp(2) }}>
-                      {currentShift === "B" &&
+                      {/* {currentShift === "B" &&
                       reclaimingA !== undefined &&
                       reclaimingA.excoal1name !== ""
                         ? [1, 2, 3, 4, 5, 6, 7, 8].map((item, index) => {
@@ -1022,7 +1022,7 @@ export default function EnterReclaiming({ navigation }) {
                             }
                             return null;
                           })
-                        : null}
+                        : null}*/}
 
                       {exCount !== undefined &&
                         extraCoal.map((value, index) => {
