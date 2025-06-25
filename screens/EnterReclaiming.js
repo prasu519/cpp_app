@@ -1060,9 +1060,7 @@ export default function EnterReclaiming({ navigation }) {
                                     return;
                                   } else {
                                     setFieldValue(
-                                      "excoal" +
-                                        (exCount + (index + 1)) +
-                                        "name",
+                                      "excoal" + (index + 1) + "name",
                                       value
                                     );
                                   }
@@ -1089,9 +1087,7 @@ export default function EnterReclaiming({ navigation }) {
                                     return;
                                   } else {
                                     setFieldValue(
-                                      "excoal" +
-                                        (exCount + (index + 1)) +
-                                        "recl",
+                                      "excoal" + (index + 1) + "recl",
                                       value
                                     );
                                     const nbCoalTotal = [...nbTotalValues];

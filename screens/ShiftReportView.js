@@ -1,7 +1,7 @@
 //date
 import { View, ScrollView, Alert } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import { Button, Card } from "@rneui/base";
@@ -16,6 +16,9 @@ import * as Print from "expo-print";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import { FormatDate } from "../utils/FormatDate";
+import DeleteShiftReportAuthentication from "./DeleteShiftReportAuthentication";
+import EditShiftReportAuthentication from "./EditShiftReportAuthentication";
+import { GlobalContext } from "../contextApi/GlobalContext";
 
 export default function ShiftReportView({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -29,7 +32,7 @@ export default function ShiftReportView({ navigation }) {
   const [mbTopStock, setMbTopStock] = useState();
   const [runningHours, setRunningHours] = useState();
   const [shiftDelays, setShiftDelays] = useState();
-  const [coalAnalysisData, setCoalAnalysisData] = useState();
+  const [coalAnalysis, setCoalAnalysis] = useState();
   const [pushingSchedule, setPushingSchedule] = useState();
   const [crusherStatus, setCrusherStatus] = useState();
   const [shiftReportEnteredBy, setShiftReportEnteredBy] = useState();
@@ -40,6 +43,36 @@ export default function ShiftReportView({ navigation }) {
   const [clickSubmit, setClickSubmit] = useState(false);
   const [latestRecord, setLatestRecord] = useState();
   const [loadLatestRecord, setLoadLatestRecord] = useState(false);
+
+  const [delAuthModelVisible, setDelAuthModelVisible] = useState(false);
+  const [editAuthModelVisible, setEditAuthModelVisible] = useState(false);
+
+  const {
+    credentials,
+    setCredentials,
+    reclaimingData,
+    setReclaimingData,
+    feedingData,
+    setFeedingData,
+    runningHoursData,
+    setRunningHoursData,
+    shiftDelaysData,
+    setShiftDelaysData,
+    mbTopStockData,
+    setMbTopStockData,
+    coalTowerStockData,
+    setCoalTowerStockData,
+    coalAnalysisData,
+    setCoalAnalysisData,
+    pushingScheduleData,
+    setPushingScheduleData,
+    allCrushersData,
+    setAllCrushersData,
+    globalDate,
+    setGlobalDate,
+    globalShift,
+    setGlobalShift,
+  } = useContext(GlobalContext);
 
   useEffect(() => {
     if (reclaiming) {
@@ -413,8 +446,8 @@ export default function ShiftReportView({ navigation }) {
                  <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
                    ${
                      item === "ci"
-                       ? coalAnalysisData[item] + "%"
-                       : coalAnalysisData[item]
+                       ? coalAnalysis[item] + "%"
+                       : coalAnalysis[item]
                    }
                  </span> 
                  </p>
@@ -608,7 +641,7 @@ export default function ShiftReportView({ navigation }) {
       const { uri } = await Print.printToFileAsync({ html: htmlContent });
 
       // Save the PDF to the file system
-      const fileUri = `${FileSystem.documentDirectory}cpp_shift_report.pdf`;
+      const fileUri = `${FileSystem.documentDirectory}CPP_${selectedShift}shift_report.pdf`;
       await FileSystem.moveAsync({
         from: uri,
         to: fileUri,
@@ -661,9 +694,70 @@ export default function ShiftReportView({ navigation }) {
     }
   };
 
+  const handleDelAuthClose = () => {
+    setDelAuthModelVisible(false);
+  };
+
+  const handleEditAuthClose = () => {
+    setEditAuthModelVisible(false);
+  };
+
+  const handleClickDelete = () => {
+    setDelAuthModelVisible(true);
+  };
+
+  const handleClickEdit = () => {
+    setEditAuthModelVisible(true);
+  };
+
+  const handleDelAuthModelSubmit = async (empnum) => {
+    await axios
+      .get(BaseUrl + "/employedetails", {
+        params: {
+          empnum: empnum,
+        },
+      })
+      .then((responce) => {
+        if (responce.data.data[0]) {
+          setCredentials(responce.data.data[0]);
+          console.log(credentials);
+          navigation.navigate("ShiftReportView");
+        } else alert("Wrong Employee Number..");
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const handleEditAuthModelSubmit = async (empnum) => {
+    await axios
+      .get(BaseUrl + "/employedetails", {
+        params: {
+          empnum: empnum,
+        },
+      })
+      .then((responce) => {
+        if (responce.data.data[0]) {
+          setCredentials(responce.data.data[0]);
+          setGlobalDate(selectedDate);
+          setGlobalShift(selectedShift);
+          setReclaimingData(reclaiming);
+          setFeedingData(feeding);
+          setRunningHoursData(runningHours);
+          setMbTopStockData(mbTopStock);
+          setCoalTowerStockData(coalTowerStock);
+          setCoalAnalysisData(coalAnalysis);
+          setPushingScheduleData(pushingSchedule);
+          setAllCrushersData(crusherStatus);
+          setShiftDelaysData(shiftDelays);
+          navigation.navigate("EditShiftReport");
+        } else alert("Wrong Employee Number..");
+      })
+      .catch((error) => console.log(error));
+  };
+
   const handleSubmit = () => {
     setClickSubmit(true);
     let date = selectedDate.toISOString().split("T")[0];
+
     if (selectedShift === "" || selectedShift === "Select") {
       alert("Select Shift..");
       return;
@@ -794,7 +888,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => setCoalAnalysisData(responce.data.data[0]))
+      .then((responce) => setCoalAnalysis(responce.data.data[0]))
       .catch((error) => console.log(error));
   };
 
@@ -841,7 +935,7 @@ export default function ShiftReportView({ navigation }) {
               // Your delete logic here
               delShiftReportPersonDetails(date, shift);
 
-              /* delReclaimingData(date, shift);
+              delReclaimingData(date, shift);
               delfeedingdata(date, shift);
               delCoalTowerStock(date, shift);
               delMbTopCoalData(date, shift);
@@ -849,7 +943,7 @@ export default function ShiftReportView({ navigation }) {
               delShiftDelayData(date, shift);
               delCoalAnalysisData(date, shift);
               delPushingScheduleData(date, shift);
-              delCrusherStatusData(date, shift);*/
+              delCrusherStatusData(date, shift);
               console.log("Shift record deleted");
               navigation.goBack();
             },
@@ -870,7 +964,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -882,7 +976,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -894,7 +988,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -906,7 +1000,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -918,7 +1012,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -930,7 +1024,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -942,7 +1036,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -954,7 +1048,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -966,7 +1060,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -978,7 +1072,7 @@ export default function ShiftReportView({ navigation }) {
           shift: shift,
         },
       })
-      .then((responce) => console.log(responce))
+      .then((responce) => console.log(responce.status))
       .catch((error) => console.log(error));
   };
 
@@ -1141,7 +1235,7 @@ export default function ShiftReportView({ navigation }) {
           disabled={!loadLatestRecord}
         />
       </View>
-      {latestRecord && !clickSubmit && !loadCard && (
+      {shiftReportEnteredBy && latestRecord && !clickSubmit && !loadCard && (
         <View
           style={{
             height: hp(20),
@@ -1159,7 +1253,11 @@ export default function ShiftReportView({ navigation }) {
         </View>
       )}
       <ScrollView>
-        {loadCard && reclaiming && mbTopStock && coalCount > 0 ? (
+        {shiftReportEnteredBy &&
+        loadCard &&
+        reclaiming &&
+        mbTopStock &&
+        coalCount > 0 ? (
           <View style={{ marginTop: hp(1), marginBottom: hp(2) }}>
             <Card>
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>
@@ -1452,9 +1550,12 @@ export default function ShiftReportView({ navigation }) {
               {reclaiming && mbTopStock && (
                 <View>
                   {Array.from({ length: 6 }, (_, index) =>
-                    reclaiming["cpp3coal" + (index + 1) + "name"] === "" &&
-                    reclaiming["cpp3coal" + (index + 1) + "recl"] ===
-                      0 ? null : (
+                    (reclaiming["cpp3coal" + (index + 1) + "name"] === "" ||
+                      reclaiming["cpp3coal" + (index + 1) + "name"] ===
+                        undefined) &&
+                    (reclaiming["cpp3coal" + (index + 1) + "recl"] === 0 ||
+                      reclaiming["cpp3coal" + (index + 1) + "recl"] ===
+                        undefined) ? null : (
                       <View
                         key={index}
                         style={{
@@ -1513,7 +1614,7 @@ export default function ShiftReportView({ navigation }) {
                       </View>
                       <Divider orientation="vertical" />
                       <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {reclaiming[item + "recl"] === 0
+                        {reclaiming[item + "recl"] === 0 || undefined
                           ? "000"
                           : reclaiming[item + "recl"]}
                       </Text>
@@ -1553,7 +1654,9 @@ export default function ShiftReportView({ navigation }) {
                         }}
                       >
                         <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
-                          {reclaiming["cpp3total_reclaiming"]}
+                          {reclaiming["cpp3total_reclaiming"] === undefined
+                            ? null
+                            : reclaiming["cpp3total_reclaiming"]}
                         </Text>
                       </View>
                     </View>
@@ -1564,6 +1667,7 @@ export default function ShiftReportView({ navigation }) {
                     <Card.Divider />
                     {[1, 2, 3, 4, 5, 6].map((item, index) =>
                       mbTopStock["cpp3coal" + item + "name"] === "" ||
+                      mbTopStock["cpp3coal" + item + "name"] === undefined ||
                       mbTopStock["cpp3coal" + item + "stock"] === 0 ? null : (
                         <View
                           key={index}
@@ -1714,7 +1818,9 @@ export default function ShiftReportView({ navigation }) {
                       </View>
                       <Divider orientation="vertical" />
                       <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {feeding[item] === 0 ? "0000" : feeding[item]}
+                        {feeding[item] === 0 || undefined
+                          ? "0000"
+                          : feeding[item]}
                       </Text>
                     </View>
                   ))}
@@ -2055,7 +2161,7 @@ export default function ShiftReportView({ navigation }) {
                 Coal Analysis
               </Card.Title>
               <Card.Divider />
-              {coalAnalysisData && (
+              {coalAnalysis && (
                 <View style={{ marginTop: 10 }}>
                   {["ci", "ash", "vm", "fc", "tm"].map((item, index) => (
                     <View
@@ -2081,8 +2187,8 @@ export default function ShiftReportView({ navigation }) {
                       <Divider orientation="vertical" />
                       <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
                         {item === "ci"
-                          ? coalAnalysisData[item] + "%"
-                          : coalAnalysisData[item]}
+                          ? coalAnalysis[item] + "%"
+                          : coalAnalysis[item]}
                       </Text>
                     </View>
                   ))}
@@ -2275,7 +2381,7 @@ export default function ShiftReportView({ navigation }) {
               />
             </View>
 
-            {/* <View>
+            {/*  <View>
               <Button
                 title="Delete Report"
                 buttonStyle={{
@@ -2285,9 +2391,32 @@ export default function ShiftReportView({ navigation }) {
                   margin: 10,
                   backgroundColor: "red",
                 }}
-                onPress={handleDeleteReport}
+                onPress={handleClickDelete}
               />
-              </View>*/}
+            </View>
+            <DeleteShiftReportAuthentication
+              onClose={handleDelAuthClose}
+              visible={delAuthModelVisible}
+              onSubmit={handleDelAuthModelSubmit}
+            />*/}
+            <View>
+              <Button
+                title="Edit Report"
+                buttonStyle={{
+                  width: wp(50),
+                  borderRadius: 25,
+                  alignSelf: "center",
+                  margin: 10,
+                  backgroundColor: "red",
+                }}
+                onPress={handleClickEdit}
+              />
+            </View>
+            <EditShiftReportAuthentication
+              onClose={handleEditAuthClose}
+              visible={editAuthModelVisible}
+              onSubmit={handleEditAuthModelSubmit}
+            />
           </View>
         ) : (
           clickSubmit && (

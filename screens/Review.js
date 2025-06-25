@@ -450,10 +450,8 @@ export default function Review({ navigation }) {
   };
 
   const onUpdateCrusherStatus = async () => {
-    console.log(allCrushersData);
     setAllCrushersData(crusherStatus);
     setEditCrusherStatus(false);
-    console.log(allCrushersData);
   };
 
   const toggleSwitchFeeding = () => {
@@ -1873,27 +1871,29 @@ export default function Review({ navigation }) {
                     alert("select cr-" + num + " status..");
                     setUpdateCrusherStatusButtVisible(true);
                     return;
+                  } else {
+                    setCrusherStatus({
+                      ...crusherStatus,
+                      ["cr" + num + "status"]: value,
+                    });
+                    setUpdateCrusherStatusButtVisible(false);
                   }
-                  setCrusherStatus({
-                    ...crusherStatus,
-                    ["cr" + num + "status"]: value,
-                  });
-                  setUpdateCrusherStatusButtVisible(false);
                 }}
                 onChangeFeeder={(value) => {
                   if (value === "") {
                     alert("select cr-" + num + " feeder..");
                     setUpdateCrusherStatusButtVisible(true);
                     return;
+                  } else {
+                    setCrusherStatus({
+                      ...crusherStatus,
+                      ["cr" + num + "feeder"]: value,
+                    });
+                    setUpdateCrusherStatusButtVisible(false);
                   }
-                  setCrusherStatus({
-                    ...crusherStatus,
-                    ["cr" + num + "feeder"]: value,
-                  });
-                  setUpdateCrusherStatusButtVisible(false);
                 }}
-                selectedStatus={allCrushersData["cr" + num + "status"]}
-                selectedFeeder={allCrushersData["cr" + num + "feeder"]}
+                selectedStatus={crusherStatus["cr" + num + "status"]}
+                selectedFeeder={crusherStatus["cr" + num + "feeder"]}
                 editable={editCrusherStatus}
               />
             ))}

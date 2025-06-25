@@ -81,7 +81,7 @@ const CrusherEdit = ({
         }}
       >
         <Picker
-          id={1}
+          id={2}
           style={{
             width: wp(25),
             backgroundColor: "white",
@@ -92,11 +92,11 @@ const CrusherEdit = ({
           onValueChange={onChangeFeeder}
           selectedValue={selectedFeeder}
         >
-          {["", "1", "2"].map((status) => (
+          {["", "1", "2"].map((feeder) => (
             <Picker.Item
-              key={status}
-              label={status.toString()}
-              value={status}
+              key={feeder}
+              label={feeder.toString()}
+              value={feeder}
               style={{ fontSize: wp(4) }}
             />
           ))}

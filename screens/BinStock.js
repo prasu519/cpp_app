@@ -512,7 +512,7 @@ export default function BinStock({ navigation }) {
                                 return;
                               } else {
                                 setFieldValue(
-                                  "oldcoal" + (excount + (index + 1)) + "stock",
+                                  "oldcoal" + (index + 1) + "stock",
                                   value
                                 );
 

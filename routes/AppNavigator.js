@@ -17,6 +17,9 @@ import PushingSchedule from "../screens/PushingSchedule";
 import EnterCoalTowerStock from "../screens/EnterCoalTowerStock";
 import ViewReports from "../screens/ViewReports";
 import ShiftReportAuthentication from "../screens/ShiftReportAuthentication";
+import EditShiftReportAuthentication from "../screens/EditShiftReportAuthentication";
+import DeleteShiftReportAuthentication from "../screens/DeleteShiftReportAuthentication";
+import EditShiftReport from "../screens/EditShiftReport";
 import ShiftReportView from "../screens/ShiftReportView";
 import DayReportView from "../screens/DayReportView";
 import BlendReportView from "../screens/BlendReportView";
@@ -38,6 +41,15 @@ function AppNavigator(props) {
         name="ShiftReportAuthentication"
         component={ShiftReportAuthentication}
       />
+      <stack.Screen
+        name="DeleteShiftReportAuthentication"
+        component={DeleteShiftReportAuthentication}
+      />
+      <stack.Screen
+        name="EditShiftReportAuthentication"
+        component={EditShiftReportAuthentication}
+      />
+      <stack.Screen name="EditShiftReport" component={EditShiftReport} />
       <stack.Screen name="CrusherEdit" component={CrusherEdit} />
       <stack.Screen name="ShiftReportEntry" component={ShiftReportEntry} />
       <stack.Screen name="EnterReclaiming" component={EnterReclaiming} />
