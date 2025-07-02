@@ -1,6 +1,7 @@
-import { View, ScrollView } from "react-native";
+import { View, ScrollView, TextInput } from "react-native";
 import { Text } from "@rneui/themed";
 import React, { useEffect, useState, useContext } from "react";
+import { Picker } from "@react-native-picker/picker";
 import { AntDesign } from "@expo/vector-icons";
 import shift from "../utils/Shift";
 import AppTextBox from "../components/AppTextBox";
@@ -10,7 +11,7 @@ import { Switch } from "@rneui/themed";
 import AppButton from "../components/AppButton";
 import BaseUrl from "../config/BaseUrl";
 import AppDropdown from "../components/AppDropdown";
-import DelayMessageComponent from "../components/DelayMessageComponent";
+import DelayMessageComponent from "../components/DelayMessageComponent"; //1480,2140,180
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -19,7 +20,6 @@ import { GlobalContext } from "../contextApi/GlobalContext";
 import { FormatDate } from "../utils/FormatDate";
 import CrusherEdit from "../components/CrusherEdit";
 import DoneScreen from "./DoneScreen";
-//total_reclaiming
 
 export default function EditShiftReport({ navigation }) {
   const [feeding, setFeeding] = useState();
@@ -77,7 +77,6 @@ export default function EditShiftReport({ navigation }) {
     feedingData,
     setFeedingData,
     runningHoursData,
-    setRunningHoursData,
     shiftDelaysData,
     setShiftDelaysData,
     mbTopStockData,
@@ -85,28 +84,15 @@ export default function EditShiftReport({ navigation }) {
     coalTowerStockData,
     setCoalTowerStockData,
     coalAnalysisData,
-    setCoalAnalysisData,
     pushingScheduleData,
     setPushingScheduleData,
     allCrushersData,
-    setAllCrushersData,
     globalDate,
     globalShift,
   } = useContext(GlobalContext);
 
   const currentDate = new Date(globalDate).toISOString().split("T")[0];
-  const currentShift = globalShift; //shift(new Date().getHours());
-
-  let reclaimingStatus = false;
-  let feedingStatus = false;
-  let runningHoursStatus = false;
-  let shiftDelaysStatus = false;
-  let mbTopStockStatus = false;
-  let coalTowerStockStatus = false;
-  let coalAnalysisStatus = false;
-  let pushingScheduleStatus = false;
-  let credentialsStatus = false;
-  let crusherDataStatus = false;
+  const currentShift = globalShift;
 
   useEffect(() => {
     if (isLoaded) {
@@ -256,9 +242,14 @@ export default function EditShiftReport({ navigation }) {
       ...feeding,
       total_feeding: totalFeeding,
     };
-
     setFeedingData(updatedFeeding);
-
+    await axios
+      .put(BaseUrl + "/feeding", updatedFeeding)
+      .then(function (response) {})
+      .catch(function (error) {
+        console.log(error);
+        alert("Could not edit Feeding data..");
+      });
     setEditFeeding(false);
   };
 
@@ -294,14 +285,25 @@ export default function EditShiftReport({ navigation }) {
       total_reclaiming: streamtotal,
       cpp3total_reclaiming: cpp3streamtotal,
     };
-
     setReclaimingData(updatedReclaiming);
-
+    await axios
+      .put(BaseUrl + "/reclaiming", updatedReclaiming)
+      .then(function (response) {})
+      .catch(function (error) {
+        console.log(error);
+        alert("Could not edit reclaiming data..");
+      });
     setEditReclaiming(false);
   };
 
   const onUpdateRunningHours = async () => {
-    setRunningHoursData(runningHours);
+    await axios
+      .put(BaseUrl + "/runningHours", runningHours)
+      .then((responce) => {})
+      .catch((error) => {
+        console.log(error);
+        alert("Could not edit running hours data..");
+      });
     setEditRunningHours(false);
   };
 
@@ -391,8 +393,15 @@ export default function EditShiftReport({ navigation }) {
         reason: delayComponent["desc" + i],
       };
     }
-
-    setShiftDelaysData(shiftDelays);
+    for (let i = 0; i < count; i++) {
+      await axios
+        .put(BaseUrl + "/shiftDelay", shiftDelays[i])
+        .then((response) => {})
+        .catch((error) => {
+          console.log(error);
+          alert("Could not edit shiftDelays data..");
+        });
+    }
     setEditShiftDelays(false);
   };
 
@@ -415,8 +424,14 @@ export default function EditShiftReport({ navigation }) {
       total_stock: totalMbtopStock,
       cpp3total_stock: cpp3totalMbtopStock,
     };
-
     setMbTopStockData(newMbtopData);
+    await axios
+      .put(BaseUrl + "/mbtopStock", newMbtopData)
+      .then(function (response) {})
+      .catch(function (error) {
+        console.log(error);
+        alert("Could not edit MbTop Stock data..");
+      });
     setEditMbtopStock(false);
   };
 
@@ -430,9 +445,14 @@ export default function EditShiftReport({ navigation }) {
       ...coalTowerStock,
       total_stock: totalCoalTowerStock,
     };
-
     setCoalTowerStockData(updatedCoalTowerStock);
-
+    await axios
+      .put(BaseUrl + "/coaltowerstock", updatedCoalTowerStock)
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+        alert("Could not edit Coal Tower Stock data..");
+      });
     setEditCoalTowerStock(false);
   };
 
@@ -445,8 +465,13 @@ export default function EditShiftReport({ navigation }) {
       alert("Total of Ash,Vm,Fc should be 100..");
       return;
     }
-
-    setCoalAnalysisData(coalAnalysis);
+    await axios
+      .put(BaseUrl + "/coalAnalysis", coalAnalysis)
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+        alert("Could not edit Coal Analysis data..");
+      });
     setEditCoalAnalysis(false);
   };
 
@@ -461,14 +486,28 @@ export default function EditShiftReport({ navigation }) {
     let newValues = { ...pushingSchedule, total_pushings: ptotal.toString() };
 
     setPushingScheduleData(newValues);
+    await axios
+      .put(BaseUrl + "/pushings", newValues)
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+        alert("Could not edit Pushing schedule data..");
+      });
     setEditPushingSchedule(false);
   };
 
   const onUpdateCrusherStatus = async () => {
-    console.log(allCrushersData);
-    setAllCrushersData(crusherStatus);
+    // setAllCrushersData(crusherStatus);
+    await axios
+      .put(BaseUrl + "/crusher", crusherStatus)
+      .then((response) => {
+        //setProgress(0.85);
+      })
+      .catch((error) => {
+        console.log(error);
+        alert("Could not edit crusher status data..");
+      });
     setEditCrusherStatus(false);
-    console.log(allCrushersData);
   };
 
   const toggleSwitchFeeding = () => {
@@ -499,185 +538,41 @@ export default function EditShiftReport({ navigation }) {
     setEditCrusherStatus((previousState) => !previousState);
   };
 
-  const handleSaveReport = async () => {
+  const handleBackButton = async () => {
     if (
-      reclaimingData &&
-      feedingData &&
-      runningHoursData &&
-      shiftDelaysData &&
-      mbTopStockData &&
-      coalTowerStockData &&
-      coalAnalysisData &&
-      pushingScheduleData &&
-      allCrushersData
+      editReclaiming ||
+      editFeeding ||
+      editShiftDelays ||
+      editRunningHours ||
+      editMbtopStock ||
+      editCoalTowerStock ||
+      editCoalAnalysis ||
+      editPushingSchedule ||
+      editCrusherStatus
     ) {
-      setProgress(0);
-      setDoneScreen(true);
-
-      await axios
-        .put(BaseUrl + "/reclaiming", reclaimingData)
-        .then(function (response) {
-          reclaimingStatus = true;
-
-          setProgress(0.1);
-        })
-        .catch(function (error) {
-          reclaimingStatus = false;
-          console.log(error);
-          alert("Could not edit reclaiming data..");
-        });
-
-      await axios
-        .put(BaseUrl + "/feeding", feedingData)
-        .then((response) => {
-          feedingStatus = true;
-
-          setProgress(0.2);
-        })
-        .catch((error) => {
-          feedingStatus = false;
-          console.log(error);
-          alert("Could not edit Feeding data..");
-        });
-
-      await axios
-        .put(BaseUrl + "/runningHours", runningHoursData)
-        .then((responce) => {
-          runningHoursStatus = true;
-
-          setProgress(0.3);
-        })
-        .catch((error) => {
-          runningHoursStatus = false;
-          console.log(error);
-          alert("Could not edit running hours data..");
-        });
-
-      let count = shiftDelaysData.length;
-      for (let i = 0; i < count; i++) {
-        await axios
-          .put(BaseUrl + "/shiftDelay", shiftDelaysData[i])
-          .then((response) => {
-            shiftDelaysStatus = true;
-
-            setProgress(0.4);
-          })
-          .catch((error) => {
-            shiftDelaysStatus = false;
-            console.log(error);
-            alert("Could not edit shiftDelays data..");
-          });
-      }
-
-      await axios
-        .put(BaseUrl + "/mbtopStock", mbTopStockData)
-        .then(function (response) {
-          mbTopStockStatus = true;
-
-          setProgress(0.5);
-        })
-        .catch(function (error) {
-          mbTopStockStatus = false;
-          console.log(error);
-          alert("Could not edit MbTop Stock data..");
-        });
-
-      await axios
-        .put(BaseUrl + "/coaltowerstock", coalTowerStockData)
-        .then((response) => {
-          coalTowerStockStatus = true;
-
-          setProgress(0.6);
-        })
-        .catch((error) => {
-          coalTowerStockStatus = false;
-          console.log(error);
-          alert("Could not edit Coal Tower Stock data..");
-        });
-
-      await axios
-        .put(BaseUrl + "/coalAnalysis", coalAnalysisData)
-        .then((response) => {
-          coalAnalysisStatus = true;
-
-          setProgress(0.7);
-        })
-        .catch((error) => {
-          coalAnalysisStatus = false;
-          console.log(error);
-          alert("Could not edit Coal Analysis data..");
-        });
-
-      await axios
-        .put(BaseUrl + "/pushings", pushingScheduleData)
-        .then((response) => {
-          pushingScheduleStatus = true;
-
-          setProgress(0.8);
-        })
-        .catch((error) => {
-          pushingScheduleStatus = false;
-          console.log(error);
-          alert("Could not edit Pushing schedule data..");
-        });
-
-      await axios
-        .put(BaseUrl + "/crusher", allCrushersData)
-        .then((response) => {
-          crusherDataStatus = true;
-
-          setProgress(0.85);
-        })
-        .catch((error) => {
-          crusherDataStatus = false;
-          console.log(error);
-          alert("Could not edit crusher status data..");
-        });
-
-      if (
-        reclaimingStatus &&
-        feedingStatus &&
-        runningHoursStatus &&
-        shiftDelaysStatus &&
-        mbTopStockStatus &&
-        coalTowerStockStatus &&
-        coalAnalysisStatus &&
-        pushingScheduleStatus &&
-        crusherDataStatus
-      ) {
-        const currentDate = new Date(globalDate).toISOString().split("T")[0];
-        const shiftReportEditedBy = {
-          date: currentDate,
-          shift: globalShift,
-          reportStatus: 2,
-        };
-        await axios
-          .put(BaseUrl + "/shiftreportenteredby", shiftReportEditedBy)
-          .then(function (response) {
-            credentialsStatus = true;
-
-            setProgress(0.9);
-          })
-          .catch(function (error) {
-            credentialsStatus = false;
-            console.log(error);
-            alert("Could not edit Shift report entered by data..");
-          });
-      }
-      setProgress(1);
-    } else {
-      alert("Enter all data..");
+      alert("Update all data..");
       return;
+    } else {
+      const currentDate = new Date(globalDate).toISOString().split("T")[0];
+      const shiftReportEditedBy = {
+        date: currentDate,
+        shift: globalShift,
+        reportStatus: 2,
+      };
+      await axios
+        .put(BaseUrl + "/shiftreportenteredby", shiftReportEditedBy)
+        .then(function (response) {
+          credentialsStatus = true;
+
+          setProgress(0.9);
+        })
+        .catch(function (error) {
+          credentialsStatus = false;
+          console.log(error);
+          alert("Could not edit Shift report entered by data..");
+        });
     }
-    /* setReclaimingData(undefined);
-    setFeedingData(undefined);
-    setRunningHoursData(undefined);
-    setShiftDelaysData(undefined);
-    setMbTopStockData(undefined);
-    setCoalTowerStockData(undefined);
-    setCoalAnalysisData(undefined);
-    setPushingScheduleData(undefined);
-    setAllCrushersData(undefined);*/
+
     setTimeout(() => {
       navigation.navigate("ShiftReportView");
     }, 1000);
@@ -722,7 +617,9 @@ export default function EditShiftReport({ navigation }) {
               name="leftcircle"
               size={40}
               color="black"
-              onPress={() => navigation.goBack()}
+              onPress={() => {
+                navigation.goBack();
+              }}
             />
             <Text
               style={{
@@ -928,103 +825,6 @@ export default function EditShiftReport({ navigation }) {
             padding: hp(2),
           }}
         >
-          <FieldSet label="Feeding Data">
-            <>
-              <Text
-                style={{
-                  alignSelf: "center",
-                  borderBottomWidth: 2,
-                  fontSize: hp(3.5),
-                  fontWeight: "bold",
-                  color: "black",
-                  marginBottom: hp(3),
-                }}
-              >
-                Feeding
-              </Text>
-
-              {[
-                "ct1",
-                "ct2",
-                "ct3",
-                "stream1",
-                "stream1A",
-                "pathc",
-                "auto",
-                "nonauto",
-              ].map((item, index) => (
-                <AppTextBox
-                  key={index}
-                  label={item}
-                  labelcolor={
-                    item === "stream1" ||
-                    item === "stream1A" ||
-                    item === "pathc" ||
-                    item === "auto" ||
-                    item === "nonauto" ||
-                    item === "New_Stream"
-                      ? "#e9c46a"
-                      : "orange"
-                  }
-                  value={feeding[item].toString()}
-                  onChangeText={(newValue) => {
-                    if (newValue === "") {
-                      setUpdateFeedButtVisible(true);
-                      setFeeding({ ...feeding, [item]: "" });
-                      return;
-                    }
-                    if (!/^[0-9]*$/.test(newValue)) {
-                      alert("Enter Numbers only...");
-                      return;
-                    } else {
-                      setUpdateFeedButtVisible(false);
-                      setFeeding({ ...feeding, [item]: newValue });
-                    }
-                  }}
-                  editable={editFeeding}
-                  maxLength={4}
-                />
-              ))}
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: wp(30),
-                  marginTop: wp(10),
-                  marginBottom: wp(10),
-                }}
-              >
-                <Text style={{ fontSize: hp(3) }}>Total Feeding</Text>
-                <Text style={{ fontSize: hp(4) }}>
-                  {feedingData.total_feeding.toString()}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 10,
-                }}
-              >
-                <Text style={{ fontSize: hp(4) }}>Edit</Text>
-                <Switch
-                  onValueChange={toggleSwitchFeeding}
-                  value={editFeeding}
-                />
-              </View>
-              {editFeeding && (
-                <AppButton
-                  buttonName="Update Feeding"
-                  buttonColour={updateFeedButtVisible ? "#C7B7A3" : "#fc5c65"}
-                  disabled={updateFeedButtVisible}
-                  onPress={onUpdateFeeding}
-                />
-              )}
-            </>
-          </FieldSet>
-
           <FieldSet label="Reclaiming Data">
             <>
               <Text
@@ -1146,8 +946,87 @@ export default function EditShiftReport({ navigation }) {
               >
                 CPP3 Reclaiming
               </Text>
-              {[1, 2, 3, 4, 5, 6].map((item, index) =>
-                reclaiming["cpp3coal" + item + "name"] === null ||
+              {[1, 2, 3, 4, 5, 6].map((item, index) => (
+                <View
+                  key={index}
+                  style={{
+                    flexDirection: "row",
+                    borderRadius: 25,
+                    width: wp(30),
+                    height: hp(6),
+                    marginLeft: wp(5),
+                    borderRadius: 20,
+                    gap: wp(5),
+                    marginBottom: wp(10),
+                  }}
+                >
+                  <Picker
+                    id={index}
+                    style={{
+                      width: wp(35),
+                      borderWidth: wp(1),
+                      backgroundColor: "white",
+                    }}
+                    mode="dropdown"
+                    onValueChange={(value) => {
+                      setReclaiming({
+                        ...reclaiming,
+                        ["cpp3coal" + item + "name"]: value.toUpperCase(),
+                      });
+                    }}
+                    enabled={editReclaiming}
+                    selectedValue={reclaiming["cpp3coal" + item + "name"]}
+                  >
+                    {["Coal", "GYC", "BWS", "MCC", "BROOKS"].map((coal) => (
+                      <Picker.Item
+                        key={coal}
+                        label={coal.toString()}
+                        value={coal}
+                        style={{ fontSize: hp(2.5) }}
+                      />
+                    ))}
+                  </Picker>
+                  <TextInput
+                    selectionColor={"black"}
+                    style={{
+                      height: hp(6),
+                      width: wp(30),
+                      paddingLeft: wp(2),
+                      fontSize: hp(3),
+                      fontFamily: "Roboto",
+                      borderWidth: wp(0.3),
+                      borderRadius: 10,
+                      borderColor: "#0c0c0c",
+                      backgroundColor: "white",
+                    }}
+                    keyboardType="number-pad"
+                    placeholder="Tons"
+                    value={reclaiming["cpp3coal" + item + "recl"].toString()}
+                    onChangeText={(value) => {
+                      if (!/^[0-9]*$/.test(value)) {
+                        alert("Enter Numbers only...");
+                        return;
+                      } else {
+                        setReclaiming({
+                          ...reclaiming,
+                          ["cpp3coal" + item + "recl"]: value,
+                        });
+
+                        /* const cpp3CoalTotal = [...cpp3TotalValues];
+                        cpp3CoalTotal[index] = value;
+                        setCpp3TotalValues(cpp3CoalTotal);
+                        const total = cpp3CoalTotal.reduce(
+                          (sum, val) => sum + (parseInt(val) || 0),
+                          0
+                        );
+                        setCpp3TotalReclaiming(total);*/
+                      }
+                    }}
+                    selectedValue={reclaiming["cpp3coal" + item + "recl"]}
+                    editable={editReclaiming}
+                  />
+                </View>
+                /* reclaiming["cpp3coal" + item + "name"] === null ||
                 reclaiming["cpp3coal" + item + "recl"] === 0 ? null : (
                   <AppTextBox
                     key={index}
@@ -1176,8 +1055,8 @@ export default function EditShiftReport({ navigation }) {
                     }}
                     editable={editReclaiming}
                   />
-                )
-              )}
+                  )*/
+              ))}
               {["patha", "pathb"].map((item, index) => (
                 <AppTextBox
                   key={index}
@@ -1258,6 +1137,103 @@ export default function EditShiftReport({ navigation }) {
                   buttonColour={updateReclButtVisible ? "#C7B7A3" : "#fc5c65"}
                   disabled={updateReclButtVisible}
                   onPress={onUpdateReclaiming}
+                />
+              )}
+            </>
+          </FieldSet>
+
+          <FieldSet label="Feeding Data">
+            <>
+              <Text
+                style={{
+                  alignSelf: "center",
+                  borderBottomWidth: 2,
+                  fontSize: hp(3.5),
+                  fontWeight: "bold",
+                  color: "black",
+                  marginBottom: hp(3),
+                }}
+              >
+                Feeding
+              </Text>
+
+              {[
+                "ct1",
+                "ct2",
+                "ct3",
+                "stream1",
+                "stream1A",
+                "pathc",
+                "auto",
+                "nonauto",
+              ].map((item, index) => (
+                <AppTextBox
+                  key={index}
+                  label={item}
+                  labelcolor={
+                    item === "stream1" ||
+                    item === "stream1A" ||
+                    item === "pathc" ||
+                    item === "auto" ||
+                    item === "nonauto" ||
+                    item === "New_Stream"
+                      ? "#e9c46a"
+                      : "orange"
+                  }
+                  value={feeding[item].toString()}
+                  onChangeText={(newValue) => {
+                    if (newValue === "") {
+                      setUpdateFeedButtVisible(true);
+                      setFeeding({ ...feeding, [item]: "" });
+                      return;
+                    }
+                    if (!/^[0-9]*$/.test(newValue)) {
+                      alert("Enter Numbers only...");
+                      return;
+                    } else {
+                      setUpdateFeedButtVisible(false);
+                      setFeeding({ ...feeding, [item]: newValue });
+                    }
+                  }}
+                  editable={editFeeding}
+                  maxLength={4}
+                />
+              ))}
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: wp(30),
+                  marginTop: wp(10),
+                  marginBottom: wp(10),
+                }}
+              >
+                <Text style={{ fontSize: hp(3) }}>Total Feeding</Text>
+                <Text style={{ fontSize: hp(4) }}>
+                  {feedingData.total_feeding.toString()}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 10,
+                }}
+              >
+                <Text style={{ fontSize: hp(4) }}>Edit</Text>
+                <Switch
+                  onValueChange={toggleSwitchFeeding}
+                  value={editFeeding}
+                />
+              </View>
+              {editFeeding && (
+                <AppButton
+                  buttonName="Update Feeding"
+                  buttonColour={updateFeedButtVisible ? "#C7B7A3" : "#fc5c65"}
+                  disabled={updateFeedButtVisible}
+                  onPress={onUpdateFeeding}
                 />
               )}
             </>
@@ -1747,7 +1723,81 @@ export default function EditShiftReport({ navigation }) {
               >
                 CPP3 Stock
               </Text>
-              {[1, 2, 3, 4, 5, 6].map((item, index) =>
+              {[1, 2, 3, 4, 5, 6].map((item, index) => (
+                <View
+                  key={index}
+                  style={{
+                    flexDirection: "row",
+                    borderRadius: 25,
+                    width: wp(30),
+                    height: hp(6),
+                    marginLeft: wp(5),
+                    borderRadius: 20,
+                    gap: wp(5),
+                    marginBottom: wp(10),
+                  }}
+                >
+                  <Picker
+                    id={index}
+                    style={{
+                      width: wp(35),
+                      borderWidth: wp(1),
+                      backgroundColor: "white",
+                    }}
+                    mode="dropdown"
+                    onValueChange={(value) => {
+                      setMbtopCoalData({
+                        ...mbtopCoalData,
+                        ["cpp3coal" + item + "name"]: value,
+                      });
+                    }}
+                    enabled={editMbtopStock}
+                    selectedValue={mbtopCoalData["cpp3coal" + item + "name"]}
+                  >
+                    {["Coal", "GYC", "BWS", "MCC", "BROOKS"].map((coal) => (
+                      <Picker.Item
+                        key={coal}
+                        label={coal.toString()}
+                        value={coal}
+                        style={{ fontSize: hp(2.5) }}
+                      />
+                    ))}
+                  </Picker>
+                  <TextInput
+                    selectionColor={"black"}
+                    style={{
+                      height: hp(6),
+                      width: wp(30),
+                      paddingLeft: wp(2),
+                      fontSize: hp(3),
+                      fontFamily: "Roboto",
+                      borderWidth: wp(0.3),
+                      borderRadius: 10,
+                      borderColor: "#0c0c0c",
+                      backgroundColor: "white",
+                    }}
+                    keyboardType="number-pad"
+                    placeholder="Tons"
+                    value={mbtopCoalData[
+                      "cpp3coal" + item + "stock"
+                    ].toString()}
+                    onChangeText={(value) => {
+                      if (!/^[0-9]*$/.test(value)) {
+                        alert("Enter Numbers only...");
+                        return;
+                      } else {
+                        setMbtopCoalData({
+                          ...mbtopCoalData,
+                          ["cpp3coal" + item + "stock"]: value,
+                        });
+                      }
+                    }}
+                    selectedValue={mbtopCoalData["cpp3coal" + item + "stock"]}
+                    editable={editMbtopStock}
+                  />
+                </View>
+              ))}
+              {/*{[1, 2, 3, 4, 5, 6].map((item, index) =>
                 mbtopCoalData["cpp3coal" + (index + 1) + "name"] === null ||
                 mbtopCoalData["cpp3coal" + (index + 1) + "stock"] ===
                   0 ? null : (
@@ -1784,7 +1834,7 @@ export default function EditShiftReport({ navigation }) {
                     maxLength={4}
                   />
                 )
-              )}
+                  )}*/}
 
               <View
                 style={{
@@ -2127,8 +2177,8 @@ export default function EditShiftReport({ navigation }) {
                     });
                     setUpdateCrusherStatusButtVisible(false);
                   }}
-                  selectedStatus={allCrushersData["cr" + num + "status"]}
-                  selectedFeeder={allCrushersData["cr" + num + "feeder"]}
+                  selectedStatus={crusherStatus["cr" + num + "status"]}
+                  selectedFeeder={crusherStatus["cr" + num + "feeder"]}
                   editable={editCrusherStatus}
                 />
               ))}
@@ -2160,9 +2210,9 @@ export default function EditShiftReport({ navigation }) {
           </FieldSet>
 
           <AppButton
-            buttonName="Save Shift Report"
+            buttonName="Back"
             buttonColour="#fc5c65"
-            onPress={handleSaveReport}
+            onPress={handleBackButton}
           />
         </ScrollView>
       </View>

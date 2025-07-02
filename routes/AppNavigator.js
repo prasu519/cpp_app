@@ -22,6 +22,7 @@ import DeleteShiftReportAuthentication from "../screens/DeleteShiftReportAuthent
 import EditShiftReport from "../screens/EditShiftReport";
 import ShiftReportView from "../screens/ShiftReportView";
 import DayReportView from "../screens/DayReportView";
+import MonthReportView from "../screens/MonthReportView";
 import BlendReportView from "../screens/BlendReportView";
 import CrusherStatus from "../screens/CrusherStatus";
 import CrushersDataEntry from "../screens/CrushersDataEntry";
@@ -65,6 +66,7 @@ function AppNavigator(props) {
       <stack.Screen name="ViewReports" component={ViewReports} />
       <stack.Screen name="ShiftReportView" component={ShiftReportView} />
       <stack.Screen name="DayReportView" component={DayReportView} />
+      <stack.Screen name="MonthReportView" component={MonthReportView} />
       <stack.Screen name="BlendReportView" component={BlendReportView} />
       <stack.Screen name="CrusherStatus" component={CrusherStatus} />
       <stack.Screen name="CrushersDataEntry" component={CrushersDataEntry} />

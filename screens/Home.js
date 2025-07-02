@@ -23,6 +23,15 @@ export default function Home({ navigation }) {
     setGlobalDate,
     globalShift,
     setGlobalShift,
+    setReclaimingData,
+    setFeedingData,
+    setRunningHoursData,
+    setShiftDelaysData,
+    setMbTopStockData,
+    setCoalTowerStockData,
+    setCoalAnalysisData,
+    setPushingScheduleData,
+    setAllCrushersData,
   } = useContext(GlobalContext);
 
   const handleAuthModelClose = () => {
@@ -66,6 +75,16 @@ export default function Home({ navigation }) {
       .then((responce) => {
         if (responce.data.data[0]) {
           setCredentials(responce.data.data[0]);
+
+          setReclaimingData(undefined);
+          setFeedingData(undefined);
+          setRunningHoursData(undefined);
+          setShiftDelaysData(undefined);
+          setMbTopStockData(undefined);
+          setCoalTowerStockData(undefined);
+          setCoalAnalysisData(undefined);
+          setPushingScheduleData(undefined);
+          setAllCrushersData(undefined);
 
           navigation.navigate("ShiftReportEntry");
         } else alert("Wrong Employee Number..");

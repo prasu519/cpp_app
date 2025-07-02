@@ -102,6 +102,23 @@ export default function ViewReports({ navigation }) {
           }}
         />
         <Button
+          title={"Month Report"}
+          buttonStyle={{
+            height: hp(5),
+            width: wp(40),
+            marginTop: hp(2),
+            alignSelf: "center",
+          }}
+          radius={20}
+          titleStyle={{
+            fontSize: hp(2),
+            fontWeight: "600",
+          }}
+          onPress={() => {
+            navigation.navigate("MonthReportView");
+          }}
+        />
+        <Button
           title={"Blend Report"}
           buttonStyle={{
             height: hp(5),

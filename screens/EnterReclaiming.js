@@ -285,7 +285,7 @@ export default function EnterReclaiming({ navigation }) {
     setDoneScreen(true);
     setReclaimingData(newValues);
     setProgress(1);
-
+    console.log(newValues);
     for (let i = 1; i <= count; i++) {
       values["coal" + i + "recl"] = "";
     }
@@ -668,7 +668,7 @@ export default function EnterReclaiming({ navigation }) {
                                       "cpp3coal" +
                                         (cpp3Count + (index + 1)) +
                                         "name",
-                                      value
+                                      value.toUpperCase()
                                     );
                                   }
                                 }}
@@ -1061,7 +1061,7 @@ export default function EnterReclaiming({ navigation }) {
                                   } else {
                                     setFieldValue(
                                       "excoal" + (index + 1) + "name",
-                                      value
+                                      value.toUpperCase()
                                     );
                                   }
                                 }}
@@ -1217,7 +1217,7 @@ export default function EnterReclaiming({ navigation }) {
                                       "cpp3coal" +
                                         (cpp3Count + (index + 1)) +
                                         "name",
-                                      value
+                                      value.toUpperCase()
                                     );
                                   }
                                 }}
