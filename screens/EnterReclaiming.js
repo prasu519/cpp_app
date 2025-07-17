@@ -16,6 +16,7 @@ import {
 } from "react-native-responsive-screen";
 import { GlobalContext } from "../contextApi/GlobalContext";
 import { FormatDate } from "../utils/FormatDate";
+//console.log
 
 export default function EnterReclaiming({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
@@ -285,7 +286,7 @@ export default function EnterReclaiming({ navigation }) {
     setDoneScreen(true);
     setReclaimingData(newValues);
     setProgress(1);
-    console.log(newValues);
+
     for (let i = 1; i <= count; i++) {
       values["coal" + i + "recl"] = "";
     }
