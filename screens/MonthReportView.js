@@ -21,6 +21,8 @@ export default function MonthReportView({ navigation }) {
   const [avgCI, setAvgCI] = useState();
   const [totalFeeding, setTotalFeeding] = useState();
   const [totalRecl, setTotalRecl] = useState();
+  const [totByCoalNamesCpp1, setTotByCoalNamesCpp1] = useState();
+  const [totByCoalNamesCpp3, setTotByCoalNamesCpp3] = useState();
   const [prevDayCShiftCTStock, setPrevDayCShiftCTStock] = useState();
   const [toDateCShiftCTStock, setToDateCShiftCTStock] = useState();
   const [prevDayDate, setPrevDayDate] = useState();
@@ -84,6 +86,43 @@ export default function MonthReportView({ navigation }) {
         },
       });
       setTotalRecl(response.data.data);
+    } catch (error) {
+      console.log(error);
+      alert(
+        "Error",
+        "Failed to fetch total feedig cpp1. Please check the date and try again."
+      );
+    }
+  };
+  const getTotalReclByCoalNameCpp1 = async (fromDate, toDate) => {
+    try {
+      const response = await axios.get(BaseUrl + "/reclaiming/totByCoalNames", {
+        params: {
+          fdate: fromDate,
+          tdate: toDate,
+        },
+      });
+      setTotByCoalNamesCpp1(response.data.data);
+    } catch (error) {
+      console.log(error);
+      alert(
+        "Error",
+        "Failed to fetch total feedig cpp1. Please check the date and try again."
+      );
+    }
+  };
+  const getTotalReclByCoalNameCpp3 = async (fromDate, toDate) => {
+    try {
+      const response = await axios.get(
+        BaseUrl + "/reclaiming/totByCoalNamesCpp3",
+        {
+          params: {
+            fdate: fromDate,
+            tdate: toDate,
+          },
+        }
+      );
+      setTotByCoalNamesCpp3(response.data.data);
     } catch (error) {
       console.log(error);
       alert(
@@ -157,6 +196,13 @@ export default function MonthReportView({ navigation }) {
       Alert.alert("Invalid Date", "To Date should be less than today's date.");
       return; // Exit the function
     }
+    if (fromDate >= todayDate) {
+      Alert.alert(
+        "Invalid Date",
+        "From Date should be less than today's date."
+      );
+      return; // Exit the function
+    }
 
     await getAvgCI(fromDate, toDate);
     await getTotalFeeding(fromDate, toDate);
@@ -164,6 +210,8 @@ export default function MonthReportView({ navigation }) {
     await getPrevDayCShiftCTStock(fromDate);
     await getToDateCShiftCTStock(toDate);
     await getTotalPushings(fromDate, toDate);
+    await getTotalReclByCoalNameCpp1(fromDate, toDate);
+    await getTotalReclByCoalNameCpp3(fromDate, toDate);
   };
 
   return (
@@ -424,6 +472,67 @@ export default function MonthReportView({ navigation }) {
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
               {"CPP3 Reclaiming - " + totalRecl.totCpp3Recl}
             </Card.Title>
+          </Card>
+        )}
+        {totByCoalNamesCpp1 !== undefined && (
+          <Card>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"CPP1 Coal Wise Reclaiming"}
+            </Card.Title>
+
+            {Object.entries(totByCoalNamesCpp1).map(
+              ([coalName, total], index) => (
+                <View
+                  key={index}
+                  style={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    paddingHorizontal: wp(5),
+                  }}
+                >
+                  <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                    {coalName}
+                  </Text>
+                  <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                    {total}
+                  </Text>
+                </View>
+              )
+            )}
+
+            <Card.Divider />
+          </Card>
+        )}
+
+        {totByCoalNamesCpp3 !== undefined && (
+          <Card>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"CPP3 Coal Wise Reclaiming"}
+            </Card.Title>
+
+            {Object.entries(totByCoalNamesCpp3).map(
+              ([coalName, total], index) => (
+                <View
+                  key={index}
+                  style={{
+                    marginBottom: 10,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    paddingHorizontal: wp(5),
+                  }}
+                >
+                  <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                    {coalName}
+                  </Text>
+                  <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                    {total}
+                  </Text>
+                </View>
+              )
+            )}
+
+            <Card.Divider />
           </Card>
         )}
       </ScrollView>
