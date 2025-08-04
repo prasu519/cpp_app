@@ -28,16 +28,21 @@ export default function MonthReportView({ navigation }) {
   const [prevDayDate, setPrevDayDate] = useState();
   const [toDateDate, setToDateDate] = useState();
   const [totalPushings, setTotalPushings] = useState();
+  const [crusherFeedersTotal, setCrusherFeedersTotal] = useState();
 
   const handleFromDateChange = (event, date) => {
     setShowFromDatePicker(false);
     if (date) {
+      //let correctDate = new Date(date);
+      //correctDate.setDate(correctDate.getDate() + 1);
       setSelectedFromDate(date);
     }
   };
   const handleToDateChange = (event, date) => {
     setShowToDatePicker(false);
     if (date) {
+      //let correctDate = new Date(date);
+      //correctDate.setDate(correctDate.getDate() + 1);
       setSelectedToDate(date);
     }
   };
@@ -184,10 +189,23 @@ export default function MonthReportView({ navigation }) {
       );
     }
   };
+  const getCrusherFeedersTotal = async (fromDate, toDate) => {
+    try {
+      const responce = await axios.get(BaseUrl + "/crusher/feedersTotal", {
+        params: { fdate: fromDate, tdate: toDate },
+      });
+      setCrusherFeedersTotal(responce.data.data);
+    } catch (error) {
+      console.log(error);
+      alert(
+        "Error",
+        "Failed to fetch crusher feeders total. Please check the date and try again."
+      );
+    }
+  };
 
   const handleSubmit = async () => {
     const todaydate = new Date();
-
     let fromDate = new Date(selectedFromDate).toISOString().split("T")[0];
     let toDate = new Date(selectedToDate).toISOString().split("T")[0];
     let todayDate = new Date(todaydate).toISOString().split("T")[0];
@@ -212,6 +230,7 @@ export default function MonthReportView({ navigation }) {
     await getTotalPushings(fromDate, toDate);
     await getTotalReclByCoalNameCpp1(fromDate, toDate);
     await getTotalReclByCoalNameCpp3(fromDate, toDate);
+    await getCrusherFeedersTotal(fromDate, toDate);
   };
 
   return (
@@ -298,7 +317,8 @@ export default function MonthReportView({ navigation }) {
             />
           )}
           <Text style={{ fontSize: hp(2.5), color: "green" }}>
-            {FormatDate(selectedFromDate)}
+            {/* {FormatDate(selectedFromDate)}*/}
+            {new Date(selectedFromDate).toISOString().split("T")[0]}
           </Text>
         </View>
 
@@ -336,7 +356,8 @@ export default function MonthReportView({ navigation }) {
             />
           )}
           <Text style={{ fontSize: hp(2.5), color: "green" }}>
-            {FormatDate(selectedToDate)}
+            {/* {FormatDate(selectedToDate)}*/}
+            {new Date(selectedToDate).toISOString().split("T")[0]}
           </Text>
         </View>
 
@@ -393,6 +414,40 @@ export default function MonthReportView({ navigation }) {
           <Card>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
               {"CPP3 Feeding - " + totalFeeding.totalPathC}
+            </Card.Title>
+          </Card>
+        )}
+        {crusherFeedersTotal !== undefined && (
+          <Card>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr34 Feeder-1 Total - " + crusherFeedersTotal.cr34Feeder1Total}
+            </Card.Title>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr34 Feeder-2 Total - " + crusherFeedersTotal.cr34Feeder2Total}
+            </Card.Title>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr35 Feeder-1 Total - " + crusherFeedersTotal.cr35Feeder1Total}
+            </Card.Title>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr35 Feeder-2 Total - " + crusherFeedersTotal.cr35Feeder2Total}
+            </Card.Title>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr36 Feeder-1 Total - " + crusherFeedersTotal.cr36Feeder1Total}
+            </Card.Title>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr36 Feeder-2 Total - " + crusherFeedersTotal.cr36Feeder2Total}
+            </Card.Title>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr37 Feeder-1 Total - " + crusherFeedersTotal.cr37Feeder1Total}
+            </Card.Title>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr37 Feeder-2 Total - " + crusherFeedersTotal.cr37Feeder2Total}
+            </Card.Title>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr38 Feeder-1 Total - " + crusherFeedersTotal.cr38Feeder1Total}
+            </Card.Title>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr38 Feeder-2 Total - " + crusherFeedersTotal.cr38Feeder2Total}
             </Card.Title>
           </Card>
         )}
@@ -464,6 +519,20 @@ export default function MonthReportView({ navigation }) {
           <Card>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
               {"CPP1 Reclaiming - " + totalRecl.totCpp1Recl}
+            </Card.Title>
+          </Card>
+        )}
+        {totalRecl !== undefined && (
+          <Card>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Path A Reclaiming - " + totalRecl.totPathARecl}
+            </Card.Title>
+          </Card>
+        )}
+        {totalRecl !== undefined && (
+          <Card>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Path B Reclaiming - " + totalRecl.totPathBRecl}
             </Card.Title>
           </Card>
         )}

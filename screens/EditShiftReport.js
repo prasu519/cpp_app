@@ -497,12 +497,158 @@ export default function EditShiftReport({ navigation }) {
   };
 
   const onUpdateCrusherStatus = async () => {
-    // setAllCrushersData(crusherStatus);
+    let cr34f1coal = 0;
+    let cr34f2coal = 0;
+    let cr35f1coal = 0;
+    let cr35f2coal = 0;
+    let cr36f1coal = 0;
+    let cr36f2coal = 0;
+    let cr37f1coal = 0;
+    let cr37f2coal = 0;
+    let cr38f1coal = 0;
+    let cr38f2coal = 0;
+
+    if (crusherStatus.cr34status === "InUse") {
+      let crsdcoal = feedingData.stream1 / 2;
+      if (crusherStatus.cr34feeder === "1") {
+        cr34f1coal = crsdcoal;
+        cr34f2coal = 0;
+      } else {
+        cr34f2coal = crsdcoal;
+        cr34f1coal = 0;
+      }
+    }
+
+    if (crusherStatus.cr35status === "InUse") {
+      let crsdcoal = feedingData.stream1 / 2;
+      if (crusherStatus.cr35feeder === "1") {
+        cr35f1coal = crsdcoal;
+        cr35f2coal = 0;
+      } else {
+        cr35f2coal = crsdcoal;
+        cr35f1coal = 0;
+      }
+    }
+    if (crusherStatus.cr36status === "InUse") {
+      let crsdcoal = feedingData.stream1 / 2;
+      if (crusherStatus.cr36feeder === "1") {
+        cr36f1coal = crsdcoal;
+        cr36f2coal = 0;
+      } else {
+        cr36f2coal = crsdcoal;
+        cr36f1coal = 0;
+      }
+    }
+    if (
+      crusherStatus.cr37status === "InUse" &&
+      crusherStatus.cr38status === "InUse"
+    ) {
+      let crsdcoal = feedingData.stream1A / 2;
+      if (crusherStatus.cr37feeder === "1") {
+        cr37f1coal = crsdcoal;
+        cr37f2coal = 0;
+      } else {
+        cr37f2coal = crsdcoal;
+        cr37f1coal = 0;
+      }
+      if (crusherStatus.cr38feeder === "1") {
+        cr38f1coal = crsdcoal;
+        cr38f2coal = 0;
+      } else {
+        cr38f2coal = crsdcoal;
+        cr38f1coal = 0;
+      }
+    }
+    if (
+      crusherStatus.cr37status === "InUse" &&
+      crusherStatus.cr38status !== "InUse"
+    ) {
+      let crsdcoal = feedingData.stream1A;
+      if (crusherStatus.cr37feeder === "1") {
+        cr37f1coal = crsdcoal;
+        cr37f2coal = 0;
+      } else {
+        cr37f2coal = crsdcoal;
+        cr37f1coal = 0;
+      }
+      if (crusherStatus.cr38feeder === "1") {
+        cr38f1coal = 0;
+        cr38f2coal = 0;
+      } else {
+        cr38f2coal = 0;
+        cr38f1coal = 0;
+      }
+    }
+    if (
+      crusherStatus.cr37status !== "InUse" &&
+      crusherStatus.cr38status === "InUse"
+    ) {
+      let crsdcoal = feedingData.stream1A;
+      if (crusherStatus.cr37feeder === "1") {
+        cr37f1coal = 0;
+        cr37f2coal = 0;
+      } else {
+        cr37f2coal = 0;
+        cr37f1coal = 0;
+      }
+      if (crusherStatus.cr38feeder === "1") {
+        cr38f1coal = crsdcoal;
+        cr38f2coal = 0;
+      } else {
+        cr38f2coal = crsdcoal;
+        cr38f1coal = 0;
+      }
+    }
+    if (
+      crusherStatus.cr37status !== "InUse" &&
+      crusherStatus.cr38status !== "InUse"
+    ) {
+      cr37f1coal = 0;
+      cr37f2coal = 0;
+      cr38f1coal = 0;
+      cr38f2coal = 0;
+    }
+
+    let finalCrusherData = {
+      ...crusherStatus,
+      ["cr34feeder1coal"]: cr34f1coal,
+      ["cr34feeder2coal"]: cr34f2coal,
+      ["cr35feeder1coal"]: cr35f1coal,
+      ["cr35feeder2coal"]: cr35f2coal,
+      ["cr36feeder1coal"]: cr36f1coal,
+      ["cr36feeder2coal"]: cr36f2coal,
+      ["cr37feeder1coal"]: cr37f1coal,
+      ["cr37feeder2coal"]: cr37f2coal,
+      ["cr38feeder1coal"]: cr38f1coal,
+      ["cr38feeder2coal"]: cr38f2coal,
+    };
+
+    /* let fdate = crusherStatus.date;
+    let fshift = crusherStatus.shift;
     await axios
-      .put(BaseUrl + "/crusher", crusherStatus)
-      .then((response) => {
-        //setProgress(0.85);
+      .delete(BaseUrl + "/crusher", {
+        params: {
+          date: fdate,
+          shift: fshift,
+        },
       })
+      .then((responce) => {})
+      .catch((error) => {
+        console.log(error);
+        alert("Could not delete crusher data from crusher edit..");
+      });
+
+    await axios
+      .post(BaseUrl + "/crusher", finalCrusherData)
+      .then((response) => {})
+      .catch((error) => {
+        console.log(error);
+        alert("Could not save crusher data from crusher edit..");
+      });*/
+
+    await axios
+      .put(BaseUrl + "/crusher", finalCrusherData)
+      .then((response) => {})
       .catch((error) => {
         console.log(error);
         alert("Could not edit crusher status data..");
