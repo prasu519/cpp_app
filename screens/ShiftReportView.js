@@ -19,6 +19,7 @@ import { FormatDate } from "../utils/FormatDate";
 import DeleteShiftReportAuthentication from "./DeleteShiftReportAuthentication";
 import EditShiftReportAuthentication from "./EditShiftReportAuthentication";
 import { GlobalContext } from "../contextApi/GlobalContext";
+import DoneScreen from "./DoneScreen";
 
 export default function ShiftReportView({ navigation }) {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -46,6 +47,9 @@ export default function ShiftReportView({ navigation }) {
 
   const [delAuthModelVisible, setDelAuthModelVisible] = useState(false);
   const [editAuthModelVisible, setEditAuthModelVisible] = useState(false);
+
+  const [doneScreen, setDoneScreen] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const {
     credentials,
@@ -720,8 +724,9 @@ export default function ShiftReportView({ navigation }) {
       .then((responce) => {
         if (responce.data.data[0]) {
           setCredentials(responce.data.data[0]);
-          console.log(credentials);
-          navigation.navigate("ShiftReportView");
+          //console.log(credentials);
+          //navigation.navigate("ShiftReportView");
+          handleDeleteReport();
         } else alert("Wrong Employee Number..");
       })
       .catch((error) => console.log(error));
@@ -757,13 +762,11 @@ export default function ShiftReportView({ navigation }) {
   const handleSubmit = () => {
     setClickSubmit(true);
     let date = selectedDate.toISOString().split("T")[0];
-
     if (selectedShift === "" || selectedShift === "Select") {
       alert("Select Shift..");
       return;
     }
     let shift = selectedShift;
-
     getShiftReportPersonDetails(date, shift);
     getBlend(date, shift);
     getReclaimingData(date, shift);
@@ -775,7 +778,6 @@ export default function ShiftReportView({ navigation }) {
     getCoalAnalysisData(date, shift);
     getPushingScheduleData(date, shift);
     getCrusherStatusData(date, shift);
-
     setLoadCard(true);
   };
 
@@ -933,19 +935,33 @@ export default function ShiftReportView({ navigation }) {
             style: "destructive",
             onPress: () => {
               // Your delete logic here
-              delShiftReportPersonDetails(date, shift);
+              setProgress(0);
+              setDoneScreen(true);
 
               delReclaimingData(date, shift);
+              setProgress(0.1);
               delfeedingdata(date, shift);
+              setProgress(0.2);
               delCoalTowerStock(date, shift);
+              setProgress(0.3);
               delMbTopCoalData(date, shift);
+              setProgress(0.4);
               delRunningHoursdata(date, shift);
+              setProgress(0.5);
               delShiftDelayData(date, shift);
+              setProgress(0.6);
               delCoalAnalysisData(date, shift);
+              setProgress(0.7);
               delPushingScheduleData(date, shift);
+              setProgress(0.8);
               delCrusherStatusData(date, shift);
+              delShiftReportPersonDetails(date, shift);
+              setProgress(1);
               console.log("Shift record deleted");
-              navigation.goBack();
+
+              setTimeout(() => {
+                navigation.navigate("ViewReports");
+              }, 1000);
             },
           },
         ],
@@ -1077,350 +1093,214 @@ export default function ShiftReportView({ navigation }) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <View
-        style={{
-          position: "absolute",
-          zIndex: 1,
-          height: hp(15),
-          width: wp(100),
-          backgroundColor: "#2FF3E0",
-          borderBottomLeftRadius: hp(8),
-          borderBottomRightRadius: hp(8),
-        }}
-      >
+    <>
+      <DoneScreen
+        progress={progress}
+        onDone={() => setDoneScreen(false)}
+        visible={doneScreen}
+      />
+      <View style={{ flex: 1 }}>
         <View
           style={{
-            paddingTop: hp(5),
-            paddingLeft: hp(2),
-            flexDirection: "row",
-            alignItems: "center",
-            gap: wp(12),
-          }}
-        >
-          <AntDesign
-            name="leftcircle"
-            size={40}
-            color="black"
-            onPress={() => navigation.goBack()}
-          />
-          <Text
-            style={{
-              fontSize: wp(6),
-              borderBottomWidth: 2,
-              color: "black",
-              alignSelf: "center",
-              fontWeight: "bold",
-            }}
-          >
-            Shift Report View
-          </Text>
-        </View>
-      </View>
-      <View
-        style={{
-          position: "relative",
-          zIndex: 1,
-          marginTop: hp(15),
-          padding: hp(2),
-          gap: wp(2),
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            gap: 15,
+            position: "absolute",
+            zIndex: 1,
+            height: hp(15),
+            width: wp(100),
+            backgroundColor: "#2FF3E0",
+            borderBottomLeftRadius: hp(8),
+            borderBottomRightRadius: hp(8),
           }}
         >
           <View
             style={{
+              paddingTop: hp(5),
+              paddingLeft: hp(2),
               flexDirection: "row",
-              gap: wp(2),
               alignItems: "center",
-              height: hp(5),
-              width: wp(45),
+              gap: wp(12),
             }}
           >
-            <Button
-              title="Select date"
-              buttonStyle={{ width: wp(23), height: hp(5) }}
-              titleStyle={{
-                fontSize: hp(1.6),
-                color: "white",
-                borderBottomWidth: 2,
-                borderBottomColor: "white",
-              }}
-              radius={25}
-              onPress={() => setShowDatePicker(true)}
+            <AntDesign
+              name="leftcircle"
+              size={40}
+              color="black"
+              onPress={() => navigation.goBack()}
             />
-            {showDatePicker && (
-              <DateTimePicker
-                value={selectedDate}
-                mode="date"
-                display="spinner"
-                onChange={handleDateChange}
-              />
-            )}
-            <Text style={{ fontSize: hp(2), color: "red" }}>
-              {selectedDate.toISOString().split("T")[0]}
+            <Text
+              style={{
+                fontSize: wp(6),
+                borderBottomWidth: 2,
+                color: "black",
+                alignSelf: "center",
+                fontWeight: "bold",
+              }}
+            >
+              Shift Report View
             </Text>
           </View>
+        </View>
+        <View
+          style={{
+            position: "relative",
+            zIndex: 1,
+            marginTop: hp(15),
+            padding: hp(2),
+            gap: wp(2),
+          }}
+        >
           <View
             style={{
               flexDirection: "row",
-              gap: wp(1),
-              alignItems: "center",
-              height: hp(5),
-              width: wp(50),
+              gap: 15,
             }}
           >
             <View
               style={{
-                height: hp(5),
-                width: wp(20),
+                flexDirection: "row",
+                gap: wp(2),
                 alignItems: "center",
-                justifyContent: "center",
-                backgroundColor: "#6495ED",
-                borderRadius: 20,
+                height: hp(5),
+                width: wp(45),
               }}
             >
-              <Text
-                style={{
-                  fontSize: hp(1.5),
-                  alignSelf: "center",
-                  fontWeight: "bold",
+              <Button
+                title="Select date"
+                buttonStyle={{ width: wp(23), height: hp(5) }}
+                titleStyle={{
+                  fontSize: hp(1.6),
                   color: "white",
+                  borderBottomWidth: 2,
+                  borderBottomColor: "white",
                 }}
-              >
-                Select Shift
+                radius={25}
+                onPress={() => setShowDatePicker(true)}
+              />
+              {showDatePicker && (
+                <DateTimePicker
+                  value={selectedDate}
+                  mode="date"
+                  display="spinner"
+                  onChange={handleDateChange}
+                />
+              )}
+              <Text style={{ fontSize: hp(2), color: "red" }}>
+                {selectedDate.toISOString().split("T")[0]}
               </Text>
             </View>
-            <Picker
-              id="Shift"
+            <View
               style={{
-                width: wp(25),
+                flexDirection: "row",
+                gap: wp(1),
+                alignItems: "center",
+                height: hp(5),
+                width: wp(50),
               }}
-              mode="dropdown"
-              enabled={true}
-              onValueChange={(shift) => setSelectedShift(shift)}
-              selectedValue={selectedShift}
             >
-              {[" ", "A", "B", "C"].map((shift) => (
-                <Picker.Item
-                  key={shift}
-                  label={shift.toString()}
-                  value={shift}
-                  style={{ fontSize: hp(2), color: "red" }}
-                />
-              ))}
-            </Picker>
+              <View
+                style={{
+                  height: hp(5),
+                  width: wp(20),
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#6495ED",
+                  borderRadius: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: hp(1.5),
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                    color: "white",
+                  }}
+                >
+                  Select Shift
+                </Text>
+              </View>
+              <Picker
+                id="Shift"
+                style={{
+                  width: wp(25),
+                }}
+                mode="dropdown"
+                enabled={true}
+                onValueChange={(shift) => setSelectedShift(shift)}
+                selectedValue={selectedShift}
+              >
+                {[" ", "A", "B", "C"].map((shift) => (
+                  <Picker.Item
+                    key={shift}
+                    label={shift.toString()}
+                    value={shift}
+                    style={{ fontSize: hp(2), color: "red" }}
+                  />
+                ))}
+              </Picker>
+            </View>
           </View>
+          <Button
+            title={"Submit"}
+            color={"#000080"}
+            buttonStyle={{
+              height: hp(5),
+              width: wp(40),
+              marginTop: hp(2),
+              alignSelf: "center",
+            }}
+            radius={20}
+            titleStyle={{
+              textDecorationLine: "underline",
+              fontSize: hp(2),
+              fontWeight: "600",
+            }}
+            onPress={handleSubmit}
+            disabled={!loadLatestRecord}
+          />
         </View>
-        <Button
-          title={"Submit"}
-          color={"#000080"}
-          buttonStyle={{
-            height: hp(5),
-            width: wp(40),
-            marginTop: hp(2),
-            alignSelf: "center",
-          }}
-          radius={20}
-          titleStyle={{
-            textDecorationLine: "underline",
-            fontSize: hp(2),
-            fontWeight: "600",
-          }}
-          onPress={handleSubmit}
-          disabled={!loadLatestRecord}
-        />
-      </View>
-      {shiftReportEnteredBy && latestRecord && !clickSubmit && !loadCard && (
-        <View
-          style={{
-            height: hp(20),
-            width: wp(100),
+        {shiftReportEnteredBy && latestRecord && !clickSubmit && !loadCard && (
+          <View
+            style={{
+              height: hp(20),
+              width: wp(100),
 
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ fontSize: hp(3) }}>Last Record uploaded on..</Text>
-          <Text style={{ fontSize: hp(3) }}>
-            {FormatDate(new Date(latestRecord.date))}
-          </Text>
-          <Text style={{ fontSize: hp(3) }}>{latestRecord.shift}</Text>
-        </View>
-      )}
-      <ScrollView>
-        {shiftReportEnteredBy &&
-        loadCard &&
-        reclaiming &&
-        mbTopStock &&
-        coalCount > 0 ? (
-          <View style={{ marginTop: hp(1), marginBottom: hp(2) }}>
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                <Text style={{ fontSize: hp(3) }}>
-                  {shiftReportEnteredBy.name} -
-                </Text>
-                <Text style={{ fontSize: hp(3) }}>
-                  {shiftReportEnteredBy.empnum}
-                </Text>
-              </Card.Title>
-            </Card>
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                Reclaiming
-              </Card.Title>
-              <Card.Divider />
-              {reclaiming && mbTopStock && coalCount > 0 && (
-                <View>
-                  {Array.from({ length: coalCount }, (_, index) =>
-                    reclaiming["coal" + (index + 1) + "name"] === "" &&
-                    reclaiming["coal" + (index + 1) + "recl"] === 0 ? null : (
-                      <View
-                        key={index}
-                        style={{
-                          marginBottom: 10,
-                          display: "flex",
-                          flexDirection: "row",
-                          marginLeft: wp(6),
-                          gap: hp(3),
-                        }}
-                      >
-                        <View
-                          style={{
-                            width: wp(30),
-
-                            alignItems: "flex-end",
-                          }}
-                        >
-                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                            {reclaiming[
-                              "coal" + (index + 1) + "name"
-                            ].toUpperCase()}
-                          </Text>
-                        </View>
-                        <Divider orientation="vertical" />
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {reclaiming["coal" + (index + 1) + "recl"] === "0"
-                            ? "000"
-                            : reclaiming["coal" + (index + 1) + "recl"]}
-                        </Text>
-                      </View>
-                    )
-                  )}
-                  {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
-                    reclaiming["excoal" + item + "name"] === "" &&
-                    reclaiming["excoal" + item + "recl"] === 0 ? null : (
-                      <View
-                        key={index}
-                        style={{
-                          marginBottom: 10,
-                          display: "flex",
-                          flexDirection: "row",
-                          marginLeft: wp(6),
-                          gap: hp(3),
-                        }}
-                      >
-                        <View
-                          style={{
-                            width: wp(30),
-
-                            alignItems: "flex-end",
-                          }}
-                        >
-                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                            {reclaiming["excoal" + item + "name"].toUpperCase()}
-                          </Text>
-                        </View>
-                        <Divider orientation="vertical" />
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {reclaiming["excoal" + item + "recl"] === "0"
-                            ? "000"
-                            : reclaiming["excoal" + item + "recl"]}
-                        </Text>
-                      </View>
-                    )
-                  )}
-                  <Card.Divider />
-                  {["cc49", "cc50", "cc126"].map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(6),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(30),
-
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {item.toUpperCase()}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {reclaiming[item + "recl"] === 0
-                          ? "000"
-                          : reclaiming[item + "recl"]}
-                      </Text>
-                    </View>
-                  ))}
-                  <Card.Divider />
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ fontSize: hp(3) }}>Last Record uploaded on..</Text>
+            <Text style={{ fontSize: hp(3) }}>
+              {FormatDate(new Date(latestRecord.date))}
+            </Text>
+            <Text style={{ fontSize: hp(3) }}>{latestRecord.shift}</Text>
+          </View>
+        )}
+        <ScrollView>
+          {shiftReportEnteredBy &&
+          loadCard &&
+          reclaiming &&
+          mbTopStock &&
+          coalCount > 0 ? (
+            <View style={{ marginTop: hp(1), marginBottom: hp(2) }}>
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  <Text style={{ fontSize: hp(3) }}>
+                    {shiftReportEnteredBy.name} -
+                  </Text>
+                  <Text style={{ fontSize: hp(3) }}>
+                    {shiftReportEnteredBy.empnum}
+                  </Text>
+                </Card.Title>
+              </Card>
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  Reclaiming
+                </Card.Title>
+                <Card.Divider />
+                {reclaiming && mbTopStock && coalCount > 0 && (
                   <View>
-                    <View
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(1),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(44),
-
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: wp(5.8),
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Total Reclaiming
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <View
-                        style={{
-                          width: wp(25),
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
-                          {reclaiming["total_reclaiming"]}
-                        </Text>
-                      </View>
-                    </View>
-                    <Card.Divider />
-                    <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                      MB Top Coal Stock
-                    </Card.Title>
-                    <Card.Divider />
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
-                      mbTopStock["coal" + item + "name"] === undefined ||
-                      mbTopStock["coal" + item + "stock"] === null ? null : (
+                    {Array.from({ length: coalCount }, (_, index) =>
+                      reclaiming["coal" + (index + 1) + "name"] === "" &&
+                      reclaiming["coal" + (index + 1) + "recl"] === 0 ? null : (
                         <View
                           key={index}
                           style={{
@@ -1441,234 +1321,23 @@ export default function ShiftReportView({ navigation }) {
                             <Text
                               style={{ fontSize: wp(5), fontWeight: "bold" }}
                             >
-                              {mbTopStock["coal" + item + "name"].toUpperCase()}
-                            </Text>
-                          </View>
-                          <Divider orientation="vertical" />
-                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                            {mbTopStock["coal" + item + "stock"] === "null"
-                              ? "000"
-                              : mbTopStock["coal" + item + "stock"]}
-                          </Text>
-                        </View>
-                      )
-                    )}
-
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
-                      mbTopStock["oldcoal" + item + "name"] === "" ||
-                      mbTopStock["oldcoal" + item + "name"] === undefined ||
-                      mbTopStock["oldcoal" + item + "stock"] === 0 ? null : (
-                        <View
-                          key={index}
-                          style={{
-                            marginBottom: 10,
-                            display: "flex",
-                            flexDirection: "row",
-                            marginLeft: wp(6),
-                            gap: hp(3),
-                          }}
-                        >
-                          <View
-                            style={{
-                              width: wp(30),
-
-                              alignItems: "flex-end",
-                            }}
-                          >
-                            <Text
-                              style={{ fontSize: wp(5), fontWeight: "bold" }}
-                            >
-                              {mbTopStock[
-                                "oldcoal" + item + "name"
+                              {reclaiming[
+                                "coal" + (index + 1) + "name"
                               ].toUpperCase()}
                             </Text>
                           </View>
                           <Divider orientation="vertical" />
                           <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                            {mbTopStock["oldcoal" + item + "stock"] === "null"
+                            {reclaiming["coal" + (index + 1) + "recl"] === "0"
                               ? "000"
-                              : mbTopStock["oldcoal" + item + "stock"]}
+                              : reclaiming["coal" + (index + 1) + "recl"]}
                           </Text>
                         </View>
                       )
                     )}
-                    <Card.Divider />
-                    <View
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(1),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(44),
-
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: wp(5.9),
-                            fontWeight: "bold",
-
-                            color: "red",
-                          }}
-                        >
-                          Total MB Stock
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <View
-                        style={{
-                          width: wp(25),
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: wp(6),
-                            fontWeight: "bold",
-                            color: "red",
-                          }}
-                        >
-                          {mbTopStock["total_stock"]}
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                </View>
-              )}
-            </Card>
-
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                CPP3 Reclaiming
-              </Card.Title>
-              <Card.Divider />
-              {reclaiming && mbTopStock && (
-                <View>
-                  {Array.from({ length: 6 }, (_, index) =>
-                    (reclaiming["cpp3coal" + (index + 1) + "name"] === "" ||
-                      reclaiming["cpp3coal" + (index + 1) + "name"] ===
-                        undefined) &&
-                    (reclaiming["cpp3coal" + (index + 1) + "recl"] === 0 ||
-                      reclaiming["cpp3coal" + (index + 1) + "recl"] ===
-                        undefined) ? null : (
-                      <View
-                        key={index}
-                        style={{
-                          marginBottom: 10,
-                          display: "flex",
-                          flexDirection: "row",
-                          marginLeft: wp(6),
-                          gap: hp(3),
-                        }}
-                      >
-                        <View
-                          style={{
-                            width: wp(30),
-
-                            alignItems: "flex-end",
-                          }}
-                        >
-                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                            {reclaiming[
-                              "cpp3coal" + (index + 1) + "name"
-                            ].toUpperCase()}
-                          </Text>
-                        </View>
-                        <Divider orientation="vertical" />
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {reclaiming["cpp3coal" + (index + 1) + "recl"] === "0"
-                            ? "000"
-                            : reclaiming["cpp3coal" + (index + 1) + "recl"]}
-                        </Text>
-                      </View>
-                    )
-                  )}
-
-                  <Card.Divider />
-                  {["patha", "pathb"].map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(6),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(30),
-
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {item.toUpperCase()}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {reclaiming[item + "recl"] === 0 || undefined
-                          ? "000"
-                          : reclaiming[item + "recl"]}
-                      </Text>
-                    </View>
-                  ))}
-                  <Card.Divider />
-                  <View>
-                    <View
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(1),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(44),
-
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: wp(5.8),
-                            fontWeight: "bold",
-                          }}
-                        >
-                          Total Reclaiming
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <View
-                        style={{
-                          width: wp(25),
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
-                          {reclaiming["cpp3total_reclaiming"] === undefined
-                            ? null
-                            : reclaiming["cpp3total_reclaiming"]}
-                        </Text>
-                      </View>
-                    </View>
-                    <Card.Divider />
-                    <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                      CPP3 MB-Top Stock
-                    </Card.Title>
-                    <Card.Divider />
-                    {[1, 2, 3, 4, 5, 6].map((item, index) =>
-                      mbTopStock["cpp3coal" + item + "name"] === "" ||
-                      mbTopStock["cpp3coal" + item + "name"] === undefined ||
-                      mbTopStock["cpp3coal" + item + "stock"] === 0 ? null : (
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
+                      reclaiming["excoal" + item + "name"] === "" &&
+                      reclaiming["excoal" + item + "recl"] === 0 ? null : (
                         <View
                           key={index}
                           style={{
@@ -1689,258 +1358,449 @@ export default function ShiftReportView({ navigation }) {
                             <Text
                               style={{ fontSize: wp(5), fontWeight: "bold" }}
                             >
-                              {mbTopStock[
-                                "cpp3coal" + item + "name"
+                              {reclaiming[
+                                "excoal" + item + "name"
                               ].toUpperCase()}
                             </Text>
                           </View>
                           <Divider orientation="vertical" />
                           <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                            {mbTopStock["cpp3coal" + item + "stock"] === "null"
+                            {reclaiming["excoal" + item + "recl"] === "0"
                               ? "000"
-                              : mbTopStock["cpp3coal" + item + "stock"]}
+                              : reclaiming["excoal" + item + "recl"]}
+                          </Text>
+                        </View>
+                      )
+                    )}
+                    <Card.Divider />
+                    {["cc49", "cc50", "cc126"].map((item, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(6),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {item.toUpperCase()}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {reclaiming[item + "recl"] === 0
+                            ? "000"
+                            : reclaiming[item + "recl"]}
+                        </Text>
+                      </View>
+                    ))}
+                    <Card.Divider />
+                    <View>
+                      <View
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(1),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(44),
+
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(5.8),
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Total Reclaiming
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(25),
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
+                            {reclaiming["total_reclaiming"]}
+                          </Text>
+                        </View>
+                      </View>
+                      <Card.Divider />
+                      <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                        MB Top Coal Stock
+                      </Card.Title>
+                      <Card.Divider />
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
+                        mbTopStock["coal" + item + "name"] === undefined ||
+                        mbTopStock["coal" + item + "stock"] === null ? null : (
+                          <View
+                            key={index}
+                            style={{
+                              marginBottom: 10,
+                              display: "flex",
+                              flexDirection: "row",
+                              marginLeft: wp(6),
+                              gap: hp(3),
+                            }}
+                          >
+                            <View
+                              style={{
+                                width: wp(30),
+
+                                alignItems: "flex-end",
+                              }}
+                            >
+                              <Text
+                                style={{ fontSize: wp(5), fontWeight: "bold" }}
+                              >
+                                {mbTopStock[
+                                  "coal" + item + "name"
+                                ].toUpperCase()}
+                              </Text>
+                            </View>
+                            <Divider orientation="vertical" />
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {mbTopStock["coal" + item + "stock"] === "null"
+                                ? "000"
+                                : mbTopStock["coal" + item + "stock"]}
+                            </Text>
+                          </View>
+                        )
+                      )}
+
+                      {[1, 2, 3, 4, 5, 6, 7, 8].map((item, index) =>
+                        mbTopStock["oldcoal" + item + "name"] === "" ||
+                        mbTopStock["oldcoal" + item + "name"] === undefined ||
+                        mbTopStock["oldcoal" + item + "stock"] === 0 ? null : (
+                          <View
+                            key={index}
+                            style={{
+                              marginBottom: 10,
+                              display: "flex",
+                              flexDirection: "row",
+                              marginLeft: wp(6),
+                              gap: hp(3),
+                            }}
+                          >
+                            <View
+                              style={{
+                                width: wp(30),
+
+                                alignItems: "flex-end",
+                              }}
+                            >
+                              <Text
+                                style={{ fontSize: wp(5), fontWeight: "bold" }}
+                              >
+                                {mbTopStock[
+                                  "oldcoal" + item + "name"
+                                ].toUpperCase()}
+                              </Text>
+                            </View>
+                            <Divider orientation="vertical" />
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {mbTopStock["oldcoal" + item + "stock"] === "null"
+                                ? "000"
+                                : mbTopStock["oldcoal" + item + "stock"]}
+                            </Text>
+                          </View>
+                        )
+                      )}
+                      <Card.Divider />
+                      <View
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(1),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(44),
+
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(5.9),
+                              fontWeight: "bold",
+
+                              color: "red",
+                            }}
+                          >
+                            Total MB Stock
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(25),
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(6),
+                              fontWeight: "bold",
+                              color: "red",
+                            }}
+                          >
+                            {mbTopStock["total_stock"]}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                )}
+              </Card>
+
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  CPP3 Reclaiming
+                </Card.Title>
+                <Card.Divider />
+                {reclaiming && mbTopStock && (
+                  <View>
+                    {Array.from({ length: 6 }, (_, index) =>
+                      (reclaiming["cpp3coal" + (index + 1) + "name"] === "" ||
+                        reclaiming["cpp3coal" + (index + 1) + "name"] ===
+                          undefined) &&
+                      (reclaiming["cpp3coal" + (index + 1) + "recl"] === 0 ||
+                        reclaiming["cpp3coal" + (index + 1) + "recl"] ===
+                          undefined) ? null : (
+                        <View
+                          key={index}
+                          style={{
+                            marginBottom: 10,
+                            display: "flex",
+                            flexDirection: "row",
+                            marginLeft: wp(6),
+                            gap: hp(3),
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: wp(30),
+
+                              alignItems: "flex-end",
+                            }}
+                          >
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {reclaiming[
+                                "cpp3coal" + (index + 1) + "name"
+                              ].toUpperCase()}
+                            </Text>
+                          </View>
+                          <Divider orientation="vertical" />
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {reclaiming["cpp3coal" + (index + 1) + "recl"] ===
+                            "0"
+                              ? "000"
+                              : reclaiming["cpp3coal" + (index + 1) + "recl"]}
                           </Text>
                         </View>
                       )
                     )}
 
                     <Card.Divider />
-                    <View
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(1),
-                        gap: hp(3),
-                      }}
-                    >
+                    {["patha", "pathb"].map((item, index) => (
                       <View
+                        key={index}
                         style={{
-                          width: wp(44),
-
-                          alignItems: "flex-end",
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(6),
+                          gap: hp(3),
                         }}
                       >
-                        <Text
+                        <View
                           style={{
-                            fontSize: wp(5.9),
-                            fontWeight: "bold",
+                            width: wp(30),
 
-                            color: "red",
+                            alignItems: "flex-end",
                           }}
                         >
-                          Total MB Stock
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {item.toUpperCase()}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {reclaiming[item + "recl"] === 0 || undefined
+                            ? "000"
+                            : reclaiming[item + "recl"]}
                         </Text>
                       </View>
-                      <Divider orientation="vertical" />
+                    ))}
+                    <Card.Divider />
+                    <View>
                       <View
                         style={{
-                          width: wp(25),
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(1),
+                          gap: hp(3),
                         }}
                       >
-                        <Text
+                        <View
                           style={{
-                            fontSize: wp(6),
-                            fontWeight: "bold",
-                            color: "red",
+                            width: wp(44),
+
+                            alignItems: "flex-end",
                           }}
                         >
-                          {mbTopStock["cpp3total_stock"]}
-                        </Text>
+                          <Text
+                            style={{
+                              fontSize: wp(5.8),
+                              fontWeight: "bold",
+                            }}
+                          >
+                            Total Reclaiming
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(25),
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
+                            {reclaiming["cpp3total_reclaiming"] === undefined
+                              ? null
+                              : reclaiming["cpp3total_reclaiming"]}
+                          </Text>
+                        </View>
+                      </View>
+                      <Card.Divider />
+                      <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                        CPP3 MB-Top Stock
+                      </Card.Title>
+                      <Card.Divider />
+                      {[1, 2, 3, 4, 5, 6].map((item, index) =>
+                        mbTopStock["cpp3coal" + item + "name"] === "" ||
+                        mbTopStock["cpp3coal" + item + "name"] === undefined ||
+                        mbTopStock["cpp3coal" + item + "stock"] === 0 ? null : (
+                          <View
+                            key={index}
+                            style={{
+                              marginBottom: 10,
+                              display: "flex",
+                              flexDirection: "row",
+                              marginLeft: wp(6),
+                              gap: hp(3),
+                            }}
+                          >
+                            <View
+                              style={{
+                                width: wp(30),
+
+                                alignItems: "flex-end",
+                              }}
+                            >
+                              <Text
+                                style={{ fontSize: wp(5), fontWeight: "bold" }}
+                              >
+                                {mbTopStock[
+                                  "cpp3coal" + item + "name"
+                                ].toUpperCase()}
+                              </Text>
+                            </View>
+                            <Divider orientation="vertical" />
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {mbTopStock["cpp3coal" + item + "stock"] ===
+                              "null"
+                                ? "000"
+                                : mbTopStock["cpp3coal" + item + "stock"]}
+                            </Text>
+                          </View>
+                        )
+                      )}
+
+                      <Card.Divider />
+                      <View
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(1),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(44),
+
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(5.9),
+                              fontWeight: "bold",
+
+                              color: "red",
+                            }}
+                          >
+                            Total MB Stock
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(25),
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(6),
+                              fontWeight: "bold",
+                              color: "red",
+                            }}
+                          >
+                            {mbTopStock["cpp3total_stock"]}
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
-                </View>
-              )}
-            </Card>
+                )}
+              </Card>
 
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                Feeding
-              </Card.Title>
-              <Card.Divider />
-              {feeding && coalTowerStock && (
-                <View style={{ marginTop: 10 }}>
-                  {["ct1", "ct2", "ct3"].map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(8),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(30),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {item.toUpperCase()}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <View
-                        style={{
-                          width: wp(25),
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {feeding[item] === 0 ? "000" : feeding[item]}
-                        </Text>
-                      </View>
-                    </View>
-                  ))}
-                  <Card.Divider />
-                  {["stream1", "stream1A", "pathc"].map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(8),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(30),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {item.toUpperCase()}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {feeding[item] === 0 || undefined
-                          ? "0000"
-                          : feeding[item]}
-                      </Text>
-                    </View>
-                  ))}
-                  <Card.Divider />
-                  <View>
-                    <View
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(38),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: wp(5.9),
-                            fontWeight: "bold",
-                            marginRight: wp(-1),
-                          }}
-                        >
-                          Total Feeding
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <View
-                        style={{
-                          width: wp(25),
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
-                          {feeding["total_feeding"]}
-                        </Text>
-                      </View>
-                    </View>
-                    <Card.Divider />
-                    <View
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(38),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: wp(5.9),
-                            fontWeight: "bold",
-                            marginRight: wp(-1),
-                          }}
-                        >
-                          Auto Feeding
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <View
-                        style={{
-                          width: wp(25),
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
-                          {feeding["auto"]}
-                        </Text>
-                      </View>
-                    </View>
-                    <Card.Divider />
-                    <View
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(38),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text
-                          style={{
-                            fontSize: wp(4.5),
-                            fontWeight: "bold",
-                            marginRight: wp(-1),
-                          }}
-                        >
-                          Non-Auto Feeding
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <View
-                        style={{
-                          width: wp(25),
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
-                          {feeding["nonauto"]}
-                        </Text>
-                      </View>
-                    </View>
-                    <Card.Divider />
-                    <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                      Coal Tower Stock
-                    </Card.Title>
-                    <Card.Divider />
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  Feeding
+                </Card.Title>
+                <Card.Divider />
+                {feeding && coalTowerStock && (
+                  <View style={{ marginTop: 10 }}>
                     {["ct1", "ct2", "ct3"].map((item, index) => (
                       <View
                         key={index}
@@ -1969,11 +1829,451 @@ export default function ShiftReportView({ navigation }) {
                           }}
                         >
                           <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                            {coalTowerStock[item] === 0
-                              ? "000"
-                              : coalTowerStock[item + "stock"]}
+                            {feeding[item] === 0 ? "000" : feeding[item]}
                           </Text>
                         </View>
+                      </View>
+                    ))}
+                    <Card.Divider />
+                    {["stream1", "stream1A", "pathc"].map((item, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(8),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {item.toUpperCase()}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {feeding[item] === 0 || undefined
+                            ? "0000"
+                            : feeding[item]}
+                        </Text>
+                      </View>
+                    ))}
+                    <Card.Divider />
+                    <View>
+                      <View
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(38),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(5.9),
+                              fontWeight: "bold",
+                              marginRight: wp(-1),
+                            }}
+                          >
+                            Total Feeding
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(25),
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
+                            {feeding["total_feeding"]}
+                          </Text>
+                        </View>
+                      </View>
+                      <Card.Divider />
+                      <View
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(38),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(5.9),
+                              fontWeight: "bold",
+                              marginRight: wp(-1),
+                            }}
+                          >
+                            Auto Feeding
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(25),
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
+                            {feeding["auto"]}
+                          </Text>
+                        </View>
+                      </View>
+                      <Card.Divider />
+                      <View
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(38),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(4.5),
+                              fontWeight: "bold",
+                              marginRight: wp(-1),
+                            }}
+                          >
+                            Non-Auto Feeding
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(25),
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
+                            {feeding["nonauto"]}
+                          </Text>
+                        </View>
+                      </View>
+                      <Card.Divider />
+                      <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                        Coal Tower Stock
+                      </Card.Title>
+                      <Card.Divider />
+                      {["ct1", "ct2", "ct3"].map((item, index) => (
+                        <View
+                          key={index}
+                          style={{
+                            marginBottom: 10,
+                            display: "flex",
+                            flexDirection: "row",
+                            marginLeft: wp(8),
+                            gap: hp(3),
+                          }}
+                        >
+                          <View
+                            style={{
+                              width: wp(30),
+                              alignItems: "flex-end",
+                            }}
+                          >
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {item.toUpperCase()}
+                            </Text>
+                          </View>
+                          <Divider orientation="vertical" />
+                          <View
+                            style={{
+                              width: wp(25),
+                            }}
+                          >
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {coalTowerStock[item] === 0
+                                ? "000"
+                                : coalTowerStock[item + "stock"]}
+                            </Text>
+                          </View>
+                        </View>
+                      ))}
+                      <Card.Divider />
+                      <View
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(38),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(5.9),
+                              fontWeight: "bold",
+                              marginRight: wp(-1),
+                              color: "red",
+                            }}
+                          >
+                            Total CT Stock
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(25),
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontSize: wp(6),
+                              fontWeight: "bold",
+                              color: "red",
+                            }}
+                          >
+                            {coalTowerStock["total_stock"]}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                )}
+              </Card>
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  Running Hours
+                </Card.Title>
+                <Card.Divider />
+                {runningHours && (
+                  <View style={{ marginTop: 10 }}>
+                    {[2, 3, 4].map((item, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(8),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            Stream-{item}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {runningHours["str" + item + "hrs"]}:
+                          {runningHours["str" + item + "min"]}
+                        </Text>
+                      </View>
+                    ))}
+                    <Card.Divider />
+                    {[49, 50, 126].map((item, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(8),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            CC-{item}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {runningHours["cc" + item + "hrs"]}:
+                          {runningHours["cc" + item + "min"]}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </Card>
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  Shift Delays
+                </Card.Title>
+                <Card.Divider />
+                {shiftDelays && (
+                  <View style={{ marginTop: 10 }}>
+                    {shiftDelays.map((item, index) => (
+                      <View key={index}>
+                        <View
+                          style={{
+                            alignSelf: "center",
+                            marginBottom: 20,
+                          }}
+                        >
+                          <Text
+                            h4
+                            h4Style={{ textDecorationLine: "underline" }}
+                          >
+                            Delay - {item.delayNumber}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-evenly",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            From :
+                          </Text>
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {item.fromTime}
+                          </Text>
+                          <Divider orientation="vertical" />
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            To :
+                          </Text>
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {item.toTime}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            marginTop: 20,
+                            width: wp(85),
+                            marginBottom: 20,
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5) }}>
+                            <Text
+                              style={{
+                                textDecorationLine: "underline",
+                                color: "green",
+                                fontWeight: "bold",
+                              }}
+                            >
+                              Reason
+                            </Text>
+                            : {item.reason}
+                          </Text>
+                        </View>
+                        <Card.Divider />
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </Card>
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  Coal Analysis
+                </Card.Title>
+                <Card.Divider />
+                {coalAnalysis && (
+                  <View style={{ marginTop: 10 }}>
+                    {["ci", "ash", "vm", "fc", "tm"].map((item, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(5),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {item.toUpperCase()}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {item === "ci"
+                            ? coalAnalysis[item] + "%"
+                            : coalAnalysis[item]}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </Card>
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  Pushing Schedule
+                </Card.Title>
+                <Card.Divider />
+                {pushingSchedule && (
+                  <View style={{ marginTop: 10 }}>
+                    {[1, 2, 3, 4, 5].map((item, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(5),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            Battery-{item}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {pushingSchedule["bat" + item]}
+                        </Text>
                       </View>
                     ))}
                     <Card.Divider />
@@ -1988,8 +2288,9 @@ export default function ShiftReportView({ navigation }) {
                     >
                       <View
                         style={{
-                          width: wp(38),
+                          width: wp(30),
                           alignItems: "flex-end",
+                          marginRight: wp(5),
                         }}
                       >
                         <Text
@@ -2000,7 +2301,7 @@ export default function ShiftReportView({ navigation }) {
                             color: "red",
                           }}
                         >
-                          Total CT Stock
+                          Total
                         </Text>
                       </View>
                       <Divider orientation="vertical" />
@@ -2016,438 +2317,184 @@ export default function ShiftReportView({ navigation }) {
                             color: "red",
                           }}
                         >
-                          {coalTowerStock["total_stock"]}
+                          {pushingSchedule["total_pushings"]}
                         </Text>
                       </View>
                     </View>
                   </View>
-                </View>
-              )}
-            </Card>
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                Running Hours
-              </Card.Title>
-              <Card.Divider />
-              {runningHours && (
-                <View style={{ marginTop: 10 }}>
-                  {[2, 3, 4].map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(8),
-                        gap: hp(3),
-                      }}
-                    >
+                )}
+              </Card>
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  Crusher Status
+                </Card.Title>
+                <Card.Divider />
+                {crusherStatus && (
+                  <View style={{ marginTop: 10 }}>
+                    {[34, 35, 36, 37, 38].map((item, index) => (
                       <View
+                        key={index}
                         style={{
-                          width: wp(30),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          Stream-{item}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {runningHours["str" + item + "hrs"]}:
-                        {runningHours["str" + item + "min"]}
-                      </Text>
-                    </View>
-                  ))}
-                  <Card.Divider />
-                  {[49, 50, 126].map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(8),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(30),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          CC-{item}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {runningHours["cc" + item + "hrs"]}:
-                        {runningHours["cc" + item + "min"]}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              )}
-            </Card>
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                Shift Delays
-              </Card.Title>
-              <Card.Divider />
-              {shiftDelays && (
-                <View style={{ marginTop: 10 }}>
-                  {shiftDelays.map((item, index) => (
-                    <View key={index}>
-                      <View
-                        style={{
-                          alignSelf: "center",
-                          marginBottom: 20,
-                        }}
-                      >
-                        <Text h4 h4Style={{ textDecorationLine: "underline" }}>
-                          Delay - {item.delayNumber}
-                        </Text>
-                      </View>
-                      <View
-                        style={{
+                          marginBottom: 10,
+                          display: "flex",
                           flexDirection: "row",
-                          justifyContent: "space-evenly",
+                          gap: hp(3),
                         }}
                       >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          From :
-                        </Text>
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {item.fromTime}
-                        </Text>
+                        <View
+                          style={{
+                            width: wp(20),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            Cr-{item}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(20),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {crusherStatus["cr" + item + "status"]}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <View
+                          style={{
+                            width: wp(10),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            F-{crusherStatus["cr" + item + "feeder"]}
+                          </Text>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </Card>
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  Blend
+                </Card.Title>
+                <Card.Divider />
+                {blend && blendCount > 0 && (
+                  <View style={{ marginTop: 10 }}>
+                    {Array.from({ length: blendCount }, (_, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(5),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {blend["cn" + (index + 1)]}
+                          </Text>
+                        </View>
                         <Divider orientation="vertical" />
                         <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          To :
-                        </Text>
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {item.toTime}
+                          {blend["cp" + (index + 1)]}%
                         </Text>
                       </View>
-                      <View
-                        style={{
-                          marginTop: 20,
-                          width: wp(85),
-                          marginBottom: 20,
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5) }}>
-                          <Text
-                            style={{
-                              textDecorationLine: "underline",
-                              color: "green",
-                              fontWeight: "bold",
-                            }}
-                          >
-                            Reason
-                          </Text>
-                          : {item.reason}
-                        </Text>
-                      </View>
-                      <Card.Divider />
-                    </View>
-                  ))}
-                </View>
-              )}
-            </Card>
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                Coal Analysis
-              </Card.Title>
-              <Card.Divider />
-              {coalAnalysis && (
-                <View style={{ marginTop: 10 }}>
-                  {["ci", "ash", "vm", "fc", "tm"].map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(5),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(30),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {item.toUpperCase()}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {item === "ci"
-                          ? coalAnalysis[item] + "%"
-                          : coalAnalysis[item]}
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              )}
-            </Card>
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                Pushing Schedule
-              </Card.Title>
-              <Card.Divider />
-              {pushingSchedule && (
-                <View style={{ marginTop: 10 }}>
-                  {[1, 2, 3, 4, 5].map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(5),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(30),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          Battery-{item}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {pushingSchedule["bat" + item]}
-                      </Text>
-                    </View>
-                  ))}
-                  <Card.Divider />
-                  <View
+                    ))}
+                  </View>
+                )}
+              </Card>
+              <View>
+                <Button
+                  title="Generate PDF"
+                  buttonStyle={{
+                    width: wp(50),
+                    borderRadius: 25,
+                    alignSelf: "center",
+                    margin: 10,
+                  }}
+                  onPress={handleGeneratePdf}
+                />
+              </View>
+              <View>
+                <Button
+                  title="Edit Report"
+                  buttonStyle={{
+                    width: wp(50),
+                    borderRadius: 25,
+                    alignSelf: "center",
+                    margin: 10,
+                    backgroundColor: "green",
+                  }}
+                  onPress={handleClickEdit}
+                />
+              </View>
+              <EditShiftReportAuthentication
+                onClose={handleEditAuthClose}
+                visible={editAuthModelVisible}
+                onSubmit={handleEditAuthModelSubmit}
+              />
+              <View>
+                <Button
+                  title="Delete Report"
+                  buttonStyle={{
+                    width: wp(50),
+                    borderRadius: 25,
+                    alignSelf: "center",
+                    margin: 10,
+                    backgroundColor: "red",
+                  }}
+                  onPress={handleClickDelete}
+                />
+              </View>
+              <DeleteShiftReportAuthentication
+                onClose={handleDelAuthClose}
+                visible={delAuthModelVisible}
+                onSubmit={handleDelAuthModelSubmit}
+              />
+            </View>
+          ) : (
+            clickSubmit && (
+              <View
+                style={{
+                  width: wp(100),
+                  height: hp(20),
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <>
+                  <Text
                     style={{
-                      marginBottom: 10,
-                      display: "flex",
-                      flexDirection: "row",
-
-                      gap: hp(3),
+                      color: "red",
+                      fontWeight: "bold",
+                      fontSize: hp(4),
                     }}
                   >
-                    <View
-                      style={{
-                        width: wp(30),
-                        alignItems: "flex-end",
-                        marginRight: wp(5),
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: wp(5.9),
-                          fontWeight: "bold",
-                          marginRight: wp(-1),
-                          color: "red",
-                        }}
-                      >
-                        Total
-                      </Text>
-                    </View>
-                    <Divider orientation="vertical" />
-                    <View
-                      style={{
-                        width: wp(25),
-                      }}
-                    >
-                      <Text
-                        style={{
-                          fontSize: wp(6),
-                          fontWeight: "bold",
-                          color: "red",
-                        }}
-                      >
-                        {pushingSchedule["total_pushings"]}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              )}
-            </Card>
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                Crusher Status
-              </Card.Title>
-              <Card.Divider />
-              {crusherStatus && (
-                <View style={{ marginTop: 10 }}>
-                  {[34, 35, 36, 37, 38].map((item, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(20),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          Cr-{item}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <View
-                        style={{
-                          width: wp(20),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {crusherStatus["cr" + item + "status"]}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <View
-                        style={{
-                          width: wp(10),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          F-{crusherStatus["cr" + item + "feeder"]}
-                        </Text>
-                      </View>
-                    </View>
-                  ))}
-                </View>
-              )}
-            </Card>
-            <Card>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                Blend
-              </Card.Title>
-              <Card.Divider />
-              {blend && blendCount > 0 && (
-                <View style={{ marginTop: 10 }}>
-                  {Array.from({ length: blendCount }, (_, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        marginBottom: 10,
-                        display: "flex",
-                        flexDirection: "row",
-                        marginLeft: wp(5),
-                        gap: hp(3),
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: wp(30),
-                          alignItems: "flex-end",
-                        }}
-                      >
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {blend["cn" + (index + 1)]}
-                        </Text>
-                      </View>
-                      <Divider orientation="vertical" />
-                      <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                        {blend["cp" + (index + 1)]}%
-                      </Text>
-                    </View>
-                  ))}
-                </View>
-              )}
-            </Card>
-            <View>
-              <Button
-                title="Generate PDF"
-                buttonStyle={{
-                  width: wp(50),
-                  borderRadius: 25,
-                  alignSelf: "center",
-                  margin: 10,
-                }}
-                onPress={handleGeneratePdf}
-              />
-            </View>
-
-            {/*  <View>
-              <Button
-                title="Delete Report"
-                buttonStyle={{
-                  width: wp(50),
-                  borderRadius: 25,
-                  alignSelf: "center",
-                  margin: 10,
-                  backgroundColor: "red",
-                }}
-                onPress={handleClickDelete}
-              />
-            </View>
-            <DeleteShiftReportAuthentication
-              onClose={handleDelAuthClose}
-              visible={delAuthModelVisible}
-              onSubmit={handleDelAuthModelSubmit}
-            />*/}
-            <View>
-              <Button
-                title="Edit Report"
-                buttonStyle={{
-                  width: wp(50),
-                  borderRadius: 25,
-                  alignSelf: "center",
-                  margin: 10,
-                  backgroundColor: "red",
-                }}
-                onPress={handleClickEdit}
-              />
-            </View>
-            <EditShiftReportAuthentication
-              onClose={handleEditAuthClose}
-              visible={editAuthModelVisible}
-              onSubmit={handleEditAuthModelSubmit}
-            />
-          </View>
-        ) : (
-          clickSubmit && (
-            <View
-              style={{
-                width: wp(100),
-                height: hp(20),
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <>
-                <Text
-                  style={{
-                    color: "red",
-                    fontWeight: "bold",
-                    fontSize: hp(4),
-                  }}
-                >
-                  No Data Available...
-                </Text>
-                <Text style={{ fontSize: hp(3) }}>Data available upto..</Text>
-                <Text style={{ fontSize: hp(3) }}>
-                  {FormatDate(new Date(latestRecord.date))}
-                </Text>
-                <Text style={{ fontSize: hp(3) }}>{latestRecord.shift}</Text>
-              </>
-            </View>
-          )
-        )}
-      </ScrollView>
-    </View>
+                    No Data Available...
+                  </Text>
+                  <Text style={{ fontSize: hp(3) }}>Data available upto..</Text>
+                  <Text style={{ fontSize: hp(3) }}>
+                    {FormatDate(new Date(latestRecord.date))}
+                  </Text>
+                  <Text style={{ fontSize: hp(3) }}>{latestRecord.shift}</Text>
+                </>
+              </View>
+            )
+          )}
+        </ScrollView>
+      </View>
+    </>
   );
 }

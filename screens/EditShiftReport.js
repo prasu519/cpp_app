@@ -11,7 +11,7 @@ import { Switch } from "@rneui/themed";
 import AppButton from "../components/AppButton";
 import BaseUrl from "../config/BaseUrl";
 import AppDropdown from "../components/AppDropdown";
-import DelayMessageComponent from "../components/DelayMessageComponent"; //1480,2140,180
+import DelayMessageComponent from "../components/DelayMessageComponent";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -29,6 +29,7 @@ export default function EditShiftReport({ navigation }) {
   const [newshiftDelays, setNewShiftDelays] = useState([]);
   const [delayComponent, setDelayComponent] = useState({});
   const [coalNames, setCoalNames] = useState({});
+  const [coalNameListCpp3, setCoalNameListCpp3] = useState();
   const [mbtopCoalData, setMbtopCoalData] = useState();
   const [coalTowerStock, setCoalTowerStock] = useState();
   const [coalAnalysis, setCoalAnalysis] = useState();
@@ -97,6 +98,7 @@ export default function EditShiftReport({ navigation }) {
   useEffect(() => {
     if (isLoaded) {
       getCoalNames();
+      getCoalNameListCpp3();
       getTotalCoals();
       getfeedingdata();
       getReclaimingData();
@@ -194,6 +196,24 @@ export default function EditShiftReport({ navigation }) {
     setIsLoaded(false);
   };
 
+  const getCoalNameListCpp3 = async () => {
+    await axios
+      .get(BaseUrl + "/coalnamelist")
+      .then((response) => {
+        //setCoalNameListCpp3(response.data.data[0]);
+        //console.log(response.data.data[0]);
+        let data = response.data.data[0];
+        const coalNames = Object.keys(data)
+          .filter((key) => key.startsWith("coalname")) // take only coalname keys
+          .map((key) => data[key]) // extract values
+          .filter((name) => name && name.trim() !== ""); // remove empty strings
+        const coalNamesFinal = ["Coal", ...coalNames];
+        setCoalNameListCpp3(coalNamesFinal);
+      })
+      .catch((error) => console.log(error));
+    setIsLoaded(false);
+  };
+
   const getMbTopCoalData = async () => {
     setMbtopCoalData(mbTopStockData);
     setIsLoaded(false);
@@ -201,7 +221,6 @@ export default function EditShiftReport({ navigation }) {
 
   const getCoalTowerStock = async () => {
     setCoalTowerStock(coalTowerStockData);
-
     setIsLoaded(false);
   };
 
@@ -1123,14 +1142,16 @@ export default function EditShiftReport({ navigation }) {
                     enabled={editReclaiming}
                     selectedValue={reclaiming["cpp3coal" + item + "name"]}
                   >
-                    {["Coal", "GYC", "BWS", "MCC", "BROOKS"].map((coal) => (
-                      <Picker.Item
-                        key={coal}
-                        label={coal.toString()}
-                        value={coal}
-                        style={{ fontSize: hp(2.5) }}
-                      />
-                    ))}
+                    {coalNameListCpp3
+                      ? coalNameListCpp3.map((coal) => (
+                          <Picker.Item
+                            key={coal}
+                            label={coal.toString()}
+                            value={coal}
+                            style={{ fontSize: hp(2.5) }}
+                          />
+                        ))
+                      : null}
                   </Picker>
                   <TextInput
                     selectionColor={"black"}
@@ -1900,14 +1921,16 @@ export default function EditShiftReport({ navigation }) {
                     enabled={editMbtopStock}
                     selectedValue={mbtopCoalData["cpp3coal" + item + "name"]}
                   >
-                    {["Coal", "GYC", "BWS", "MCC", "BROOKS"].map((coal) => (
-                      <Picker.Item
-                        key={coal}
-                        label={coal.toString()}
-                        value={coal}
-                        style={{ fontSize: hp(2.5) }}
-                      />
-                    ))}
+                    {coalNameListCpp3
+                      ? coalNameListCpp3.map((coal) => (
+                          <Picker.Item
+                            key={coal}
+                            label={coal.toString()}
+                            value={coal}
+                            style={{ fontSize: hp(2.5) }}
+                          />
+                        ))
+                      : null}
                   </Picker>
                   <TextInput
                     selectionColor={"black"}

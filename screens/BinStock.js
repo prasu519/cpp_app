@@ -486,7 +486,7 @@ export default function BinStock({ navigation }) {
                               } else {
                                 setFieldValue(
                                   "oldcoal" + (index + 1) + "name",
-                                  value
+                                  value.toUpperCase()
                                 );
                               }
                             }}
@@ -635,7 +635,7 @@ export default function BinStock({ navigation }) {
                               } else {
                                 setFieldValue(
                                   "cpp3coal" + (index + 1) + "name",
-                                  value
+                                  value.toUpperCase()
                                 );
                               }
                             }}

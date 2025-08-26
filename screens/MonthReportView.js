@@ -233,6 +233,16 @@ export default function MonthReportView({ navigation }) {
     await getCrusherFeedersTotal(fromDate, toDate);
   };
 
+  const formatItem = (str) => {
+    const match = str.match(/^([a-zA-Z]+)(\d+)([A-Za-z]+)(\d+)/);
+    if (!match) return str;
+
+    const [, prefix, num1, word, num2] = match;
+    return `${prefix.slice(0, 2).toUpperCase()}-${num1} ${
+      word.charAt(0).toUpperCase() + word.slice(1)
+    }-${num2}`;
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <View
@@ -317,8 +327,8 @@ export default function MonthReportView({ navigation }) {
             />
           )}
           <Text style={{ fontSize: hp(2.5), color: "green" }}>
-            {/* {FormatDate(selectedFromDate)}*/}
-            {new Date(selectedFromDate).toISOString().split("T")[0]}
+            {FormatDate(selectedFromDate)}
+            {/*{new Date(selectedFromDate).toISOString().split("T")[0]}*/}
           </Text>
         </View>
 
@@ -356,8 +366,8 @@ export default function MonthReportView({ navigation }) {
             />
           )}
           <Text style={{ fontSize: hp(2.5), color: "green" }}>
-            {/* {FormatDate(selectedToDate)}*/}
-            {new Date(selectedToDate).toISOString().split("T")[0]}
+            {FormatDate(selectedToDate)}
+            {/*{new Date(selectedToDate).toISOString().split("T")[0]}*/}
           </Text>
         </View>
 
@@ -420,13 +430,61 @@ export default function MonthReportView({ navigation }) {
         {crusherFeedersTotal !== undefined && (
           <Card>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr34 Feeder-1 Total - " + crusherFeedersTotal.cr34Feeder1Total}
+              {"Crushed Coal by feeders"}
+            </Card.Title>
+            <Card.Divider />
+            <View style={{ marginTop: 10 }}>
+              {[
+                "cr34Feeder1Total",
+                "cr34Feeder2Total",
+                "cr35Feeder1Total",
+                "cr35Feeder2Total",
+                "cr36Feeder1Total",
+                "cr36Feeder2Total",
+                "cr37Feeder1Total",
+                "cr37Feeder2Total",
+                "cr38Feeder1Total",
+                "cr38Feeder2Total",
+              ].map((item, index) => (
+                <View
+                  key={index}
+                  style={{
+                    marginBottom: 10,
+                    display: "flex",
+                    flexDirection: "row",
+                    marginLeft: wp(5),
+                    gap: hp(3),
+                  }}
+                >
+                  <View
+                    style={{
+                      width: wp(40),
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                      {formatItem(item)}
+                    </Text>
+                  </View>
+                  <Divider orientation="vertical" />
+                  <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                    {crusherFeedersTotal[item]}
+                  </Text>
+                </View>
+              ))}
+            </View>
+
+            {/* <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Cr34 Feeder-1 "}
+              {crusherFeedersTotal.cr34Feeder1Total}
             </Card.Title>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr34 Feeder-2 Total - " + crusherFeedersTotal.cr34Feeder2Total}
+              {"Cr34 Feeder-2 "}
+              {crusherFeedersTotal.cr34Feeder2Total}
             </Card.Title>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr35 Feeder-1 Total - " + crusherFeedersTotal.cr35Feeder1Total}
+              {"Cr35 Feeder-1 "}
+              {crusherFeedersTotal.cr35Feeder1Total}
             </Card.Title>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
               {"Cr35 Feeder-2 Total - " + crusherFeedersTotal.cr35Feeder2Total}
@@ -448,7 +506,7 @@ export default function MonthReportView({ navigation }) {
             </Card.Title>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
               {"Cr38 Feeder-2 Total - " + crusherFeedersTotal.cr38Feeder2Total}
-            </Card.Title>
+            </Card.Title>*/}
           </Card>
         )}
         {toDateCShiftCTStock !== undefined && (
