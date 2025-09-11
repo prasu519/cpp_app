@@ -13,6 +13,7 @@ import shift from "../utils/Shift";
 import BlendAuthentication from "./BlendAuthentication";
 
 export default function Home({ navigation }) {
+  const [enableCpp3, setEnableCpp3] = useState(false);
   const [authModelVisible, setAuthModelVisible] = useState(false);
   const [blendAuthModelVisible, setBlendAuthModelVisible] = useState(false);
   const [shiftReportEnteredBy, setShiftReportEnteredBy] = useState();
@@ -45,6 +46,7 @@ export default function Home({ navigation }) {
     setAuthModelVisible(true);
   };
   const handleEnterBlend = () => {
+    setEnableCpp3(true);
     setBlendAuthModelVisible(true);
   };
 
@@ -58,8 +60,11 @@ export default function Home({ navigation }) {
       .then((responce) => {
         if (responce.data.data[0]) {
           setCredentials(responce.data.data[0]);
-
-          navigation.navigate("AddBlend");
+          if (enableCpp3) {
+            navigation.navigate("AddBlendCpp3");
+          } else {
+            navigation.navigate("AddBlend");
+          }
         } else alert("Wrong Employee Number..");
       })
       .catch((error) => console.log(error));
@@ -136,9 +141,9 @@ export default function Home({ navigation }) {
           onSubmit={handleAuthModelSubmit}
         />
         <Button
-          title={"Add Blend"}
-          buttonStyle={{ width: 200, height: 100 }}
-          titleStyle={{ fontSize: 25, color: "white" }}
+          title={"Add Blend Cpp1"}
+          buttonStyle={{ width: 200, height: 60 }}
+          titleStyle={{ fontSize: 20, color: "white" }}
           radius={25}
           color="#FF8080"
           onPress={handleEnterBlend} //{() => navigation.navigate("AddBlend")}
@@ -148,6 +153,21 @@ export default function Home({ navigation }) {
           visible={blendAuthModelVisible}
           onSubmit={handleBlendAuthModelSubmit}
         />
+
+        <Button
+          title={"Add Blend Cpp3"}
+          buttonStyle={{ width: 200, height: 60 }}
+          titleStyle={{ fontSize: 20, color: "white" }}
+          radius={25}
+          color="#FF8080"
+          onPress={handleEnterBlend} //{() => navigation.navigate("AddBlend")}
+        ></Button>
+        <BlendAuthentication
+          onClose={handleBlendAuthClose}
+          visible={blendAuthModelVisible}
+          onSubmit={handleBlendAuthModelSubmit}
+        />
+
         <Button
           title={"View Reports"}
           buttonStyle={{ width: 200, height: 100 }}

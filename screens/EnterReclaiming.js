@@ -537,6 +537,7 @@ export default function EnterReclaiming({ navigation }) {
                                 backgroundColor: "white",
                               }}
                               placeholder="Coal Name"
+                              autoCapitalize="characters"
                               onChangeText={(value) => {
                                 if (/^[0-9]*$/.test(value)) {
                                   alert("Coal Name must be alphabets...");
@@ -660,6 +661,7 @@ export default function EnterReclaiming({ navigation }) {
                                   backgroundColor: "white",
                                 }}
                                 placeholder="Coal Name"
+                                autoCapitalize="characters"
                                 onChangeText={(value) => {
                                   if (/^[0-9]*$/.test(value)) {
                                     alert("Coal Name must be alphabets...");
@@ -1055,6 +1057,7 @@ export default function EnterReclaiming({ navigation }) {
                                   backgroundColor: "white",
                                 }}
                                 placeholder="Coal Name"
+                                autoCapitalize="characters"
                                 onChangeText={(value) => {
                                   if (/^[0-9]*$/.test(value)) {
                                     alert("Coal Name must be alphabets...");
@@ -1209,6 +1212,7 @@ export default function EnterReclaiming({ navigation }) {
                                   backgroundColor: "white",
                                 }}
                                 placeholder="Coal Name"
+                                autoCapitalize="characters"
                                 onChangeText={(value) => {
                                   if (/^[0-9]*$/.test(value)) {
                                     alert("Coal Name must be alphabets...");

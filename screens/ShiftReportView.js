@@ -518,7 +518,7 @@ export default function ShiftReportView({ navigation }) {
      
               <div style= "display:flex; flex-direction:row; width:780px; height:930px;  margin-top:50px;border:2px solid black;align-self: center;margin-left:10px;margin-right:10px">
                 <div style=" flex-direction:column;  display: inline-block; float: left; width:400px;float:left; border-right: 2px solid black; text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px">
-                <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Pushing Schedule</p>
+              <!--  <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Pushing Schedule</p>
                 ${[1, 2, 3, 4, 5]
                   .map(
                     (item, index) =>
@@ -539,7 +539,7 @@ export default function ShiftReportView({ navigation }) {
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                   ${pushingSchedule.total_pushings}
-                </p>
+                </p> -->
                 <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>
                   Running Hours
                 </p>

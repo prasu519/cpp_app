@@ -119,10 +119,10 @@ export default function ViewReports({ navigation }) {
           }}
         />
         <Button
-          title={"Blend Report"}
+          title={"Blend Report Cpp1"}
           buttonStyle={{
             height: hp(5),
-            width: wp(40),
+            width: wp(50),
             marginTop: hp(2),
             alignSelf: "center",
           }}
@@ -133,6 +133,23 @@ export default function ViewReports({ navigation }) {
           }}
           onPress={() => {
             navigation.navigate("BlendReportView");
+          }}
+        />
+        <Button
+          title={"Blend Report Cpp3"}
+          buttonStyle={{
+            height: hp(5),
+            width: wp(50),
+            marginTop: hp(2),
+            alignSelf: "center",
+          }}
+          radius={20}
+          titleStyle={{
+            fontSize: hp(2),
+            fontWeight: "600",
+          }}
+          onPress={() => {
+            navigation.navigate("BlendReportViewCpp3");
           }}
         />
       </View>

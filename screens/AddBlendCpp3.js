@@ -19,7 +19,7 @@ import {
 import { FormatDate } from "../utils/FormatDate";
 import { GlobalContext } from "../contextApi/GlobalContext";
 
-export default function AddBlend({ navigation }) {
+export default function AddBlendCpp3({ navigation }) {
   const [count, setCount] = useState(0);
   const [doneScreen, setDoneScreen] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -153,7 +153,7 @@ export default function AddBlend({ navigation }) {
     setProgress(0);
     setDoneScreen(true);
     await axios
-      .post(BaseUrl + "/blend", finalValues, {
+      .post(BaseUrl + "/blend/cpp3", finalValues, {
         onUploadProgress: (progress) =>
           setProgress(progress.loaded / progress.total),
       })
@@ -200,7 +200,7 @@ export default function AddBlend({ navigation }) {
                   paddingLeft: hp(2),
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: wp(20),
+                  gap: wp(12),
                 }}
               >
                 <AntDesign
@@ -218,7 +218,7 @@ export default function AddBlend({ navigation }) {
                     fontWeight: "bold",
                   }}
                 >
-                  Add Blend
+                  Add Blend Cpp-3
                 </Text>
               </View>
 

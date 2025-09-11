@@ -480,6 +480,7 @@ export default function BinStock({ navigation }) {
                               backgroundColor: "white",
                             }}
                             placeholder="Coal Name"
+                            autoCapitalize="characters"
                             onChangeText={(value) => {
                               if (/^[0-9]*$/.test(value)) {
                                 return alert("Coal Name must be alphabets...");
@@ -629,6 +630,7 @@ export default function BinStock({ navigation }) {
                               backgroundColor: "white",
                             }}
                             placeholder="Coal Name"
+                            autoCapitalize="characters"
                             onChangeText={(value) => {
                               if (/^[0-9]*$/.test(value)) {
                                 return alert("Coal Name must be alphabets...");
