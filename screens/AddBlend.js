@@ -200,7 +200,7 @@ export default function AddBlend({ navigation }) {
                   paddingLeft: hp(2),
                   flexDirection: "row",
                   alignItems: "center",
-                  gap: wp(20),
+                  gap: wp(10),
                 }}
               >
                 <AntDesign
@@ -218,7 +218,7 @@ export default function AddBlend({ navigation }) {
                     fontWeight: "bold",
                   }}
                 >
-                  Add Blend
+                  Add Blend Cpp-1
                 </Text>
               </View>
 

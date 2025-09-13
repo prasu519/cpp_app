@@ -45,7 +45,10 @@ export default function Home({ navigation }) {
   const handleEnterShiftReport = () => {
     setAuthModelVisible(true);
   };
-  const handleEnterBlend = () => {
+  const handleEnterBlendCpp1 = () => {
+    setBlendAuthModelVisible(true);
+  };
+  const handleEnterBlendCpp3 = () => {
     setEnableCpp3(true);
     setBlendAuthModelVisible(true);
   };
@@ -62,6 +65,7 @@ export default function Home({ navigation }) {
           setCredentials(responce.data.data[0]);
           if (enableCpp3) {
             navigation.navigate("AddBlendCpp3");
+            setEnableCpp3(false);
           } else {
             navigation.navigate("AddBlend");
           }
@@ -146,7 +150,7 @@ export default function Home({ navigation }) {
           titleStyle={{ fontSize: 20, color: "white" }}
           radius={25}
           color="#FF8080"
-          onPress={handleEnterBlend} //{() => navigation.navigate("AddBlend")}
+          onPress={handleEnterBlendCpp1} //{() => navigation.navigate("AddBlend")}
         ></Button>
         <BlendAuthentication
           onClose={handleBlendAuthClose}
@@ -160,7 +164,7 @@ export default function Home({ navigation }) {
           titleStyle={{ fontSize: 20, color: "white" }}
           radius={25}
           color="#FF8080"
-          onPress={handleEnterBlend} //{() => navigation.navigate("AddBlend")}
+          onPress={handleEnterBlendCpp3} //{() => navigation.navigate("AddBlend")}
         ></Button>
         <BlendAuthentication
           onClose={handleBlendAuthClose}
