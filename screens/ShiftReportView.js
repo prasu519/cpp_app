@@ -29,6 +29,7 @@ export default function ShiftReportView({ navigation }) {
   const [feeding, setFeeding] = useState();
   const [reclaiming, setReclaiming] = useState();
   const [blend, setBlend] = useState();
+  const [blendCpp3, setBlendCpp3] = useState();
   const [coalTowerStock, setCoalTowerStock] = useState();
   const [mbTopStock, setMbTopStock] = useState();
   const [runningHours, setRunningHours] = useState();
@@ -40,6 +41,7 @@ export default function ShiftReportView({ navigation }) {
 
   const [coalCount, setCoalCount] = useState(0);
   const [blendCount, setBlendCount] = useState(0);
+  const [blendCountCpp3, setBlendCountCpp3] = useState(0);
   const [loadCard, setLoadCard] = useState(false);
   const [clickSubmit, setClickSubmit] = useState(false);
   const [latestRecord, setLatestRecord] = useState();
@@ -327,7 +329,7 @@ export default function ShiftReportView({ navigation }) {
                           .join("")
                   }
                   <p style="text-decoration: underline; font-size: 24px; font-weight:bold"; margin-bottom: 5px;>
-                   MB-Top Stock
+                   CPP3 MB-Top Stock
                   </p>
                   ${Array.from({ length: 6 }, (_, index) =>
                     mbTopStock["cpp3coal" + (index + 1) + "name"] ===
@@ -359,8 +361,42 @@ export default function ShiftReportView({ navigation }) {
                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                    ${mbTopStock.cpp3total_stock}
                   </p>
-                </div>
-              </div>
+               
+           <p style="text-decoration: underline; font-size: 24px; font-weight:bold"; margin-bottom: 5px;>
+                 CPP3 Blend Ratio
+               </p>
+               ${Array.from(
+                 { length: blendCountCpp3 },
+                 (_, index) => `
+               <div style="margin: 10px;  flex-direction: row; ">
+                 <p style=" display: flex; justify-content: space-between;">
+                 <span style="font-size: 17px; font-weight:bold">
+
+                 ${blendCpp3["cn" + (index + 1)].toUpperCase()}
+                 </span>
+                 <span style=" margin-left: 20px;font-size: 17px; font-weight:bold">
+                 ${blendCpp3["cp" + (index + 1)] + "%"}
+                 </span>
+                 </p>
+               </div>
+               `
+               ).join("")}
+               <p style="text-decoration: underline; font-size: 24px; font-weight:bold"; margin-bottom: 5px;>
+                 Cpp3 Blend Start Date
+               </p>
+               <div style="margin: 10px;  flex-direction: row; ">
+                 <p style=" display: flex; justify-content: space-between;">
+                 <span style="font-size: 17px; font-weight:bold">
+                 ${FormatDate(new Date(blendCpp3.date))}
+                 </span>
+                 <span style=" margin-left: 20px;font-size: 17px; font-weight:bold">
+                 ${blendCpp3.shift}
+                 </span>
+                 </p>
+               </div> 
+
+               </div>
+               </div>
 
               <div style= "display:flex; flex-direction:row; width:780px; height:930px;  margin-top:5px;border:2px solid black;align-self: center;margin-left:10px;margin-right:10px">
               <div style=" flex-direction:column;  display: inline-block;float: left; width:400px;float:left;  text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px; margin-left:10px;border-right: 2px solid black;">
@@ -769,6 +805,7 @@ export default function ShiftReportView({ navigation }) {
     let shift = selectedShift;
     getShiftReportPersonDetails(date, shift);
     getBlend(date, shift);
+    getBlendCpp3(date, shift);
     getReclaimingData(date, shift);
     getfeedingdata(date, shift);
     getCoalTowerStock(date, shift);
@@ -806,6 +843,21 @@ export default function ShiftReportView({ navigation }) {
       .then((response) => {
         setBlend(response.data.data[0]);
         setBlendCount(response.data.data[0].total);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const getBlendCpp3 = async (date, shift) => {
+    await axios
+      .get(BaseUrl + "/blend/cpp3", {
+        params: {
+          date: date,
+          shift: shift,
+        },
+      })
+      .then((response) => {
+        setBlendCpp3(response.data.data[0]);
+        setBlendCountCpp3(response.data.data[0].total);
       })
       .catch((error) => console.log(error));
   };
@@ -2409,6 +2461,43 @@ export default function ShiftReportView({ navigation }) {
                         <Divider orientation="vertical" />
                         <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
                           {blend["cp" + (index + 1)]}%
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </Card>
+              <Card>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  CPP3 Blend
+                </Card.Title>
+                <Card.Divider />
+                {blendCpp3 && blendCountCpp3 > 0 && (
+                  <View style={{ marginTop: 10 }}>
+                    {Array.from({ length: blendCountCpp3 }, (_, index) => (
+                      <View
+                        key={index}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(5),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {blendCpp3["cn" + (index + 1)]}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {blendCpp3["cp" + (index + 1)]}%
                         </Text>
                       </View>
                     ))}
