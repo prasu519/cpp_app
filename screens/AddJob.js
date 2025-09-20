@@ -12,9 +12,8 @@ import axios from "axios";
 import shift from "../utils/Shift";
 import BlendAuthentication from "./BlendAuthentication";
 
-export default function Home({ navigation }) {
+export default function AddJob({ navigation }) {
   const [enableCpp3, setEnableCpp3] = useState(false);
-  const [enableAddJob, setEnableAddJob] = useState(false);
   const [authModelVisible, setAuthModelVisible] = useState(false);
   const [blendAuthModelVisible, setBlendAuthModelVisible] = useState(false);
   const [shiftReportEnteredBy, setShiftReportEnteredBy] = useState();
@@ -25,15 +24,8 @@ export default function Home({ navigation }) {
     setGlobalDate,
     globalShift,
     setGlobalShift,
-    setReclaimingData,
-    setFeedingData,
-    setRunningHoursData,
-    setShiftDelaysData,
-    setMbTopStockData,
-    setCoalTowerStockData,
-    setCoalAnalysisData,
-    setPushingScheduleData,
-    setAllCrushersData,
+    addJobType,
+    setAddJobType,
   } = useContext(GlobalContext);
 
   const handleAuthModelClose = () => {
@@ -53,10 +45,6 @@ export default function Home({ navigation }) {
     setEnableCpp3(true);
     setBlendAuthModelVisible(true);
   };
-  const handleAddJob = () => {
-    setEnableAddJob(true);
-    setBlendAuthModelVisible(true);
-  };
 
   const handleBlendAuthModelSubmit = async (empnum) => {
     await axios
@@ -68,10 +56,7 @@ export default function Home({ navigation }) {
       .then((responce) => {
         if (responce.data.data[0]) {
           setCredentials(responce.data.data[0]);
-          if (enableAddJob) {
-            navigation.navigate("AddJob");
-            setEnableAddJob(false);
-          } else if (enableCpp3) {
+          if (enableCpp3) {
             navigation.navigate("AddBlendCpp3");
             setEnableCpp3(false);
           } else {
@@ -117,15 +102,15 @@ export default function Home({ navigation }) {
         style={{
           position: "absolute",
           zIndex: 1,
-          height: hp(30),
+          height: hp(15),
           width: wp(100),
           backgroundColor: "#2FF3E0",
           borderBottomLeftRadius: hp(8),
           borderBottomRightRadius: hp(8),
         }}
       >
-        <View style={{ alignItems: "center", marginVertical: 80 }}>
-          <Text h2>Welcome To CPP</Text>
+        <View style={{ alignItems: "center", marginVertical: 35 }}>
+          <Text h2>Add Job</Text>
         </View>
       </View>
       <View
@@ -135,88 +120,54 @@ export default function Home({ navigation }) {
           zIndex: 1,
           alignItems: "center",
           justifyContent: "center",
-          gap: 30,
-          top: wp(10),
+          gap: 40,
+          top: wp(8),
         }}
       >
         <Button
-          title={"Enter Shift Reports"}
-          buttonStyle={{ width: 200, height: 100, elevation: 20 }}
+          title={"Operational Job"}
+          buttonStyle={{ width: 250, height: 60 }}
           titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
+          onPress={() => navigation.navigate("AddJobDetails")}
           color="#E3E587"
-          onPress={handleEnterShiftReport}
-        />
-
-        <ShiftReportAuthentication
-          onClose={handleAuthModelClose}
-          visible={authModelVisible}
-          onSubmit={handleAuthModelSubmit}
-        />
-
-        <Button
-          title={"View Reports"}
-          buttonStyle={{ width: 200, height: 60 }}
-          titleStyle={{ fontSize: 20, color: "white" }}
-          radius={25}
-          onPress={() => navigation.navigate("ViewReports")}
         ></Button>
 
         <Button
-          title={"Add Blend Cpp1"}
-          buttonStyle={{ width: 200, height: 60 }}
-          titleStyle={{ fontSize: 20, color: "white" }}
+          title={"Mechanical Job"}
+          buttonStyle={{ width: 250, height: 60 }}
+          titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
-          color="#FF8080"
-          onPress={handleEnterBlendCpp1} //{() => navigation.navigate("AddBlend")}
+          onPress={() => navigation.navigate("AddJobDetails")}
+          color="#E3E587"
         ></Button>
-        <BlendAuthentication
-          onClose={handleBlendAuthClose}
-          visible={blendAuthModelVisible}
-          onSubmit={handleBlendAuthModelSubmit}
-        />
 
         <Button
-          title={"Add Blend Cpp3"}
-          buttonStyle={{ width: 200, height: 60 }}
-          titleStyle={{ fontSize: 20, color: "white" }}
+          title={"Electrical Job"}
+          buttonStyle={{ width: 250, height: 60 }}
+          titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
-          color="#FF8080"
-          onPress={handleEnterBlendCpp3} //{() => navigation.navigate("AddBlend")}
+          onPress={() => navigation.navigate("AddJobDetails")}
+          color="#E3E587"
         ></Button>
-        <BlendAuthentication
-          onClose={handleBlendAuthClose}
-          visible={blendAuthModelVisible}
-          onSubmit={handleBlendAuthModelSubmit}
-        />
 
         <Button
-          title={"Add New Job"}
-          buttonStyle={{ width: 200, height: 60 }}
-          titleStyle={{ fontSize: 20, color: "white" }}
+          title={"Instrumentation Job"}
+          buttonStyle={{ width: 250, height: 60 }}
+          titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
-          color="#FF8080"
-          onPress={handleAddJob} //{() => navigation.navigate("AddBlend")}
+          onPress={() => navigation.navigate("AddJobDetails")}
+          color="#E3E587"
         ></Button>
-        <BlendAuthentication
-          onClose={handleBlendAuthClose}
-          visible={blendAuthModelVisible}
-          onSubmit={handleBlendAuthModelSubmit}
-        />
+
         <Button
-          title={"Show Pending Jobs"}
-          buttonStyle={{ width: 200, height: 60 }}
-          titleStyle={{ fontSize: 18, color: "white" }}
+          title={"Other Jobs"}
+          buttonStyle={{ width: 250, height: 60 }}
+          titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
-          onPress={() => navigation.navigate("ViewReports")}
+          onPress={() => navigation.navigate("AddJobDetails")}
+          color="#E3E587"
         ></Button>
-        {/* <Button
-          title={"Crushers Report"}
-          buttonStyle={{ width: 200, height: 100 }}
-          titleStyle={{ fontSize: 25, color: "white" }}
-          radius={25}
-          onPress={() => navigation.navigate("CrushersDataEntry")}
-        ></Button> */}
       </View>
     </View>
   );

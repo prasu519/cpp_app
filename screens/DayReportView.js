@@ -145,7 +145,8 @@ export default function DayReportView({ navigation }) {
 
 
               <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
-                <h2 style="text-decoration: underline; margin-top:30px">Pushing Schedule</h2>
+      <!--      
+              <h2 style="text-decoration: underline; margin-top:30px">Pushing Schedule</h2>
                 ${["bat1", "bat2", "bat3", "bat4", "bat5"]
                   .map(
                     (item, index) =>
@@ -165,6 +166,57 @@ export default function DayReportView({ navigation }) {
                   <span style="font-size: 30px; font-weight:bold">${
                     mergedPushingData.total_pushings
                   }</span>
+      -->
+                  
+
+                <h2 style="text-decoration: underline;">CPP3 Reclaiming</h2>
+                ${Object.keys(cpp3MergedReclaimingData)
+                  .map((key) =>
+                    key === "patha" ||
+                    key === "pathb" ||
+                    key === "cpp3total_reclaiming"
+                      ? null
+                      : `
+
+              <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
+              <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
+              <span style="font-size: 20px; font-weight: bold;">
+              ${key.toUpperCase()}
+              </span>
+            </div>
+            
+            <span style="font-size: 20px; font-weight: bold;">
+            ${cpp3MergedReclaimingData[key]}
+            </span>
+          </div>
+      `
+                  )
+                  .join("")}
+      <h3 style="text-decoration: underline; margin-top:30px ">Stream-wise Reclm</h3>
+      ${["patha", "pathb"]
+        .map(
+          (item, index) =>
+            `
+
+            <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
+            <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
+              <span style="font-size: 20px; font-weight: bold;">
+              ${item.toUpperCase()}
+              </span>
+            </div>
+            
+            <span style="font-size: 20px; font-weight: bold;">
+            ${cpp3MergedReclaimingData[item]}
+            </span>
+          </div>
+      `
+        )
+        .join("")}
+        <h3 style="text-decoration: underline; margin-top:30px">Total Reclaiming</h3>
+        <span style="font-size: 30px; font-weight:bold">${
+          cpp3MergedReclaimingData.cpp3total_reclaiming
+        }</span>
+        
               </div>
 
               <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
@@ -209,55 +261,7 @@ export default function DayReportView({ navigation }) {
                    )
                    .join("")}
                   </br>
-                   <h2 style="text-decoration: underline;">CPP3 Reclaiming</h2>
-                ${Object.keys(cpp3MergedReclaimingData)
-                  .map((key) =>
-                    key === "patha" ||
-                    key === "pathb" ||
-                    key === "cpp3total_reclaiming"
-                      ? null
-                      : `
-
-                      <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
-                      <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
-                        <span style="font-size: 20px; font-weight: bold;">
-                        ${key.toUpperCase()}
-                        </span>
-                      </div>
-                      
-                      <span style="font-size: 20px; font-weight: bold;">
-                      ${cpp3MergedReclaimingData[key]}
-                      </span>
-                    </div>
-                `
-                  )
-                  .join("")}
-
-               
-                <h3 style="text-decoration: underline; margin-top:30px ">Stream-wise Reclm</h3>
-                ${["patha", "pathb"]
-                  .map(
-                    (item, index) =>
-                      `
-
-                      <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
-                      <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
-                        <span style="font-size: 20px; font-weight: bold;">
-                        ${item.toUpperCase()}
-                        </span>
-                      </div>
-                      
-                      <span style="font-size: 20px; font-weight: bold;">
-                      ${cpp3MergedReclaimingData[item]}
-                      </span>
-                    </div>
-                `
-                  )
-                  .join("")}
-                  <h3 style="text-decoration: underline; margin-top:30px">Total Reclaiming</h3>
-                  <span style="font-size: 30px; font-weight:bold">${
-                    cpp3MergedReclaimingData.cpp3total_reclaiming
-                  }</span>
+                  
 
               </div>
               

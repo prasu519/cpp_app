@@ -17,6 +17,7 @@ export const GlobalProvider = ({ children }) => {
   const [globalDate, setGlobalDate] = useState();
   const [globalShift, setGlobalShift] = useState();
   const [allCrushersData, setAllCrushersData] = useState();
+  const [addJobType, setAddJobType] = useState();
 
   return (
     <GlobalContext.Provider
@@ -45,6 +46,8 @@ export const GlobalProvider = ({ children }) => {
         setGlobalShift,
         allCrushersData,
         setAllCrushersData,
+        addJobType,
+        setAddJobType,
       }}
     >
       {children}

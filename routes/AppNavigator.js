@@ -29,6 +29,8 @@ import BlendReportViewCpp3 from "../screens/BlendReportViewCpp3";
 import CrusherStatus from "../screens/CrusherStatus";
 import CrushersDataEntry from "../screens/CrushersDataEntry";
 import CrusherEdit from "../components/CrusherEdit";
+import AddJob from "../screens/AddJob";
+import AddJobDetails from "../screens/AddJobDetails";
 
 const stack = createNativeStackNavigator();
 
@@ -77,6 +79,8 @@ function AppNavigator(props) {
       />
       <stack.Screen name="CrusherStatus" component={CrusherStatus} />
       <stack.Screen name="CrushersDataEntry" component={CrushersDataEntry} />
+      <stack.Screen name="AddJob" component={AddJob} />
+      <stack.Screen name="AddJobDetails" component={AddJobDetails} />
     </stack.Navigator>
   );
 }
