@@ -74,6 +74,7 @@ export default function MonthReportView({ navigation }) {
         },
       });
       setTotalFeeding(response.data.data);
+      console.log(response.data.data);
     } catch (error) {
       console.log(error);
       alert(
@@ -427,6 +428,44 @@ export default function MonthReportView({ navigation }) {
             </Card.Title>
           </Card>
         )}
+
+        {totalFeeding !== undefined && (
+          <Card>
+            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
+              {"Feeding to Coal Towers"}
+            </Card.Title>
+            <Card.Divider />
+            <View style={{ marginTop: 10 }}>
+              {["Ct1", "Ct2", "Ct3"].map((item, index) => (
+                <View
+                  key={index}
+                  style={{
+                    marginBottom: 10,
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: hp(3),
+                  }}
+                >
+                  <View
+                    style={{
+                      width: wp(30),
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                      {item.toUpperCase()}
+                    </Text>
+                  </View>
+                  <Divider orientation="vertical" />
+                  <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                    {totalFeeding["total" + item]}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </Card>
+        )}
+
         {crusherFeedersTotal !== undefined && (
           <Card>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>

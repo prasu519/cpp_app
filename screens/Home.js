@@ -190,7 +190,7 @@ export default function Home({ navigation }) {
           onSubmit={handleBlendAuthModelSubmit}
         />
 
-        <Button
+        {/*  <Button
           title={"Add New Job"}
           buttonStyle={{ width: 200, height: 60 }}
           titleStyle={{ fontSize: 20, color: "white" }}
@@ -210,7 +210,7 @@ export default function Home({ navigation }) {
           radius={25}
           onPress={() => navigation.navigate("ViewReports")}
         ></Button>
-        {/* <Button
+      <Button
           title={"Crushers Report"}
           buttonStyle={{ width: 200, height: 100 }}
           titleStyle={{ fontSize: 25, color: "white" }}
