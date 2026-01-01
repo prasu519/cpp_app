@@ -15,6 +15,10 @@ import { FormatDate } from "../utils/FormatDate";
 export default function MonthReportView({ navigation }) {
   const [selectedFromDate, setSelectedFromDate] = useState(new Date());
   const [selectedToDate, setSelectedToDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedFromShift, setSelectedFromShift] = useState();
+  const [selectedToShift, setSelectedToShift] = useState();
+  const [selectedShift, setSelectedShift] = useState("");
   const [showFromDatePicker, setShowFromDatePicker] = useState(false);
   const [showToDatePicker, setShowToDatePicker] = useState(false);
   const [blendData, setBlendData] = useState({});
@@ -29,6 +33,7 @@ export default function MonthReportView({ navigation }) {
   const [toDateDate, setToDateDate] = useState();
   const [totalPushings, setTotalPushings] = useState();
   const [crusherFeedersTotal, setCrusherFeedersTotal] = useState();
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleFromDateChange = (event, date) => {
     setShowFromDatePicker(false);
@@ -47,12 +52,21 @@ export default function MonthReportView({ navigation }) {
     }
   };
 
-  const getAvgCI = async (fromDate, toDate) => {
+  const handleDateChange = (event, date) => {
+    setShowDatePicker(false);
+    if (date) {
+      setSelectedDate(date);
+    }
+  };
+
+  const getAvgCI = async (fromDate, fromShift, toDate, toShift) => {
     try {
       const response = await axios.get(BaseUrl + "/coalAnalysis/avgci", {
         params: {
           fromdate: fromDate,
+          fromshift: fromShift,
           todate: toDate,
+          toshift: toShift,
         },
       });
       setAvgCI(response.data.data);
@@ -65,16 +79,17 @@ export default function MonthReportView({ navigation }) {
     }
   };
 
-  const getTotalFeeding = async (fromDate, toDate) => {
+  const getTotalFeeding = async (fromDate, fromShift, toDate, toShift) => {
     try {
       const response = await axios.get(BaseUrl + "/feeding/totfeeding", {
         params: {
           fdate: fromDate,
+          fshift: fromShift,
           tdate: toDate,
+          tshift: toShift,
         },
       });
       setTotalFeeding(response.data.data);
-      console.log(response.data.data);
     } catch (error) {
       console.log(error);
       alert(
@@ -83,12 +98,14 @@ export default function MonthReportView({ navigation }) {
       );
     }
   };
-  const getTotalRecl = async (fromDate, toDate) => {
+  const getTotalRecl = async (fromDate, fromShift, toDate, toShift) => {
     try {
       const response = await axios.get(BaseUrl + "/reclaiming/totrecl", {
         params: {
           fdate: fromDate,
+          fshift: fromShift,
           tdate: toDate,
+          tshift: toShift,
         },
       });
       setTotalRecl(response.data.data);
@@ -100,12 +117,19 @@ export default function MonthReportView({ navigation }) {
       );
     }
   };
-  const getTotalReclByCoalNameCpp1 = async (fromDate, toDate) => {
+  const getTotalReclByCoalNameCpp1 = async (
+    fromDate,
+    fromShift,
+    toDate,
+    toShift
+  ) => {
     try {
       const response = await axios.get(BaseUrl + "/reclaiming/totByCoalNames", {
         params: {
           fdate: fromDate,
+          fshift: fromShift,
           tdate: toDate,
+          tshift: toShift,
         },
       });
       setTotByCoalNamesCpp1(response.data.data);
@@ -117,14 +141,21 @@ export default function MonthReportView({ navigation }) {
       );
     }
   };
-  const getTotalReclByCoalNameCpp3 = async (fromDate, toDate) => {
+  const getTotalReclByCoalNameCpp3 = async (
+    fromDate,
+    fromShift,
+    toDate,
+    toShift
+  ) => {
     try {
       const response = await axios.get(
         BaseUrl + "/reclaiming/totByCoalNamesCpp3",
         {
           params: {
             fdate: fromDate,
+            fshift: fromShift,
             tdate: toDate,
+            tshift: toShift,
           },
         }
       );
@@ -137,16 +168,24 @@ export default function MonthReportView({ navigation }) {
       );
     }
   };
-  const getPrevDayCShiftCTStock = async (fromDate) => {
-    const pdate = new Date(fromDate);
-    pdate.setDate(pdate.getDate() - 1);
-    const prvdate = pdate.toISOString().split("T")[0];
-    setPrevDayDate(prvdate);
+  const getPrevDayCShiftCTStock = async (fromDate, fromShift) => {
+    let prevShift;
+    let prvdate;
+    if (fromShift == "A") {
+      prevShift = "C";
+      const pdate = new Date(fromDate);
+      pdate.setDate(pdate.getDate() - 1);
+      prvdate = pdate.toISOString().split("T")[0];
+      setPrevDayDate(prvdate);
+    }
+    if (fromShift == "B") prevShift = "A";
+    if (fromShift == "C") prevShift = "B";
+
     try {
       const responce = await axios.get(BaseUrl + "/coaltowerstock", {
         params: {
-          date: prvdate,
-          shift: "C",
+          date: fromShift === "A" ? prvdate : fromDate,
+          shift: prevShift,
         },
       });
       setPrevDayCShiftCTStock(responce.data.data[0]);
@@ -158,13 +197,13 @@ export default function MonthReportView({ navigation }) {
       );
     }
   };
-  const getToDateCShiftCTStock = async (toDate) => {
+  const getToDateCShiftCTStock = async (toDate, toShift) => {
     setToDateDate(toDate);
     try {
       const responce = await axios.get(BaseUrl + "/coaltowerstock", {
         params: {
           date: toDate,
-          shift: "C",
+          shift: toShift,
         },
       });
       setToDateCShiftCTStock(responce.data.data[0]);
@@ -176,10 +215,15 @@ export default function MonthReportView({ navigation }) {
       );
     }
   };
-  const getTotalPushings = async (fromDate, toDate) => {
+  const getTotalPushings = async (fromDate, fromShift, toDate, toShift) => {
     try {
       const responce = await axios.get(BaseUrl + "/pushings/totpush", {
-        params: { fromdate: fromDate, todate: toDate },
+        params: {
+          fromdate: fromDate,
+          fromshift: fromShift,
+          todate: toDate,
+          toshift: toShift,
+        },
       });
       setTotalPushings(responce.data.data);
     } catch (error) {
@@ -190,10 +234,20 @@ export default function MonthReportView({ navigation }) {
       );
     }
   };
-  const getCrusherFeedersTotal = async (fromDate, toDate) => {
+  const getCrusherFeedersTotal = async (
+    fromDate,
+    fromShift,
+    toDate,
+    toShift
+  ) => {
     try {
       const responce = await axios.get(BaseUrl + "/crusher/feedersTotal", {
-        params: { fdate: fromDate, tdate: toDate },
+        params: {
+          fdate: fromDate,
+          fshift: fromShift,
+          tdate: toDate,
+          tshift: toShift,
+        },
       });
       setCrusherFeedersTotal(responce.data.data);
     } catch (error) {
@@ -206,9 +260,15 @@ export default function MonthReportView({ navigation }) {
   };
 
   const handleSubmit = async () => {
+    if (selectedFromShift === undefined || selectedToShift == undefined) {
+      alert("please enter shift");
+      return;
+    }
     const todaydate = new Date();
     let fromDate = new Date(selectedFromDate).toISOString().split("T")[0];
+    let fromShift = selectedFromShift;
     let toDate = new Date(selectedToDate).toISOString().split("T")[0];
+    let toShift = selectedToShift;
     let todayDate = new Date(todaydate).toISOString().split("T")[0];
 
     if (toDate >= todayDate) {
@@ -222,16 +282,30 @@ export default function MonthReportView({ navigation }) {
       );
       return; // Exit the function
     }
+    if (fromDate > toDate) {
+      Alert.alert(
+        "Invalid Date",
+        "From Date should be less than To Date date."
+      );
+      return; // Exit the function
+    }
+    if (fromDate == toDate && fromShift > toShift) {
+      Alert.alert(
+        "Invalid Date",
+        "From Shift should be less than To shift in same date."
+      );
+      return; // Exit the function
+    }
 
-    await getAvgCI(fromDate, toDate);
-    await getTotalFeeding(fromDate, toDate);
-    await getTotalRecl(fromDate, toDate);
-    await getPrevDayCShiftCTStock(fromDate);
-    await getToDateCShiftCTStock(toDate);
-    await getTotalPushings(fromDate, toDate);
-    await getTotalReclByCoalNameCpp1(fromDate, toDate);
-    await getTotalReclByCoalNameCpp3(fromDate, toDate);
-    await getCrusherFeedersTotal(fromDate, toDate);
+    await getAvgCI(fromDate, fromShift, toDate, toShift);
+    await getTotalFeeding(fromDate, fromShift, toDate, toShift);
+    await getTotalRecl(fromDate, fromShift, toDate, toShift);
+    await getPrevDayCShiftCTStock(fromDate, fromShift);
+    await getToDateCShiftCTStock(toDate, toShift);
+    await getTotalPushings(fromDate, fromShift, toDate, toShift);
+    await getTotalReclByCoalNameCpp1(fromDate, fromShift, toDate, toShift);
+    await getTotalReclByCoalNameCpp3(fromDate, fromShift, toDate, toShift);
+    await getCrusherFeedersTotal(fromDate, fromShift, toDate, toShift);
   };
 
   const formatItem = (str) => {
@@ -285,16 +359,282 @@ export default function MonthReportView({ navigation }) {
           </Text>
         </View>
       </View>
-      <View
-        style={{
-          position: "relative",
-          zIndex: 1,
-          marginTop: hp(15),
-          padding: hp(2),
-          gap: wp(2),
-        }}
-      >
+      <ScrollView>
         <View
+          style={{
+            position: "relative",
+            marginTop: hp(15),
+            padding: hp(2),
+            gap: wp(2),
+            height: hp(55),
+            backgroundColor: "#EFECE3",
+            borderRadius: 20,
+            top: wp(1),
+            borderWidth: 0.5,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignSelf: "center",
+              height: hp(5),
+              width: wp(50),
+              backgroundColor: "lightgreen",
+              borderRadius: 25,
+              flexDirection: "row",
+              gap: 10,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: wp(6),
+                color: "black",
+                alignSelf: "center",
+                fontWeight: "bold",
+              }}
+            >
+              From
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignSelf: "center",
+              height: hp(10),
+              width: wp(90),
+              backgroundColor: "lightgrey",
+              borderRadius: 25,
+              flexDirection: "row",
+              gap: 10,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                gap: wp(2),
+                alignItems: "center",
+                justifyContent: "center",
+                height: hp(5),
+                width: wp(45),
+              }}
+            >
+              <Button
+                title="Date"
+                buttonStyle={{ width: wp(18), height: hp(5) }}
+                titleStyle={{
+                  fontSize: hp(2),
+                  color: "white",
+                  borderBottomWidth: 2,
+                  borderBottomColor: "white",
+                }}
+                radius={25}
+                onPress={() => setShowFromDatePicker(true)}
+              />
+              {showFromDatePicker && (
+                <DateTimePicker
+                  value={selectedFromDate}
+                  mode="date"
+                  display="spinner"
+                  onChange={handleFromDateChange}
+                />
+              )}
+              <Text style={{ fontSize: hp(2), color: "red" }}>
+                {selectedFromDate.toISOString().split("T")[0]}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: wp(1),
+                alignItems: "center",
+                height: hp(5),
+                width: wp(40),
+                backgroundColor: "white",
+                borderRadius: 20,
+              }}
+            >
+              <View
+                style={{
+                  height: hp(5),
+                  width: wp(18),
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#6495ED",
+                  borderRadius: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: hp(2),
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                    color: "white",
+                  }}
+                >
+                  Shift
+                </Text>
+              </View>
+              <Picker
+                id="Shift"
+                style={{
+                  width: wp(25),
+                }}
+                mode="dropdown"
+                enabled={true}
+                onValueChange={(shift) => setSelectedFromShift(shift)}
+                selectedValue={selectedFromShift}
+              >
+                {[" ", "A", "B", "C"].map((shift) => (
+                  <Picker.Item
+                    key={shift}
+                    label={shift.toString()}
+                    value={shift}
+                    style={{ fontSize: hp(2), color: "red" }}
+                  />
+                ))}
+              </Picker>
+            </View>
+          </View>
+          <View
+            style={{
+              width: wp(90),
+              marginVertical: wp(7),
+              borderBottomColor: "lightgrey",
+              borderBottomWidth: wp(0.5),
+              top: hp(1),
+            }}
+          ></View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignSelf: "center",
+              height: hp(5),
+              width: wp(20),
+              backgroundColor: "lightgreen",
+              borderRadius: 25,
+              flexDirection: "row",
+            }}
+          >
+            <Text
+              style={{
+                fontSize: wp(6),
+                color: "black",
+                alignSelf: "center",
+                fontWeight: "bold",
+              }}
+            >
+              To
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignSelf: "center",
+              height: hp(10),
+              width: wp(90),
+              backgroundColor: "lightgrey",
+              borderRadius: 25,
+              flexDirection: "row",
+              gap: 10,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: "row",
+                gap: wp(2),
+                alignItems: "center",
+                justifyContent: "center",
+                height: hp(5),
+                width: wp(45),
+              }}
+            >
+              <Button
+                title="Date"
+                buttonStyle={{ width: wp(18), height: hp(5) }}
+                titleStyle={{
+                  fontSize: hp(2),
+                  color: "white",
+                  borderBottomWidth: 2,
+                  borderBottomColor: "white",
+                }}
+                radius={25}
+                onPress={() => setShowToDatePicker(true)}
+              />
+              {showToDatePicker && (
+                <DateTimePicker
+                  value={selectedToDate}
+                  mode="date"
+                  display="spinner"
+                  onChange={handleToDateChange}
+                />
+              )}
+              <Text style={{ fontSize: hp(2), color: "red" }}>
+                {selectedToDate.toISOString().split("T")[0]}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                gap: wp(1),
+                alignItems: "center",
+                height: hp(5),
+                width: wp(40),
+                backgroundColor: "white",
+                borderRadius: 20,
+              }}
+            >
+              <View
+                style={{
+                  height: hp(5),
+                  width: wp(18),
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#6495ED",
+                  borderRadius: 20,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: hp(2),
+                    alignSelf: "center",
+                    fontWeight: "bold",
+                    color: "white",
+                  }}
+                >
+                  Shift
+                </Text>
+              </View>
+              <Picker
+                id="Shift"
+                style={{
+                  width: wp(25),
+                }}
+                mode="dropdown"
+                enabled={true}
+                onValueChange={(shift) => setSelectedToShift(shift)}
+                selectedValue={selectedToShift}
+              >
+                {[" ", "A", "B", "C"].map((shift) => (
+                  <Picker.Item
+                    key={shift}
+                    label={shift.toString()}
+                    value={shift}
+                    style={{ fontSize: hp(2), color: "red" }}
+                  />
+                ))}
+              </Picker>
+            </View>
+          </View>
+
+          {/*  <View
           style={{
             flexDirection: "row",
             gap: wp(2),
@@ -329,7 +669,6 @@ export default function MonthReportView({ navigation }) {
           )}
           <Text style={{ fontSize: hp(2.5), color: "green" }}>
             {FormatDate(selectedFromDate)}
-            {/*{new Date(selectedFromDate).toISOString().split("T")[0]}*/}
           </Text>
         </View>
 
@@ -368,29 +707,40 @@ export default function MonthReportView({ navigation }) {
           )}
           <Text style={{ fontSize: hp(2.5), color: "green" }}>
             {FormatDate(selectedToDate)}
-            {/*{new Date(selectedToDate).toISOString().split("T")[0]}*/}
           </Text>
+        </View>*/}
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              alignSelf: "center",
+              height: hp(10),
+              width: wp(80),
+
+              borderRadius: 25,
+            }}
+          >
+            <Button
+              title={"Submit"}
+              color={"#000080"}
+              buttonStyle={{
+                height: hp(6),
+                width: wp(40),
+                alignSelf: "center",
+              }}
+              radius={20}
+              titleStyle={{
+                textDecorationLine: "underline",
+                fontSize: hp(2),
+                fontWeight: "600",
+              }}
+              onPress={handleSubmit}
+            />
+          </View>
         </View>
 
-        <Button
-          title={"Submit"}
-          color={"#000080"}
-          buttonStyle={{
-            height: hp(5),
-            width: wp(40),
-            marginTop: hp(2),
-            alignSelf: "center",
-          }}
-          radius={20}
-          titleStyle={{
-            textDecorationLine: "underline",
-            fontSize: hp(2),
-            fontWeight: "600",
-          }}
-          onPress={handleSubmit}
-        />
-      </View>
-      <ScrollView>
         {avgCI !== undefined && (
           <Card>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
@@ -401,9 +751,7 @@ export default function MonthReportView({ navigation }) {
         {prevDayCShiftCTStock !== undefined && (
           <Card>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {prevDayDate +
-                "/C-Shift CT Stock - " +
-                prevDayCShiftCTStock.total_stock}
+              {"Opening CT Stock - " + prevDayCShiftCTStock.total_stock}
             </Card.Title>
           </Card>
         )}
@@ -551,9 +899,7 @@ export default function MonthReportView({ navigation }) {
         {toDateCShiftCTStock !== undefined && (
           <Card>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {toDateDate +
-                "/C-Shift CT Stock - " +
-                toDateCShiftCTStock.total_stock}
+              {"Closing CT Stock - " + toDateCShiftCTStock.total_stock}
             </Card.Title>
           </Card>
         )}

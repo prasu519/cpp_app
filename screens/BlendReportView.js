@@ -17,7 +17,10 @@ export default function BlendReportView({ navigation }) {
   const [selectedToDate, setSelectedToDate] = useState(new Date());
   const [showFromDatePicker, setShowFromDatePicker] = useState(false);
   const [showToDatePicker, setShowToDatePicker] = useState(false);
-  const [blendData, setBlendData] = useState({});
+  const [blendData, setBlendData] = useState([]);
+  const [dateShiftArray, setDateShiftArray] = useState([]);
+  const [blendFeedingArray, setBlendFeedingArray] = useState([]);
+
   const [excludedKeys, setExcludedKeys] = useState([
     "__v",
     "_id",
@@ -26,6 +29,18 @@ export default function BlendReportView({ navigation }) {
     "empnum",
     "total",
   ]);
+
+  useEffect(() => {
+    if (blendData.length > 0) {
+      dateShiftSaparator();
+    }
+  }, [blendData]);
+
+  useEffect(() => {
+    if (dateShiftArray.length > 0) {
+      buildBlendFeedingRanges(dateShiftArray);
+    }
+  }, [dateShiftArray]);
 
   const handleFromDateChange = (event, date) => {
     setShowFromDatePicker(false);
@@ -48,7 +63,7 @@ export default function BlendReportView({ navigation }) {
           todate: toDate,
         },
       });
-      setBlendData(response.data.data);
+      setBlendData(response.data.data || []);
     } catch (error) {
       console.log(error);
       alert(
@@ -58,9 +73,132 @@ export default function BlendReportView({ navigation }) {
     }
   };
 
+  const getPreviousShift = (shift) => {
+    if (shift === "A") return "C";
+    if (shift === "B") return "A";
+    if (shift === "C") return "B";
+  };
+
+  const getPreviousDate = (dateStr) => {
+    const d = new Date(dateStr);
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().split("T")[0];
+  };
+
+  const dateShiftSaparator = () => {
+    if (!Array.isArray(blendData)) return;
+
+    setBlendFeedingArray([]); // clear previous data
+
+    const sorted = [...blendData].sort(
+      (a, b) => new Date(a.date) - new Date(b.date)
+    );
+
+    const result = sorted.map((item) => [item.date.split("T")[0], item.shift]);
+
+    setDateShiftArray(result);
+  };
+
+  const buildBlendFeedingRanges = async (arr) => {
+    let results = [];
+
+    for (let i = 0; i < arr.length; i++) {
+      const [startDate, startShift] = arr[i];
+
+      if (i === arr.length - 1) {
+        // last blend ends at selectedToDate and previous shift of last
+        results.push({
+          startDate,
+          startShift,
+          endDate: new Date(selectedToDate).toISOString().split("T")[0],
+          endShift: "C", //getPreviousShift(startShift),
+        });
+      } else {
+        const [nextDate, nextShift] = arr[i + 1];
+
+        let endDate = nextDate;
+        let endShift = getPreviousShift(nextShift);
+
+        if (nextShift === "A") {
+          endDate = getPreviousDate(nextDate);
+          endShift = "C";
+        }
+
+        results.push({
+          startDate,
+          startShift,
+          endDate,
+          endShift,
+        });
+      }
+    }
+
+    // call feeding API for each blend
+    const feeds = [];
+
+    for (const r of results) {
+      const val = await getFeedingBlendWise(
+        r.startDate,
+        r.startShift,
+        r.endDate,
+        r.endShift
+      );
+
+      feeds.push(val);
+    }
+
+    setBlendFeedingArray(feeds);
+  };
+
+  const getFeedingBlendWise = async (
+    blendStartDate,
+    blendStartShift,
+    blendEndDate,
+    blendEndShift
+  ) => {
+    try {
+      //console.log(blendStartDate, blendStartShift, blendEndDate, blendEndShift);
+      const response = await axios.get(BaseUrl + "/feeding/totfeeding", {
+        params: {
+          fdate: blendStartDate,
+          fshift: blendStartShift,
+          tdate: blendEndDate,
+          tshift: blendEndShift,
+        },
+      });
+
+      return response.data.data; // <-- IMPORTANT
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Failed to fetch total feeding cpp1.");
+      return 0;
+    }
+  };
+
   const handleSubmit = async () => {
+    const todaydate = new Date();
     let fromDate = new Date(selectedFromDate).toISOString().split("T")[0];
     let toDate = new Date(selectedToDate).toISOString().split("T")[0];
+    let todayDate = new Date(todaydate).toISOString().split("T")[0];
+
+    if (toDate >= todayDate) {
+      Alert.alert("Invalid Date", "To Date should be less than today's date.");
+      return; // Exit the function
+    }
+    if (fromDate >= todayDate) {
+      Alert.alert(
+        "Invalid Date",
+        "From Date should be less than today's date."
+      );
+      return; // Exit the function
+    }
+    if (fromDate > toDate) {
+      Alert.alert(
+        "Invalid Date",
+        "From Date should be less than To Date date."
+      );
+      return; // Exit the function
+    }
 
     await getBlendDataDatewise(fromDate, toDate);
   };
@@ -106,110 +244,111 @@ export default function BlendReportView({ navigation }) {
           </Text>
         </View>
       </View>
-      <View
-        style={{
-          position: "relative",
-          zIndex: 1,
-          marginTop: hp(15),
-          padding: hp(2),
-          gap: wp(2),
-        }}
-      >
-        <View
-          style={{
-            flexDirection: "row",
-            gap: wp(2),
-            alignItems: "center",
-            justifyContent: "center",
-            alignSelf: "center",
-            height: hp(10),
-            width: wp(80),
-            backgroundColor: "lightgrey",
-            borderRadius: 25,
-          }}
-        >
-          <Button
-            title="From Date"
-            buttonStyle={{ width: wp(40), height: hp(5) }}
-            titleStyle={{
-              fontSize: hp(2),
-              color: "white",
-              borderBottomWidth: 2,
-              borderBottomColor: "white",
-            }}
-            radius={25}
-            onPress={() => setShowFromDatePicker(true)}
-          />
-          {showFromDatePicker && (
-            <DateTimePicker
-              value={selectedFromDate}
-              mode="date"
-              display="spinner"
-              onChange={handleFromDateChange}
-            />
-          )}
-          <Text style={{ fontSize: hp(2.5), color: "green" }}>
-            {FormatDate(selectedFromDate)}
-          </Text>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            gap: wp(2),
-            alignItems: "center",
-            justifyContent: "center",
-            alignSelf: "center",
-            height: hp(10),
-            width: wp(80),
-            backgroundColor: "lightgrey",
-            borderRadius: 25,
-          }}
-        >
-          <Button
-            title="To Date"
-            buttonStyle={{ width: wp(40), height: hp(5) }}
-            titleStyle={{
-              fontSize: hp(2),
-              color: "white",
-              borderBottomWidth: 2,
-              borderBottomColor: "white",
-            }}
-            radius={25}
-            onPress={() => setShowToDatePicker(true)}
-          />
-          {showToDatePicker && (
-            <DateTimePicker
-              value={selectedToDate}
-              mode="date"
-              display="spinner"
-              onChange={handleToDateChange}
-            />
-          )}
-          <Text style={{ fontSize: hp(2.5), color: "green" }}>
-            {FormatDate(selectedToDate)}
-          </Text>
-        </View>
-
-        <Button
-          title={"Submit"}
-          color={"#000080"}
-          buttonStyle={{
-            height: hp(5),
-            width: wp(40),
-            marginTop: hp(2),
-            alignSelf: "center",
-          }}
-          radius={20}
-          titleStyle={{
-            textDecorationLine: "underline",
-            fontSize: hp(2),
-            fontWeight: "600",
-          }}
-          onPress={handleSubmit}
-        />
-      </View>
       <ScrollView>
+        <View
+          style={{
+            position: "relative",
+            zIndex: 1,
+            marginTop: hp(15),
+            padding: hp(2),
+            gap: wp(2),
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              gap: wp(2),
+              alignItems: "center",
+              justifyContent: "center",
+              alignSelf: "center",
+              height: hp(10),
+              width: wp(80),
+              backgroundColor: "lightgrey",
+              borderRadius: 25,
+            }}
+          >
+            <Button
+              title="From Date"
+              buttonStyle={{ width: wp(40), height: hp(5) }}
+              titleStyle={{
+                fontSize: hp(2),
+                color: "white",
+                borderBottomWidth: 2,
+                borderBottomColor: "white",
+              }}
+              radius={25}
+              onPress={() => setShowFromDatePicker(true)}
+            />
+            {showFromDatePicker && (
+              <DateTimePicker
+                value={selectedFromDate}
+                mode="date"
+                display="spinner"
+                onChange={handleFromDateChange}
+              />
+            )}
+            <Text style={{ fontSize: hp(2.5), color: "green" }}>
+              {FormatDate(selectedFromDate)}
+            </Text>
+          </View>
+
+          <View
+            style={{
+              flexDirection: "row",
+              gap: wp(2),
+              alignItems: "center",
+              justifyContent: "center",
+              alignSelf: "center",
+              height: hp(10),
+              width: wp(80),
+              backgroundColor: "lightgrey",
+              borderRadius: 25,
+            }}
+          >
+            <Button
+              title="To Date"
+              buttonStyle={{ width: wp(40), height: hp(5) }}
+              titleStyle={{
+                fontSize: hp(2),
+                color: "white",
+                borderBottomWidth: 2,
+                borderBottomColor: "white",
+              }}
+              radius={25}
+              onPress={() => setShowToDatePicker(true)}
+            />
+            {showToDatePicker && (
+              <DateTimePicker
+                value={selectedToDate}
+                mode="date"
+                display="spinner"
+                onChange={handleToDateChange}
+              />
+            )}
+            <Text style={{ fontSize: hp(2.5), color: "green" }}>
+              {FormatDate(selectedToDate)}
+            </Text>
+          </View>
+
+          <Button
+            title={"Submit"}
+            color={"#000080"}
+            buttonStyle={{
+              height: hp(5),
+              width: wp(40),
+              marginTop: hp(2),
+              alignSelf: "center",
+            }}
+            radius={20}
+            titleStyle={{
+              textDecorationLine: "underline",
+              fontSize: hp(2),
+              fontWeight: "600",
+            }}
+            onPress={handleSubmit}
+          />
+        </View>
+
         {blendData !== undefined &&
           Array.from({ length: blendData.length }, (_, index) => (
             <Card key={index}>
@@ -304,6 +443,35 @@ export default function BlendReportView({ navigation }) {
                       </View>
                     );
                   })}
+              <Card.Divider />
+              <View
+                key={index + 2}
+                style={{
+                  marginBottom: 10,
+                  display: "flex",
+                  flexDirection: "row",
+                  marginLeft: wp(10),
+                  gap: hp(3),
+                }}
+              >
+                <View
+                  style={{
+                    width: wp(30),
+                    alignItems: "flex-end",
+                  }}
+                >
+                  <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                    Feeding
+                  </Text>
+                </View>
+                <Divider orientation="vertical" />
+                <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                  {blendFeedingArray[index]
+                    ? Number(blendFeedingArray[index].totalStream1 || 0) +
+                      Number(blendFeedingArray[index].totalStream1A || 0)
+                    : "Loading..."}
+                </Text>
+              </View>
             </Card>
           ))}
       </ScrollView>
