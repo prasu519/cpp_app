@@ -832,6 +832,10 @@ export default function MonthReportView({ navigation }) {
                 "cr37Feeder2Total",
                 "cr38Feeder1Total",
                 "cr38Feeder2Total",
+                "cr201Feeder1Total",
+                "cr201Feeder2Total",
+                "cr202Feeder1Total",
+                "cr202Feeder2Total",
               ].map((item, index) => (
                 <View
                   key={index}

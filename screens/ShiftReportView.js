@@ -1,5 +1,5 @@
 //date
-import { View, ScrollView, Alert } from "react-native";
+import { View, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState, useEffect, useContext } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -621,7 +621,7 @@ export default function ShiftReportView({ navigation }) {
                 </div>
                 <div style=" flex-direction:column;  display: inline-block;float: left; width:400px;float:left;  text-align:center;align-items:flex-start;margin-top:2px; margin-right:10px; margin-left:10px">
                 <p style="text-decoration: underline; font-size: 25px; font-weight:bold"; margin-bottom: 10px;>Crusher Status</p>             
-                ${["cr34", "cr35", "cr36", "cr37", "cr38"]
+                ${["cr34", "cr35", "cr36", "cr37", "cr38", "cr201", "cr202"]
                   .map(
                     (item, index) =>
                       `
@@ -1290,7 +1290,7 @@ export default function ShiftReportView({ navigation }) {
               </Picker>
             </View>
           </View>
-          <Button
+          {/* <Button
             title={"Submit"}
             color={"#000080"}
             buttonStyle={{
@@ -1307,7 +1307,34 @@ export default function ShiftReportView({ navigation }) {
             }}
             onPress={handleSubmit}
             disabled={!loadLatestRecord}
-          />
+          /> */}
+
+          {!loadLatestRecord ? (
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
+              <ActivityIndicator size="large" color="#0000ff" />
+              <Text style={{ marginTop: hp(1), color: "gray" }}>
+                Loading latest record...
+              </Text>
+            </View>
+          ) : (
+            <Button
+              title="Submit"
+              onPress={handleSubmit}
+              color={"#000080"}
+              buttonStyle={{
+                height: hp(5),
+                width: wp(40),
+                marginTop: hp(2),
+                alignSelf: "center",
+              }}
+              radius={20}
+              titleStyle={{
+                textDecorationLine: "underline",
+                fontSize: hp(2),
+                fontWeight: "600",
+              }}
+            />
+          )}
         </View>
         {shiftReportEnteredBy && latestRecord && !clickSubmit && !loadCard && (
           <View
@@ -2383,7 +2410,7 @@ export default function ShiftReportView({ navigation }) {
                 <Card.Divider />
                 {crusherStatus && (
                   <View style={{ marginTop: 10 }}>
-                    {[34, 35, 36, 37, 38].map((item, index) => (
+                    {[34, 35, 36, 37, 38, 201, 202].map((item, index) => (
                       <View
                         key={index}
                         style={{
@@ -2571,7 +2598,9 @@ export default function ShiftReportView({ navigation }) {
                       fontSize: hp(4),
                     }}
                   >
-                    No Data Available...
+                    {loadCard && reclaiming && mbTopStock && coalCount > 0
+                      ? "Loading.."
+                      : "No Data Available"}
                   </Text>
                   <Text style={{ fontSize: hp(3) }}>Data available upto..</Text>
                   <Text style={{ fontSize: hp(3) }}>

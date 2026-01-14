@@ -36,6 +36,8 @@ export default function CrusherStatus({ navigation, route }) {
   const [cr36Data, setCr36Data] = useState({});
   const [cr37Data, setCr37Data] = useState({});
   const [cr38Data, setCr38Data] = useState({});
+  const [cr201Data, setCr201Data] = useState({});
+  const [cr202Data, setCr202Data] = useState({});
   const [prevShiftCrusherData, setPrevShiftCrusherData] = useState();
   const [crushedCoal, setCrushedCoal] = useState();
 
@@ -74,6 +76,7 @@ export default function CrusherStatus({ navigation, route }) {
         },
       ]);
     }
+    console.log(feedingData);
   }, []);
 
   const getPrevShiftCrusherData = async (date, shift) => {
@@ -114,6 +117,16 @@ export default function CrusherStatus({ navigation, route }) {
       ["status"]: prevShiftCrusherData.cr38status,
       ["feeder"]: prevShiftCrusherData.cr38feeder,
     });
+    setCr201Data({
+      ...cr201Data,
+      ["status"]: prevShiftCrusherData.cr201status,
+      ["feeder"]: prevShiftCrusherData.cr201feeder,
+    });
+    setCr202Data({
+      ...cr202Data,
+      ["status"]: prevShiftCrusherData.cr202status,
+      ["feeder"]: prevShiftCrusherData.cr202feeder,
+    });
   };
 
   const handleSaveCr = async () => {
@@ -137,7 +150,15 @@ export default function CrusherStatus({ navigation, route }) {
       cr38Data.status === undefined ||
       cr38Data.feeder === undefined ||
       cr38Data.status === "" ||
-      cr38Data.feeder === ""
+      cr38Data.feeder === "" ||
+      cr201Data.status === undefined ||
+      cr201Data.feeder === undefined ||
+      cr201Data.status === "" ||
+      cr201Data.feeder === "" ||
+      cr202Data.status === undefined ||
+      cr202Data.feeder === undefined ||
+      cr202Data.status === "" ||
+      cr202Data.feeder === ""
     ) {
       alert("Enter all values..");
       return;
@@ -193,6 +214,10 @@ export default function CrusherStatus({ navigation, route }) {
     let cr37f2coal = 0;
     let cr38f1coal = 0;
     let cr38f2coal = 0;
+    let cr201f1coal = 0;
+    let cr201f2coal = 0;
+    let cr202f1coal = 0;
+    let cr202f2coal = 0;
 
     if (cr34Data.status === "InUse") {
       let crsdcoal = feedingData.stream1 / 2;
@@ -277,6 +302,57 @@ export default function CrusherStatus({ navigation, route }) {
       cr38f2coal = 0;
     }
 
+    if (cr201Data.status === "InUse" && cr202Data.status === "InUse") {
+      let crsdcoal = feedingData.pathc / 2;
+      if (cr201Data.feeder === "1") {
+        cr201f1coal = crsdcoal;
+        cr201f2coal = 0;
+      } else {
+        cr201f2coal = crsdcoal;
+        cr201f1coal = 0;
+      }
+      if (cr202Data.feeder === "1") {
+        cr202f1coal = crsdcoal;
+        cr202f2coal = 0;
+      } else {
+        cr202f2coal = crsdcoal;
+        cr202f1coal = 0;
+      }
+    }
+
+    if (cr201Data.status === "InUse" && cr202Data.status !== "InUse") {
+      let crsdcoal = feedingData.pathc;
+      if (cr201Data.feeder === "1") {
+        cr201f1coal = crsdcoal;
+        cr201f2coal = 0;
+      } else {
+        cr201f2coal = crsdcoal;
+        cr201f1coal = 0;
+      }
+      cr202f1coal = 0;
+      cr202f2coal = 0;
+    }
+
+    if (cr201Data.status !== "InUse" && cr202Data.status === "InUse") {
+      let crsdcoal = feedingData.pathc;
+      cr201f1coal = 0;
+      cr201f2coal = 0;
+      if (cr202Data.feeder === "1") {
+        cr202f1coal = crsdcoal;
+        cr202f2coal = 0;
+      } else {
+        cr202f2coal = crsdcoal;
+        cr202f1coal = 0;
+      }
+    }
+
+    if (cr201Data.status !== "InUse" && cr202Data.status !== "InUse") {
+      cr201f1coal = 0;
+      cr201f2coal = 0;
+      cr202f1coal = 0;
+      cr202f2coal = 0;
+    }
+
     const crData = {
       date: currentDate,
       shift: currentShift,
@@ -300,6 +376,14 @@ export default function CrusherStatus({ navigation, route }) {
       cr38feeder: cr38Data.feeder,
       cr38feeder1coal: cr38f1coal,
       cr38feeder2coal: cr38f2coal,
+      cr201status: cr201Data.status,
+      cr201feeder: cr201Data.feeder,
+      cr201feeder1coal: cr201f1coal,
+      cr201feeder2coal: cr201f2coal,
+      cr202status: cr202Data.status,
+      cr202feeder: cr202Data.feeder,
+      cr202feeder1coal: cr202f1coal,
+      cr202feeder2coal: cr202f2coal,
     };
     const updatedData = {
       ...allCrushersData,
@@ -307,13 +391,13 @@ export default function CrusherStatus({ navigation, route }) {
     };
     await setAllCrushersData(updatedData);
 
-    console.log(updatedData);
-
     setCr34Data({});
     setCr35Data({});
     setCr36Data({});
     setCr37Data({});
     setCr38Data({});
+    setCr201Data({});
+    setCr202Data({});
 
     navigation.goBack();
   };
@@ -456,7 +540,7 @@ export default function CrusherStatus({ navigation, route }) {
                 <View style={{ flex: 1, gap: wp(5) }}>
                   <CrusherComponent
                     number={35}
-                    colour="#FF9898"
+                    colour="#FFD586"
                     onChangeStatus={(value) =>
                       setCr35Data({ ...cr35Data, ["status"]: value })
                     }
@@ -483,7 +567,7 @@ export default function CrusherStatus({ navigation, route }) {
                 <View style={{ flex: 1, gap: wp(5) }}>
                   <CrusherComponent
                     number={36}
-                    colour="#7965C1"
+                    colour="#FFD586"
                     onChangeStatus={(value) =>
                       setCr36Data({ ...cr36Data, ["status"]: value })
                     }
@@ -510,7 +594,7 @@ export default function CrusherStatus({ navigation, route }) {
                 <View style={{ flex: 1, gap: wp(5) }}>
                   <CrusherComponent
                     number={37}
-                    colour="#129990"
+                    colour="#FF9898"
                     onChangeStatus={(value) =>
                       setCr37Data({ ...cr37Data, ["status"]: value })
                     }
@@ -537,7 +621,7 @@ export default function CrusherStatus({ navigation, route }) {
                 <View style={{ flex: 1, gap: wp(5) }}>
                   <CrusherComponent
                     number={38}
-                    colour="#DC8BE0"
+                    colour="#FF9898"
                     onChangeStatus={(value) =>
                       setCr38Data({ ...cr38Data, ["status"]: value })
                     }
@@ -556,6 +640,60 @@ export default function CrusherStatus({ navigation, route }) {
                         ? cr38Data.feeder
                         : prevShiftCrusherData
                         ? prevShiftCrusherData.cr38feeder
+                        : ""
+                    }
+                  />
+                </View>
+
+                <View style={{ flex: 1, gap: wp(5) }}>
+                  <CrusherComponent
+                    number={201}
+                    colour="#DC8BE0"
+                    onChangeStatus={(value) =>
+                      setCr201Data({ ...cr201Data, ["status"]: value })
+                    }
+                    selectedStatus={
+                      cr201Data.status
+                        ? cr201Data.status
+                        : prevShiftCrusherData
+                        ? prevShiftCrusherData.cr201status
+                        : ""
+                    }
+                    onChangeFeeder={(value) =>
+                      setCr201Data({ ...cr201Data, ["feeder"]: value })
+                    }
+                    selectedFeeder={
+                      cr201Data.feeder
+                        ? cr201Data.feeder
+                        : prevShiftCrusherData
+                        ? prevShiftCrusherData.cr201feeder
+                        : ""
+                    }
+                  />
+                </View>
+
+                <View style={{ flex: 1, gap: wp(5) }}>
+                  <CrusherComponent
+                    number={202}
+                    colour="#DC8BE0"
+                    onChangeStatus={(value) =>
+                      setCr202Data({ ...cr202Data, ["status"]: value })
+                    }
+                    selectedStatus={
+                      cr202Data.status
+                        ? cr202Data.status
+                        : prevShiftCrusherData
+                        ? prevShiftCrusherData.cr202status
+                        : ""
+                    }
+                    onChangeFeeder={(value) =>
+                      setCr202Data({ ...cr202Data, ["feeder"]: value })
+                    }
+                    selectedFeeder={
+                      cr202Data.feeder
+                        ? cr202Data.feeder
+                        : prevShiftCrusherData
+                        ? prevShiftCrusherData.cr202feeder
                         : ""
                     }
                   />

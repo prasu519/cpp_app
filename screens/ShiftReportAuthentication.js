@@ -1,6 +1,14 @@
 //date
 import React, { useState, useEffect } from "react";
-import { Modal, View, Text, TextInput, Button } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  TextInput,
+  Button,
+  ActivityIndicator,
+} from "react-native";
+
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -261,11 +269,16 @@ export default function ShiftReportAuthentication({
             }}
           >
             <Button title="Cancel" onPress={handleCancel} color="red" />
-            <Button
-              title="Enter Report"
-              onPress={handleSubmit}
-              disabled={!latestRecordLoaded}
-            />
+            {!latestRecordLoaded ? (
+              <View style={{ alignItems: "center", justifyContent: "center" }}>
+                <ActivityIndicator size="large" color="#0000ff" />
+                <Text style={{ marginTop: hp(1), color: "gray" }}>
+                  Loading latest record...
+                </Text>
+              </View>
+            ) : (
+              <Button title="Enter Report" onPress={handleSubmit} />
+            )}
           </View>
         </View>
       </View>

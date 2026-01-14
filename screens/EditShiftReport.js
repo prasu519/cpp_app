@@ -526,6 +526,10 @@ export default function EditShiftReport({ navigation }) {
     let cr37f2coal = 0;
     let cr38f1coal = 0;
     let cr38f2coal = 0;
+    let cr201f1coal = 0;
+    let cr201f2coal = 0;
+    let cr202f1coal = 0;
+    let cr202f2coal = 0;
 
     if (crusherStatus.cr34status === "InUse") {
       let crsdcoal = feedingData.stream1 / 2;
@@ -628,6 +632,76 @@ export default function EditShiftReport({ navigation }) {
       cr38f2coal = 0;
     }
 
+    if (
+      crusherStatus.cr201status === "InUse" &&
+      crusherStatus.cr202status === "InUse"
+    ) {
+      let crsdcoal = feedingData.stream1A / 2;
+      if (crusherStatus.cr201feeder === "1") {
+        cr201f1coal = crsdcoal;
+        cr201f2coal = 0;
+      } else {
+        cr201f2coal = crsdcoal;
+        cr201f1coal = 0;
+      }
+      if (crusherStatus.cr202feeder === "1") {
+        cr202f1coal = crsdcoal;
+        cr202f2coal = 0;
+      } else {
+        cr202f2coal = crsdcoal;
+        cr202f1coal = 0;
+      }
+    }
+    if (
+      crusherStatus.cr201status === "InUse" &&
+      crusherStatus.cr202status !== "InUse"
+    ) {
+      let crsdcoal = feedingData.stream1A;
+      if (crusherStatus.cr201feeder === "1") {
+        cr201f1coal = crsdcoal;
+        cr201f2coal = 0;
+      } else {
+        cr201f2coal = crsdcoal;
+        cr201f1coal = 0;
+      }
+      if (crusherStatus.cr202feeder === "1") {
+        cr202f1coal = 0;
+        cr202f2coal = 0;
+      } else {
+        cr202f2coal = 0;
+        cr202f1coal = 0;
+      }
+    }
+    if (
+      crusherStatus.cr201status !== "InUse" &&
+      crusherStatus.cr202status === "InUse"
+    ) {
+      let crsdcoal = feedingData.stream1A;
+      if (crusherStatus.cr201feeder === "1") {
+        cr201f1coal = 0;
+        cr201f2coal = 0;
+      } else {
+        cr201f2coal = 0;
+        cr201f1coal = 0;
+      }
+      if (crusherStatus.cr202feeder === "1") {
+        cr202f1coal = crsdcoal;
+        cr202f2coal = 0;
+      } else {
+        cr202f2coal = crsdcoal;
+        cr202f1coal = 0;
+      }
+    }
+    if (
+      crusherStatus.cr201status !== "InUse" &&
+      crusherStatus.cr202status !== "InUse"
+    ) {
+      cr201f1coal = 0;
+      cr201f2coal = 0;
+      cr202f1coal = 0;
+      cr202f2coal = 0;
+    }
+
     let finalCrusherData = {
       ...crusherStatus,
       ["cr34feeder1coal"]: cr34f1coal,
@@ -640,6 +714,10 @@ export default function EditShiftReport({ navigation }) {
       ["cr37feeder2coal"]: cr37f2coal,
       ["cr38feeder1coal"]: cr38f1coal,
       ["cr38feeder2coal"]: cr38f2coal,
+      ["cr201feeder1coal"]: cr201f1coal,
+      ["cr201feeder2coal"]: cr201f2coal,
+      ["cr202feeder1coal"]: cr202f1coal,
+      ["cr202feeder2coal"]: cr202f2coal,
     };
 
     /* let fdate = crusherStatus.date;
@@ -1111,7 +1189,7 @@ export default function EditShiftReport({ navigation }) {
               >
                 CPP3 Reclaiming
               </Text>
-              {[1, 2, 3, 4, 5, 6].map((item, index) => (
+              {[1, 2, 3, 4, 5].map((item, index) => (
                 <View
                   key={index}
                   style={{
@@ -2317,7 +2395,7 @@ export default function EditShiftReport({ navigation }) {
               >
                 Crusher Status
               </Text>
-              {[34, 35, 36, 37, 38].map((num, index) => (
+              {[34, 35, 36, 37, 38, 201, 202].map((num, index) => (
                 <CrusherEdit
                   key={index}
                   labelcolor="orange"

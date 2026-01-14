@@ -1,4 +1,4 @@
-import { View, ScrollView, Alert } from "react-native";
+import { View, ScrollView, Alert } from "react-native"; //loading..
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState, useEffect } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -27,6 +27,10 @@ export default function DayReportView({ navigation }) {
   const [mergedPushingData, setMergedPushingData] = useState({});
   const [mergedTimingData, setMergedTimingData] = useState({});
   const [clickSubmit, setClickSubmit] = useState(false);
+  const [cshiftMbTopStock, setCshiftMbTopStock] = useState();
+  const [cshiftCTStock, setCshiftCTStock] = useState();
+  const [cshiftCrusherStatus, setCshiftCrusherStatus] = useState();
+  const [dayAvgCI, setDayAvgCI] = useState();
   let reclaimingA;
   let reclaimingB;
   let reclaimingC;
@@ -73,7 +77,7 @@ export default function DayReportView({ navigation }) {
                   .join("")}
 
                
-                <h3 style="text-decoration: underline; margin-top:30px ">Stream-wise Reclm</h3>
+                <h2 style="text-decoration: underline; margin-top:30px ">Stream-Reclm</h2>
                 ${["cc49", "cc50", "cc126"]
                   .map(
                     (item, index) =>
@@ -93,7 +97,7 @@ export default function DayReportView({ navigation }) {
                 `
                   )
                   .join("")}
-                  <h3 style="text-decoration: underline; margin-top:30px">Total Reclaiming</h3>
+                  <h2 style="text-decoration: underline; margin-top:30px">Total Reclaiming</h2>
                   <span style="font-size: 30px; font-weight:bold">${
                     mergedReclaimingData.total_reclaiming
                   }</span>
@@ -101,48 +105,102 @@ export default function DayReportView({ navigation }) {
          
   
               <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
-                <h2 style="text-decoration: underline; margin-top:30px">Feeding Data</h2>
-                ${["ct1", "ct2", "ct3"]
-                  .map(
-                    (item, index) =>
-                      `
-                  <div style="margin-bottom: 10px;  flex-direction: row; ">
-                    <span style="font-size: 20px; font-weight:bold">
-                      ${item.toUpperCase()}
-                    </span>
-                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                      ${mergedFeedingData[item]}
-                    </span>
-                  </div>
-                `
-                  )
-                  .join("")}
-                <h3 style="text-decoration: underline; margin-top:30px">Stream-wise Feeding</h3>
-                ${["stream1", "stream1A", "pathc"]
-                  .map(
-                    (item, index) =>
-                      `
-
+             
+              <h2 style="text-decoration: underline;">CPP3 Reclaiming</h2>
+                        ${Object.keys(cpp3MergedReclaimingData)
+                          .map((key) =>
+                            key === "patha" ||
+                            key === "pathb" ||
+                            key === "cpp3total_reclaiming"
+                              ? null
+                              : `
+        
                       <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
                       <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
-                        <span style="font-size: 20px; font-weight: bold;">
-                        ${item.toUpperCase()}
-                        </span>
-                      </div>
-                      
                       <span style="font-size: 20px; font-weight: bold;">
-                      ${mergedFeedingData[item]}
+                      ${key.toUpperCase()}
                       </span>
                     </div>
-                `
-                  )
-                  .join("")}
-                  <h3 style="text-decoration: underline; margin-top:30px">Total Feeding</h3>
-                  <span style="font-size: 30px; font-weight:bold">${
-                    mergedFeedingData.total_feeding
-                  }</span>
+                    
+                    <span style="font-size: 20px; font-weight: bold;">
+                    ${cpp3MergedReclaimingData[key]}
+                    </span>
+                  </div>
+              `
+                          )
+                          .join("")}
+              <h2 style="text-decoration: underline; margin-top:30px ">Stream-Reclm</h2>
+              ${["patha", "pathb"]
+                .map(
+                  (item, index) =>
+                    `
+        
+                    <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
+                    <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
+                      <span style="font-size: 20px; font-weight: bold;">
+                      ${item.toUpperCase()}
+                      </span>
+                    </div>
+                    
+                    <span style="font-size: 20px; font-weight: bold;">
+                    ${cpp3MergedReclaimingData[item]}
+                    </span>
+                  </div>
+              `
+                )
+                .join("")}
+                <h2 style="text-decoration: underline; margin-top:30px">Total Reclaiming</h2>
+                <span style="font-size: 30px; font-weight:bold">${
+                  cpp3MergedReclaimingData.cpp3total_reclaiming
+                }</span>
+</br>
+              <h2 style="text-decoration: underline;">Running hours</h2>
+              ${[2, 3, 4]
+                .map(
+                  (item, index) =>
+                    `
+                <div style="margin-bottom: 10px;  flex-direction: row; ">
+                  <span style="font-size: 20px; font-weight:bold">
+                    Stream-${item}
+                  </span>
+                  <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                    ${
+                      mergedTimingData["str" + item + "hrs"] +
+                      " : " +
+                      mergedTimingData["str" + item + "min"]
+                    }
+                  </span>
+                </div>
+              `
+                )
+                .join("")}
+               </br>
+               ${[50, 49, 126]
+                 .map(
+                   (item, index) =>
+                     `
+               <div style="margin-bottom: 10px;  flex-direction: row; ">
+                 <span style="font-size: 20px; font-weight:bold">
+                   CC-${item}
+                 </span>
+                 <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                   ${
+                     mergedTimingData["cc" + item + "hrs"] +
+                     " : " +
+                     mergedTimingData["cc" + item + "min"]
+                   }
+                 </span>
+               </div>
+             `
+                 )
+                 .join("")}
+                </br>
+        
+                     
+       
+        
               </div> 
-
+       
 
               <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
       <!--      
@@ -168,32 +226,24 @@ export default function DayReportView({ navigation }) {
                   }</span>
       -->
                   
-
-                <h2 style="text-decoration: underline;">CPP3 Reclaiming</h2>
-                ${Object.keys(cpp3MergedReclaimingData)
-                  .map((key) =>
-                    key === "patha" ||
-                    key === "pathb" ||
-                    key === "cpp3total_reclaiming"
-                      ? null
-                      : `
-
-              <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
-              <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
-              <span style="font-size: 20px; font-weight: bold;">
-              ${key.toUpperCase()}
-              </span>
-            </div>
-            
-            <span style="font-size: 20px; font-weight: bold;">
-            ${cpp3MergedReclaimingData[key]}
-            </span>
-          </div>
+             <h2 style="text-decoration: underline;">Feeding Data</h2>
+      ${["ct1", "ct2", "ct3"]
+        .map(
+          (item, index) =>
+            `
+        <div style="margin-bottom: 10px;  flex-direction: row; ">
+          <span style="font-size: 20px; font-weight:bold">
+            ${item.toUpperCase()}
+          </span>
+          <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+            ${mergedFeedingData[item]}
+          </span>
+        </div>
       `
-                  )
-                  .join("")}
-      <h3 style="text-decoration: underline; margin-top:30px ">Stream-wise Reclm</h3>
-      ${["patha", "pathb"]
+        )
+        .join("")}
+      <h2 style="text-decoration: underline; margin-top:30px">Stream-Feeding</h2>
+      ${["stream1", "stream1A", "pathc"]
         .map(
           (item, index) =>
             `
@@ -206,71 +256,120 @@ export default function DayReportView({ navigation }) {
             </div>
             
             <span style="font-size: 20px; font-weight: bold;">
-            ${cpp3MergedReclaimingData[item]}
+            ${mergedFeedingData[item]}
             </span>
           </div>
       `
         )
         .join("")}
-        <h3 style="text-decoration: underline; margin-top:30px">Total Reclaiming</h3>
+        <h2 style="text-decoration: underline; margin-top:30px">Total Feeding</h2>
         <span style="font-size: 30px; font-weight:bold">${
-          cpp3MergedReclaimingData.cpp3total_reclaiming
+          mergedFeedingData.total_feeding
         }</span>
+
+
+    
         
               </div>
 
               <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
-                <h2 style="text-decoration: underline; margin-top:30px">Running hours</h2>
-                ${[2, 3, 4]
-                  .map(
-                    (item, index) =>
-                      `
-                  <div style="margin-bottom: 10px;  flex-direction: row; ">
+              <h2 style="text-decoration: underline;">MB Top Stock</h2>
+             
+                <div style="margin-bottom: 10px;  flex-direction: row; ">
+                  <span style="font-size: 20px; font-weight:bold">
+                    CPP1 - ${cshiftMbTopStock.total_stock}
+                  </span>
+                </div>
+               <div style="margin-bottom: 10px;  flex-direction: row; ">
+               <span style="font-size: 20px; font-weight:bold">
+                 CPP3 - ${cshiftMbTopStock.cpp3total_stock}
+               </span>
+             </div>
+             </br>
+             <div style="margin-bottom: 10px;  flex-direction: row; ">
+               <span style="font-size: 20px; font-weight:bold">
+                 TOTAL - ${
+                   cshiftMbTopStock.total_stock +
+                   cshiftMbTopStock.cpp3total_stock
+                 }
+               </span>
+             </div>
+             
+        
+                      <h2 style="text-decoration: underline;">Coal Tower Stock</h2>
+                      <div style="margin-bottom: 10px;  flex-direction: row; ">
+                      <span style="font-size: 20px; font-weight:bold">
+                        CT1 - ${cshiftCTStock.ct1stock}
+                      </span>
+                    </div>
+                    <div style="margin-bottom: 10px;  flex-direction: row; ">
                     <span style="font-size: 20px; font-weight:bold">
-                      Stream-${item}
-                    </span>
-                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                      ${
-                        mergedTimingData["str" + item + "hrs"] +
-                        " : " +
-                        mergedTimingData["str" + item + "min"]
-                      }
+                      CT2 - ${cshiftCTStock.ct2stock}
                     </span>
                   </div>
-                `
-                  )
-                  .join("")}
-                 </br>
-                 ${[50, 49, 126]
-                   .map(
-                     (item, index) =>
-                       `
-                 <div style="margin-bottom: 10px;  flex-direction: row; ">
-                   <span style="font-size: 20px; font-weight:bold">
-                     CC-${item}
-                   </span>
-                   <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                     ${
-                       mergedTimingData["cc" + item + "hrs"] +
-                       " : " +
-                       mergedTimingData["cc" + item + "min"]
-                     }
-                   </span>
-                 </div>
-               `
-                   )
-                   .join("")}
-                  </br>
-                  
-
+                  <div style="margin-bottom: 10px;  flex-direction: row; ">
+                      <span style="font-size: 20px; font-weight:bold">
+                        CT3 - ${cshiftCTStock.ct3stock}
+                      </span>
+                    </div>
+                    </br>
+                    <div style="margin-bottom: 10px;  flex-direction: row; ">
+                      <span style="font-size: 20px; font-weight:bold">
+                        TOTAL - ${cshiftCTStock.total_stock}
+                      </span>
+                    </div>
+              <h2 style="text-decoration: underline;">Crushing Index</h2>
+                  <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                AVG - ${Number(dayAvgCI).toFixed(2)}
+              </span>
+            </div>
+            <h2 style="text-decoration: underline;">Crusher Status</h2>
+                <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                  CR34 - ${cshiftCrusherStatus.cr34status}
+                </span>
+                </div>
+                <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                  CR35 - ${cshiftCrusherStatus.cr35status}
+                </span>
+                </div>
+                <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                  CR36 - ${cshiftCrusherStatus.cr36status}
+                </span>
+                </div>
+                <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                  CR37 - ${cshiftCrusherStatus.cr37status}
+                </span>
+                </div>
+                <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                  CR38 - ${cshiftCrusherStatus.cr38status}
+                </span>
+                </div>
+                <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                  CR201 - ${cshiftCrusherStatus.cr201status}
+                </span>
+                </div>
+                <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 20px; font-weight:bold">
+                  CR202 - ${cshiftCrusherStatus.cr202status}
+                </span>
+                </div>
+                
               </div>
+            </div>
               
             </body>
           </html>
         `;
 
       const { uri } = await Print.printToFileAsync({ html: htmlContent });
-      console.log("PDF generated at:", uri);
+      //console.log("PDF generated at:", uri);
 
       // Save the PDF to the file system
       const fileUri = `${FileSystem.documentDirectory}cpp_day_report.pdf`;
@@ -278,7 +377,7 @@ export default function DayReportView({ navigation }) {
         from: uri,
         to: fileUri,
       });
-      console.log("PDF saved at:", fileUri);
+      //console.log("PDF saved at:", fileUri);
 
       // Share the PDF
       if (await Sharing.isAvailableAsync()) {
@@ -470,6 +569,64 @@ export default function DayReportView({ navigation }) {
 
       return merge;
     }, {});
+  };
+
+  const getCshiftMbTopStock = async (date) => {
+    await axios
+      .get(BaseUrl + "/mbtopStock", {
+        params: {
+          date: date,
+          shift: "C",
+        },
+      })
+      .then((responce) => {
+        setCshiftMbTopStock(responce.data.data[0]);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  const getCshiftCTStock = async (date) => {
+    await axios
+      .get(BaseUrl + "/coaltowerstock", {
+        params: {
+          date: date,
+          shift: "C",
+        },
+      })
+      .then((responce) => setCshiftCTStock(responce.data.data[0]))
+      .catch((error) => console.log(error));
+  };
+
+  const getCrusherStatusData = async (date) => {
+    await axios
+      .get(BaseUrl + "/crusher", {
+        params: {
+          date: date,
+          shift: "C",
+        },
+      })
+      .then((responce) => setCshiftCrusherStatus(responce.data.data[0]))
+      .catch((error) => console.log(error));
+  };
+
+  const getAvgCI = async (date) => {
+    try {
+      const response = await axios.get(BaseUrl + "/coalAnalysis/avgci", {
+        params: {
+          fromdate: date,
+          fromshift: "A",
+          todate: date,
+          toshift: "C",
+        },
+      });
+      setDayAvgCI(response.data.data);
+    } catch (error) {
+      console.log(error);
+      alert(
+        "Error",
+        "Failed to fetch average C.I . Please check the date and try again."
+      );
+    }
   };
 
   const getTotalFeeding = async (date) => {
@@ -702,6 +859,10 @@ export default function DayReportView({ navigation }) {
     if (pushingData !== undefined) {
       setMergedPushingData(pushingData);
     }
+    getCshiftMbTopStock(date);
+    getCshiftCTStock(date);
+    getCrusherStatusData(date);
+    getAvgCI(date);
 
     let timingsData = await getTotalTimings(date);
     if (timingsData !== undefined) {

@@ -20,6 +20,7 @@ export default function BlendReportView({ navigation }) {
   const [blendData, setBlendData] = useState([]);
   const [dateShiftArray, setDateShiftArray] = useState([]);
   const [blendFeedingArray, setBlendFeedingArray] = useState([]);
+  const [clickSubmit, setClickSubmit] = useState(false);
 
   const [excludedKeys, setExcludedKeys] = useState([
     "__v",
@@ -199,7 +200,7 @@ export default function BlendReportView({ navigation }) {
       );
       return; // Exit the function
     }
-
+    setClickSubmit(true);
     await getBlendDataDatewise(fromDate, toDate);
   };
 
@@ -349,131 +350,153 @@ export default function BlendReportView({ navigation }) {
           />
         </View>
 
-        {blendData !== undefined &&
-          Array.from({ length: blendData.length }, (_, index) => (
-            <Card key={index}>
-              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
-                {"Blend - " + (index + 1)}
-              </Card.Title>
-              <Card.Divider />
-              <View
-                key={index}
-                style={{
-                  marginBottom: 10,
-                  display: "flex",
-                  flexDirection: "row",
-                  marginLeft: wp(10),
-                  gap: hp(3),
-                }}
-              >
+        {blendData.length !== 0
+          ? Array.from({ length: blendData.length }, (_, index) => (
+              <Card key={index}>
+                <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                  {"Blend - " + (index + 1)}
+                </Card.Title>
+                <Card.Divider />
                 <View
+                  key={index}
                   style={{
-                    width: wp(30),
-                    alignItems: "flex-end",
+                    marginBottom: 10,
+                    display: "flex",
+                    flexDirection: "row",
+                    marginLeft: wp(10),
+                    gap: hp(3),
                   }}
                 >
+                  <View
+                    style={{
+                      width: wp(30),
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                      Start Date
+                    </Text>
+                  </View>
+                  <Divider orientation="vertical" />
                   <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                    Start Date
+                    {blendData[index]["date"].split("T", 1)}
                   </Text>
                 </View>
-                <Divider orientation="vertical" />
-                <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                  {blendData[index]["date"].split("T", 1)}
-                </Text>
-              </View>
-              <View
-                key={index + 1}
-                style={{
-                  marginBottom: 10,
-                  display: "flex",
-                  flexDirection: "row",
-                  marginLeft: wp(10),
-                  gap: hp(3),
-                }}
-              >
                 <View
+                  key={index + 1}
                   style={{
-                    width: wp(30),
-                    alignItems: "flex-end",
+                    marginBottom: 10,
+                    display: "flex",
+                    flexDirection: "row",
+                    marginLeft: wp(10),
+                    gap: hp(3),
                   }}
                 >
+                  <View
+                    style={{
+                      width: wp(30),
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                      Shift
+                    </Text>
+                  </View>
+                  <Divider orientation="vertical" />
                   <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                    Shift
+                    {blendData[index]["shift"].split("T", 1)}
                   </Text>
                 </View>
-                <Divider orientation="vertical" />
-                <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                  {blendData[index]["shift"].split("T", 1)}
-                </Text>
-              </View>
-              <Card.Divider />
+                <Card.Divider />
 
-              {blendData[index] &&
-                Object.keys(blendData[index])
-                  .filter(
-                    (key) =>
-                      !excludedKeys.includes(key) && !key.startsWith("cp")
-                  )
-                  .map((ikey, inindex) => {
-                    return (
-                      <View
-                        key={inindex}
-                        style={{
-                          marginBottom: 10,
-                          display: "flex",
-                          flexDirection: "row",
-                          marginLeft: wp(10),
-                          gap: hp(3),
-                        }}
-                      >
+                {blendData[index] &&
+                  Object.keys(blendData[index])
+                    .filter(
+                      (key) =>
+                        !excludedKeys.includes(key) && !key.startsWith("cp")
+                    )
+                    .map((ikey, inindex) => {
+                      return (
                         <View
+                          key={inindex}
                           style={{
-                            width: wp(30),
-                            alignItems: "flex-end",
+                            marginBottom: 10,
+                            display: "flex",
+                            flexDirection: "row",
+                            marginLeft: wp(10),
+                            gap: hp(3),
                           }}
                         >
+                          <View
+                            style={{
+                              width: wp(30),
+                              alignItems: "flex-end",
+                            }}
+                          >
+                            <Text
+                              style={{ fontSize: wp(5), fontWeight: "bold" }}
+                            >
+                              {blendData[index]["cn" + (inindex + 1)]}
+                            </Text>
+                          </View>
+                          <Divider orientation="vertical" />
                           <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                            {blendData[index]["cn" + (inindex + 1)]}
+                            {blendData[index]["cp" + (inindex + 1)] + "%"}
                           </Text>
                         </View>
-                        <Divider orientation="vertical" />
-                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                          {blendData[index]["cp" + (inindex + 1)] + "%"}
-                        </Text>
-                      </View>
-                    );
-                  })}
-              <Card.Divider />
-              <View
-                key={index + 2}
-                style={{
-                  marginBottom: 10,
-                  display: "flex",
-                  flexDirection: "row",
-                  marginLeft: wp(10),
-                  gap: hp(3),
-                }}
-              >
+                      );
+                    })}
+                <Card.Divider />
                 <View
+                  key={index + 2}
                   style={{
-                    width: wp(30),
-                    alignItems: "flex-end",
+                    marginBottom: 10,
+                    display: "flex",
+                    flexDirection: "row",
+                    marginLeft: wp(10),
+                    gap: hp(3),
                   }}
                 >
+                  <View
+                    style={{
+                      width: wp(30),
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                      Feeding
+                    </Text>
+                  </View>
+                  <Divider orientation="vertical" />
                   <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                    Feeding
+                    {blendFeedingArray[index]
+                      ? Number(blendFeedingArray[index].totalStream1 || 0) +
+                        Number(blendFeedingArray[index].totalStream1A || 0)
+                      : "Loading..."}
                   </Text>
                 </View>
-                <Divider orientation="vertical" />
-                <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
-                  {blendFeedingArray[index]
-                    ? Number(blendFeedingArray[index].totalStream1 || 0) +
-                      Number(blendFeedingArray[index].totalStream1A || 0)
-                    : "Loading..."}
+              </Card>
+            ))
+          : clickSubmit && (
+              <View
+                style={{
+                  width: wp(100),
+                  height: hp(20),
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "red",
+                    fontWeight: "bold",
+                    fontSize: hp(4),
+                  }}
+                >
+                  No Data Available
                 </Text>
               </View>
-            </Card>
-          ))}
+            )}
       </ScrollView>
     </View>
   );
