@@ -320,7 +320,7 @@ export default function DayReportView({ navigation }) {
                     </div>
               <h2 style="text-decoration: underline;">Crushing Index</h2>
                   <div style="margin-bottom: 10px;  flex-direction: row; ">
-                <span style="font-size: 20px; font-weight:bold">
+                <span style="font-size: 30px; font-weight:bold">
                 AVG - ${Number(dayAvgCI).toFixed(2)}
               </span>
             </div>

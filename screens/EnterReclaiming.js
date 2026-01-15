@@ -21,7 +21,7 @@ import { FormatDate } from "../utils/FormatDate";
 export default function EnterReclaiming({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
   const [coalNameListCpp3, setCoalNameListCpp3] = useState();
-  const [selectedCoalNameCpp3, setSelectedCoalNameCpp3] = useState();
+  const [selectedCoalNameCpp3, setSelectedCoalNameCpp3] = useState("");
   const [isLoaded, setIsLoaded] = useState(true);
   const [count, setCount] = useState(0);
   const [doneScreen, setDoneScreen] = useState(false);
@@ -190,9 +190,6 @@ export default function EnterReclaiming({ navigation }) {
       }
       if (values["cpp3coal" + i + "recl"] === "") {
         values["cpp3coal" + i + "recl"] = 0;
-      }
-      if (values["cpp3coal" + i + "name"] === null) {
-        return alert("Please enter only alphabets for coal name...");
       }
 
       coaltotal =

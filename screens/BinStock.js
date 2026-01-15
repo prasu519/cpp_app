@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, TextInput } from "react-native";
 import React, { useEffect, useState, useContext } from "react";
 import { Formik } from "formik";
+import { Picker } from "@react-native-picker/picker";
 import AppTextBox from "../components/AppTextBox";
 import AppButton from "../components/AppButton";
 import axios from "axios";
@@ -19,6 +20,9 @@ import { FormatDate } from "../utils/FormatDate";
 console;
 export default function BinStock({ navigation }) {
   const [coalNames, setCoalNames] = useState({});
+  const [coalNameListCpp3, setCoalNameListCpp3] = useState();
+  const [selectedCoalNameCpp3, setSelectedCoalNameCpp3] = useState("");
+  const [isLoaded, setIsLoaded] = useState(true);
   const [count, setCount] = useState();
   const [doneScreen, setDoneScreen] = useState(false);
   const [buttonEnable, setButtonEnable] = useState(false);
@@ -114,6 +118,27 @@ export default function BinStock({ navigation }) {
     getExCoalCount();
   }, [lastShiftRecl]);
 
+  useEffect(() => {
+    const getCoalNameListCpp3 = async () => {
+      await axios
+        .get(BaseUrl + "/coalnamelist")
+        .then((response) => {
+          //setCoalNameListCpp3(response.data.data[0]);
+          //console.log(response.data.data[0]);
+          let data = response.data.data[0];
+          const coalNames = Object.keys(data)
+            .filter((key) => key.startsWith("coalname")) // take only coalname keys
+            .map((key) => data[key]) // extract values
+            .filter((name) => name && name.trim() !== ""); // remove empty strings
+          const coalNamesFinal = ["Coal", ...coalNames];
+          setCoalNameListCpp3(coalNamesFinal);
+        })
+        .catch((error) => console.log(error));
+      setIsLoaded(false);
+    };
+    getCoalNameListCpp3();
+  }, []);
+
   const handleAddCoal = () => {
     setOldCoal([...oldCoal, ""]);
     setOldCount(oldCount + 1);
@@ -184,18 +209,37 @@ export default function BinStock({ navigation }) {
     }
     let newValues = {
       ...values,
-      coal1name: coalNames.cn1,
-      coal2name: coalNames.cn2,
-      coal3name: coalNames.cn3,
-      coal4name: coalNames.cn4,
-      coal5name: coalNames.cn5,
-      coal6name: coalNames.cn6,
-      coal7name: coalNames.cn7,
-      coal8name: coalNames.cn8,
+      coal1name: coalNames.cn1 ? coalNames.cn1 : "",
+      coal2name: coalNames.cn2 ? coalNames.cn2 : "",
+      coal3name: coalNames.cn3 ? coalNames.cn3 : "",
+      coal4name: coalNames.cn4 ? coalNames.cn4 : "",
+      coal5name: coalNames.cn5 ? coalNames.cn5 : "",
+      coal6name: coalNames.cn6 ? coalNames.cn6 : "",
+      coal7name: coalNames.cn7 ? coalNames.cn7 : "",
+      coal8name: coalNames.cn8 ? coalNames.cn8 : "",
+      cpp3coal1name: selectedCoalNameCpp3.cpp3coal1name
+        ? selectedCoalNameCpp3.cpp3coal1name
+        : "",
+      cpp3coal2name: selectedCoalNameCpp3.cpp3coal2name
+        ? selectedCoalNameCpp3.cpp3coal2name
+        : "",
+      cpp3coal3name: selectedCoalNameCpp3.cpp3coal3name
+        ? selectedCoalNameCpp3.cpp3coal3name
+        : "",
+      cpp3coal4name: selectedCoalNameCpp3.cpp3coal4name
+        ? selectedCoalNameCpp3.cpp3coal4name
+        : "",
+      cpp3coal5name: selectedCoalNameCpp3.cpp3coal5name
+        ? selectedCoalNameCpp3.cpp3coal5name
+        : "",
+      cpp3coal6name: selectedCoalNameCpp3.cpp3coal6name
+        ? selectedCoalNameCpp3.cpp3coal6name
+        : "",
 
       total_stock: TotalStock,
       cpp3total_stock: Cpp3TotalStock,
     };
+
     setMbTopStockData(newValues);
     setProgress(0);
 
@@ -616,7 +660,7 @@ export default function BinStock({ navigation }) {
                             gap: wp(10),
                           }}
                         >
-                          <TextInput
+                          {/*<TextInput
                             selectionColor={"black"}
                             style={{
                               height: hp(6),
@@ -641,7 +685,41 @@ export default function BinStock({ navigation }) {
                                 );
                               }
                             }}
-                          />
+                          />*/}
+                          <Picker
+                            id={index}
+                            style={{
+                              width: wp(35),
+                              borderWidth: wp(1),
+                              backgroundColor: "white",
+                            }}
+                            mode="dropdown"
+                            onValueChange={(value) => {
+                              setSelectedCoalNameCpp3({
+                                ...selectedCoalNameCpp3,
+                                ["cpp3coal" + (index + 1) + "name"]:
+                                  value.toUpperCase(),
+                              });
+                            }}
+                            selectedValue={
+                              selectedCoalNameCpp3
+                                ? selectedCoalNameCpp3[
+                                    "cpp3coal" + (index + 1) + "name"
+                                  ]
+                                : "Coal"
+                            }
+                          >
+                            {coalNameListCpp3
+                              ? coalNameListCpp3.map((coal) => (
+                                  <Picker.Item
+                                    key={coal}
+                                    label={coal.toString()}
+                                    value={coal}
+                                    style={{ fontSize: hp(2.5) }}
+                                  />
+                                ))
+                              : null}
+                          </Picker>
                           <TextInput
                             selectionColor={"black"}
                             style={{

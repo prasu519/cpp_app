@@ -1861,7 +1861,7 @@ export default function Review({ navigation }) {
             >
               Crusher Status
             </Text>
-            {[34, 35, 36, 37, 38].map((num, index) => (
+            {[34, 35, 36, 37, 38, 201, 202].map((num, index) => (
               <CrusherEdit
                 key={index}
                 labelcolor="orange"
