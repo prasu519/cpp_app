@@ -105,7 +105,7 @@ export default function ViewReports({ navigation }) {
           title={"Month Report"}
           buttonStyle={{
             height: hp(5),
-            width: wp(40),
+            paddingHorizontal: wp(6),
             marginTop: hp(2),
             alignSelf: "center",
           }}
@@ -116,6 +116,57 @@ export default function ViewReports({ navigation }) {
           }}
           onPress={() => {
             navigation.navigate("MonthReportView");
+          }}
+        />
+        <Button
+          title={"Feeding Report in Excel"}
+          buttonStyle={{
+            height: hp(5),
+            paddingHorizontal: wp(6),
+            marginTop: hp(2),
+            alignSelf: "center",
+          }}
+          radius={20}
+          titleStyle={{
+            fontSize: hp(2),
+            fontWeight: "600",
+          }}
+          onPress={() => {
+            navigation.navigate("FeedingReportInExcel");
+          }}
+        />
+        <Button
+          title={"Reclaiming Report in Excel"}
+          buttonStyle={{
+            height: hp(5),
+            paddingHorizontal: wp(6),
+            marginTop: hp(2),
+            alignSelf: "center",
+          }}
+          radius={20}
+          titleStyle={{
+            fontSize: hp(2),
+            fontWeight: "600",
+          }}
+          onPress={() => {
+            navigation.navigate("ReclaimingReportExcel");
+          }}
+        />
+        <Button
+          title={"Pushings Report in Excel"}
+          buttonStyle={{
+            height: hp(5),
+            paddingHorizontal: wp(6),
+            marginTop: hp(2),
+            alignSelf: "center",
+          }}
+          radius={20}
+          titleStyle={{
+            fontSize: hp(2),
+            fontWeight: "600",
+          }}
+          onPress={() => {
+            navigation.navigate("PushingsReportInExcel");
           }}
         />
         <Button

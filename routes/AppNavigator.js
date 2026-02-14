@@ -31,6 +31,9 @@ import CrushersDataEntry from "../screens/CrushersDataEntry";
 import CrusherEdit from "../components/CrusherEdit";
 import AddJob from "../screens/AddJob";
 import AddJobDetails from "../screens/AddJobDetails";
+import FeedingReportInExcel from "../screens/FeedingReportInExcel";
+import PushingsReportInExcel from "../screens/PushingsReportInExcel";
+import ReclaimingReportExcel from "../screens/ReclaimingReportExcel";
 
 const stack = createNativeStackNavigator();
 
@@ -81,6 +84,18 @@ function AppNavigator(props) {
       <stack.Screen name="CrushersDataEntry" component={CrushersDataEntry} />
       <stack.Screen name="AddJob" component={AddJob} />
       <stack.Screen name="AddJobDetails" component={AddJobDetails} />
+      <stack.Screen
+        name="FeedingReportInExcel"
+        component={FeedingReportInExcel}
+      />
+      <stack.Screen
+        name="PushingsReportInExcel"
+        component={PushingsReportInExcel}
+      />
+      <stack.Screen
+        name="ReclaimingReportExcel"
+        component={ReclaimingReportExcel}
+      />
     </stack.Navigator>
   );
 }

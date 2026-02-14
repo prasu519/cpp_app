@@ -715,7 +715,7 @@ export default function BinStock({ navigation }) {
                                     key={coal}
                                     label={coal.toString()}
                                     value={coal}
-                                    style={{ fontSize: hp(2.5) }}
+                                    style={{ fontSize: hp(1.6) }}
                                   />
                                 ))
                               : null}

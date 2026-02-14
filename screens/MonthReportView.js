@@ -1,4 +1,4 @@
-import { View, ScrollView, Alert } from "react-native";
+import { View, ScrollView, Alert, ActivityIndicator } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import React, { useState, useEffect } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -633,82 +633,6 @@ export default function MonthReportView({ navigation }) {
               </Picker>
             </View>
           </View>
-
-          {/*  <View
-          style={{
-            flexDirection: "row",
-            gap: wp(2),
-            alignItems: "center",
-            justifyContent: "center",
-            alignSelf: "center",
-            height: hp(10),
-            width: wp(80),
-            backgroundColor: "lightgrey",
-            borderRadius: 25,
-          }}
-        >
-          <Button
-            title="From Date"
-            buttonStyle={{ width: wp(40), height: hp(5) }}
-            titleStyle={{
-              fontSize: hp(2),
-              color: "white",
-              borderBottomWidth: 2,
-              borderBottomColor: "white",
-            }}
-            radius={25}
-            onPress={() => setShowFromDatePicker(true)}
-          />
-          {showFromDatePicker && (
-            <DateTimePicker
-              value={selectedFromDate}
-              mode="date"
-              display="spinner"
-              onChange={handleFromDateChange}
-            />
-          )}
-          <Text style={{ fontSize: hp(2.5), color: "green" }}>
-            {FormatDate(selectedFromDate)}
-          </Text>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            gap: wp(2),
-            alignItems: "center",
-            justifyContent: "center",
-            alignSelf: "center",
-            height: hp(10),
-            width: wp(80),
-            backgroundColor: "lightgrey",
-            borderRadius: 25,
-          }}
-        >
-          <Button
-            title="To Date"
-            buttonStyle={{ width: wp(40), height: hp(5) }}
-            titleStyle={{
-              fontSize: hp(2),
-              color: "white",
-              borderBottomWidth: 2,
-              borderBottomColor: "white",
-            }}
-            radius={25}
-            onPress={() => setShowToDatePicker(true)}
-          />
-          {showToDatePicker && (
-            <DateTimePicker
-              value={selectedToDate}
-              mode="date"
-              display="spinner"
-              onChange={handleToDateChange}
-            />
-          )}
-          <Text style={{ fontSize: hp(2.5), color: "green" }}>
-            {FormatDate(selectedToDate)}
-          </Text>
-        </View>*/}
 
           <View
             style={{

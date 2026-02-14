@@ -2543,6 +2543,7 @@ export default function ShiftReportView({ navigation }) {
                   onPress={handleGeneratePdf}
                 />
               </View>
+
               <View>
                 <Button
                   title="Edit Report"
@@ -2598,9 +2599,7 @@ export default function ShiftReportView({ navigation }) {
                       fontSize: hp(4),
                     }}
                   >
-                    {loadCard && reclaiming && mbTopStock && coalCount > 0
-                      ? "Loading.."
-                      : "No Data Available"}
+                    {shiftReportEnteredBy ? "Loading.." : "No Data Available"}
                   </Text>
                   <Text style={{ fontSize: hp(3) }}>Data available upto..</Text>
                   <Text style={{ fontSize: hp(3) }}>
