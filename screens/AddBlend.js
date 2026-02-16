@@ -134,10 +134,10 @@ export default function AddBlend({ navigation }) {
         return alert("Mistakes in Blend entries..");
       }
 
-      let cname = values["cn" + i].toString();
+      /* let cname = values["cn" + i].toString();
       if (!cnRegex.test(cname)) {
         return alert("Mistakes in Blend entries.. ");
-      }
+      }*/
 
       let cpercent = values["cp" + i].toString();
       if (!cpRegex.test(cpercent)) {

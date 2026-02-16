@@ -161,7 +161,7 @@ export default function ReclaimingReportExcel({ navigation }) {
             paddingLeft: hp(2),
             flexDirection: "row",
             alignItems: "center",
-            gap: wp(8),
+            gap: wp(6),
           }}
         >
           <AntDesign
@@ -171,7 +171,7 @@ export default function ReclaimingReportExcel({ navigation }) {
             onPress={() => navigation.goBack()}
           />
           <Text style={{ fontSize: wp(6), fontWeight: "bold" }}>
-            Feeding Report In Excel
+            Reclaiming Report In Excel
           </Text>
         </View>
       </View>
