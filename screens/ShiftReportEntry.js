@@ -388,7 +388,7 @@ export default function ShiftReportEntry({ navigation }) {
 
             <Button
               title={"Enter Feeding"}
-              buttonStyle={{ width: wp(40), height: hp(7) }}
+              buttonStyle={{ width: wp(60), height: hp(7) }}
               titleStyle={{
                 fontSize: hp(2.5),
                 color: "black",

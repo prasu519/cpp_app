@@ -76,7 +76,7 @@ export default function CrusherStatus({ navigation, route }) {
         },
       ]);
     }
-    console.log(feedingData);
+    //console.log(feedingData);
   }, []);
 
   const getPrevShiftCrusherData = async (date, shift) => {

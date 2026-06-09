@@ -1272,7 +1272,7 @@ export default function ShiftReportView({ navigation }) {
               <Picker
                 id="Shift"
                 style={{
-                  width: wp(25),
+                  width: wp(27),
                 }}
                 mode="dropdown"
                 enabled={true}

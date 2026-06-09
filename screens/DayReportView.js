@@ -30,7 +30,7 @@ export default function DayReportView({ navigation }) {
   const [cshiftMbTopStock, setCshiftMbTopStock] = useState();
   const [cshiftCTStock, setCshiftCTStock] = useState();
   const [cshiftCrusherStatus, setCshiftCrusherStatus] = useState();
-  const [dayAvgCI, setDayAvgCI] = useState();
+  const [dayAvgAnalysis, setDayAvgAnalysis] = useState();
   let reclaimingA;
   let reclaimingB;
   let reclaimingC;
@@ -49,7 +49,7 @@ export default function DayReportView({ navigation }) {
                 </div>
               </div>
      
-              <div style="display:flex; flex-direction:row; width:800px; height:800px; border:2px solid black; margin-top:10px">
+              <div style="display:flex; flex-direction:row; width:800px; height:900px; border:2px solid black; margin-top:10px">
                 <div style=" flex-direction:column;width:200px;float:left; border-right: 2px solid black; text-align:center;align-items:flex-start;">
                 <h2 style="text-decoration: underline;">CPP1 Reclaiming</h2>
                 ${Object.keys(mergedReclaimingData)
@@ -83,7 +83,7 @@ export default function DayReportView({ navigation }) {
                     (item, index) =>
                       `
 
-                      <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
+                    <div style="margin-bottom: 10px; display: flex; flex-direction: row; margin-left: 10px; gap: 10px;">
                       <div style="width: 100px; height:30px; align-items: center; display: flex; justify-content: flex-end;">
                         <span style="font-size: 20px; font-weight: bold;">
                         ${item.toUpperCase()}
@@ -101,6 +101,33 @@ export default function DayReportView({ navigation }) {
                   <span style="font-size: 30px; font-weight:bold">${
                     mergedReclaimingData.total_reclaiming
                   }</span>
+
+                  <h2 style="text-decoration: underline;">MB Top Stock</h2>
+                  ${[1, 2, 3, 4, 5, 6, 7, 8]
+                    .map((item, index) =>
+                      cshiftMbTopStock["coal" + item + "name"] != ""
+                        ? `
+                      <div style="margin-bottom: 10px;  flex-direction: row; ">
+                        <span style="font-size: 20px; font-weight:bold">
+                        ${cshiftMbTopStock[
+                          "coal" + item + "name"
+                        ].toUpperCase()} - ${
+                            cshiftMbTopStock["coal" + item + "stock"]
+                          }
+                        </span>
+                      </div>
+                      `
+                        : null
+                    )
+                    .join("")}
+                  
+                    
+                    <div style="margin-top: 10px;  flex-direction: row; ">
+                      <span style="font-size: 25px; font-weight:bold">
+                        TOTAL - ${cshiftMbTopStock.total_stock}
+                      </span>
+                    </div>
+                 
               </div>  
          
   
@@ -153,52 +180,42 @@ export default function DayReportView({ navigation }) {
                 <span style="font-size: 30px; font-weight:bold">${
                   cpp3MergedReclaimingData.cpp3total_reclaiming
                 }</span>
-</br>
-              <h2 style="text-decoration: underline;">Running hours</h2>
-              ${[2, 3, 4]
-                .map(
-                  (item, index) =>
-                    `
-                <div style="margin-bottom: 10px;  flex-direction: row; ">
-                  <span style="font-size: 20px; font-weight:bold">
-                    Stream-${item}
-                  </span>
-                  <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                    ${
-                      mergedTimingData["str" + item + "hrs"] +
-                      " : " +
-                      mergedTimingData["str" + item + "min"]
-                    }
-                  </span>
-                </div>
-              `
-                )
-                .join("")}
-               </br>
-               ${[50, 49, 126]
-                 .map(
-                   (item, index) =>
-                     `
-               <div style="margin-bottom: 10px;  flex-direction: row; ">
-                 <span style="font-size: 20px; font-weight:bold">
-                   CC-${item}
-                 </span>
-                 <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
-                   ${
-                     mergedTimingData["cc" + item + "hrs"] +
-                     " : " +
-                     mergedTimingData["cc" + item + "min"]
-                   }
-                 </span>
-               </div>
-             `
-                 )
-                 .join("")}
-                </br>
-        
-                     
-       
-        
+
+                <h2 style="text-decoration: underline;">MB Top Stock</h2>
+                  ${[1, 2, 3, 4, 5, 6]
+                    .map((item, index) =>
+                      cshiftMbTopStock["cpp3coal" + item + "name"] != ""
+                        ? `
+                      <div style="margin-bottom: 10px;  flex-direction: row; ">
+                        <span style="font-size: 20px; font-weight:bold">
+                        ${cshiftMbTopStock[
+                          "cpp3coal" + item + "name"
+                        ].toUpperCase()} - ${
+                            cshiftMbTopStock["cpp3coal" + item + "stock"]
+                          }
+                        </span>
+                      </div>
+                      `
+                        : null
+                    )
+                    .join("")}
+                  
+                    
+                    <div style="margin-top: 10px;  flex-direction: row; ">
+                      <span style="font-size: 25px; font-weight:bold">
+                        TOTAL - ${cshiftMbTopStock.cpp3total_stock}
+                      </span>
+                    </div>     
+                    </br>
+                    <h2 style="text-decoration: underline;">Total MBTop Stock</h2>
+                    <div style="margin-bottom: 10px;  flex-direction: row; ">
+                     <span style="font-size: 30px; font-weight:bold">
+                       ${
+                         cshiftMbTopStock.total_stock +
+                         cshiftMbTopStock.cpp3total_stock
+                       }
+                     </span>
+                   </div>   
               </div> 
        
 
@@ -263,40 +280,11 @@ export default function DayReportView({ navigation }) {
         )
         .join("")}
         <h2 style="text-decoration: underline; margin-top:30px">Total Feeding</h2>
-        <span style="font-size: 30px; font-weight:bold">${
+        <span style="font-size: 25px; font-weight:bold">${
           mergedFeedingData.total_feeding
         }</span>
 
-
-    
-        
-              </div>
-
-              <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
-              <h2 style="text-decoration: underline;">MB Top Stock</h2>
-             
-                <div style="margin-bottom: 10px;  flex-direction: row; ">
-                  <span style="font-size: 20px; font-weight:bold">
-                    CPP1 - ${cshiftMbTopStock.total_stock}
-                  </span>
-                </div>
-               <div style="margin-bottom: 10px;  flex-direction: row; ">
-               <span style="font-size: 20px; font-weight:bold">
-                 CPP3 - ${cshiftMbTopStock.cpp3total_stock}
-               </span>
-             </div>
-             </br>
-             <div style="margin-bottom: 10px;  flex-direction: row; ">
-               <span style="font-size: 20px; font-weight:bold">
-                 TOTAL - ${
-                   cshiftMbTopStock.total_stock +
-                   cshiftMbTopStock.cpp3total_stock
-                 }
-               </span>
-             </div>
-             
-        
-                      <h2 style="text-decoration: underline;">Coal Tower Stock</h2>
+        <h2 style="text-decoration: underline;">Coal Tower Stock</h2>
                       <div style="margin-bottom: 10px;  flex-direction: row; ">
                       <span style="font-size: 20px; font-weight:bold">
                         CT1 - ${cshiftCTStock.ct1stock}
@@ -312,19 +300,59 @@ export default function DayReportView({ navigation }) {
                         CT3 - ${cshiftCTStock.ct3stock}
                       </span>
                     </div>
-                    </br>
                     <div style="margin-bottom: 10px;  flex-direction: row; ">
-                      <span style="font-size: 20px; font-weight:bold">
+                      <span style="font-size: 25px; font-weight:bold">
                         TOTAL - ${cshiftCTStock.total_stock}
                       </span>
                     </div>
-              <h2 style="text-decoration: underline;">Crushing Index</h2>
-                  <div style="margin-bottom: 10px;  flex-direction: row; ">
-                <span style="font-size: 30px; font-weight:bold">
-                AVG - ${Number(dayAvgCI).toFixed(2)}
-              </span>
+                   <h2 style="text-decoration: underline;">Total Coal Stock</h2>
+                    <div style="margin-bottom: 10px;  flex-direction: row; ">
+                     <span style="font-size: 30px; font-weight:bold">
+                       ${
+                         cshiftMbTopStock.total_stock +
+                         cshiftMbTopStock.cpp3total_stock +
+                         cshiftCTStock.total_stock
+                       }
+                     </span>
+                   </div>
+
+
+                
             </div>
-            <h2 style="text-decoration: underline;">Crusher Status</h2>
+
+            <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
+             
+             
+        
+                      
+              <h2 style="text-decoration: underline;">Coal Analysis Day Avg</h2>
+              <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 25px; font-weight:bold">
+                  CI - ${Number(dayAvgAnalysis.avgci).toFixed(2)}
+                </span>
+              </div>
+              <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 25px; font-weight:bold">
+                ASH - ${Number(dayAvgAnalysis.avgash).toFixed(2)}
+                </span>
+              </div>
+              <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 25px; font-weight:bold">
+                VM - ${Number(dayAvgAnalysis.avgvm).toFixed(2)}
+                </span>
+              </div>
+              <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 25px; font-weight:bold">
+                FC - ${Number(dayAvgAnalysis.avgfc).toFixed(2)}
+                </span>
+              </div>
+              <div style="margin-bottom: 10px;  flex-direction: row; ">
+                <span style="font-size: 25px; font-weight:bold">
+                TM - ${Number(dayAvgAnalysis.avgtm).toFixed(2)}
+                </span>
+              </div>
+              
+              <h2 style="text-decoration: underline;">Crusher Status</h2>
                 <div style="margin-bottom: 10px;  flex-direction: row; ">
                 <span style="font-size: 20px; font-weight:bold">
                   CR34 - ${cshiftCrusherStatus.cr34status}
@@ -360,7 +388,47 @@ export default function DayReportView({ navigation }) {
                   CR202 - ${cshiftCrusherStatus.cr202status}
                 </span>
                 </div>
-                
+
+                <h2 style="text-decoration: underline;">Running hours</h2>
+                ${[2, 3, 4]
+                  .map(
+                    (item, index) =>
+                      `
+                  <div style="margin-bottom: 10px;  flex-direction: row; ">
+                    <span style="font-size: 20px; font-weight:bold">
+                      Stream-${item}
+                    </span>
+                    <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                      ${
+                        mergedTimingData["str" + item + "hrs"] +
+                        " : " +
+                        mergedTimingData["str" + item + "min"]
+                      }
+                    </span>
+                  </div>
+                `
+                  )
+                  .join("")}
+                 </br>
+                 ${[50, 49, 126]
+                   .map(
+                     (item, index) =>
+                       `
+                 <div style="margin-bottom: 10px;  flex-direction: row; ">
+                   <span style="font-size: 20px; font-weight:bold">
+                     CC-${item}
+                   </span>
+                   <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                     ${
+                       mergedTimingData["cc" + item + "hrs"] +
+                       " : " +
+                       mergedTimingData["cc" + item + "min"]
+                     }
+                   </span>
+                 </div>
+               `
+                   )
+                   .join("")}
               </div>
             </div>
               
@@ -593,7 +661,9 @@ export default function DayReportView({ navigation }) {
           shift: "C",
         },
       })
-      .then((responce) => setCshiftCTStock(responce.data.data[0]))
+      .then((responce) => {
+        setCshiftCTStock(responce.data.data[0]);
+      })
       .catch((error) => console.log(error));
   };
 
@@ -619,7 +689,7 @@ export default function DayReportView({ navigation }) {
           toshift: "C",
         },
       });
-      setDayAvgCI(response.data.data);
+      setDayAvgAnalysis(response.data.data);
     } catch (error) {
       console.log(error);
       alert(
@@ -1253,6 +1323,188 @@ export default function DayReportView({ navigation }) {
 
             <Card>
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                MB-Top Stocks CPP-1
+              </Card.Title>
+              <Card.Divider />
+
+              {cshiftMbTopStock && (
+                <View>
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((key) => {
+                    return cshiftMbTopStock["coal" + key + "name"] != "" ? (
+                      <View
+                        key={key}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(5),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {cshiftMbTopStock[
+                              "coal" + key + "name"
+                            ].toUpperCase()}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {cshiftMbTopStock["coal" + key + "stock"]}
+                        </Text>
+                      </View>
+                    ) : (
+                      ""
+                    );
+                  })}
+
+                  <Card.Divider />
+                  <View>
+                    <View
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(35),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(6),
+                            fontWeight: "bold",
+                            color: "red",
+                          }}
+                        >
+                          Total
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(25),
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(6),
+                            fontWeight: "bold",
+                            color: "red",
+                          }}
+                        >
+                          {cshiftMbTopStock.total_stock}
+                        </Text>
+                      </View>
+                    </View>
+                    <Card.Divider />
+                  </View>
+                </View>
+              )}
+            </Card>
+
+            <Card>
+              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                MB-Top Stocks CPP-3
+              </Card.Title>
+              <Card.Divider />
+
+              {cshiftMbTopStock && (
+                <View>
+                  {[1, 2, 3, 4, 5, 6].map((key) => {
+                    return cshiftMbTopStock["cpp3coal" + key + "name"] != "" ? (
+                      <View
+                        key={key}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(5),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {cshiftMbTopStock[
+                              "cpp3coal" + key + "name"
+                            ].toUpperCase()}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {cshiftMbTopStock["cpp3coal" + key + "stock"]}
+                        </Text>
+                      </View>
+                    ) : (
+                      ""
+                    );
+                  })}
+
+                  <Card.Divider />
+                  <View>
+                    <View
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(35),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(6),
+                            fontWeight: "bold",
+                            color: "red",
+                          }}
+                        >
+                          Total
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(25),
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(6),
+                            fontWeight: "bold",
+                            color: "red",
+                          }}
+                        >
+                          {cshiftMbTopStock.cpp3total_stock}
+                        </Text>
+                      </View>
+                    </View>
+                    <Card.Divider />
+                  </View>
+                </View>
+              )}
+            </Card>
+
+            <Card>
+              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
                 Feeding
               </Card.Title>
               <Card.Divider />
@@ -1377,6 +1629,94 @@ export default function DayReportView({ navigation }) {
 
             <Card>
               <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                Coal Tower Stocks
+              </Card.Title>
+              <Card.Divider />
+
+              {cshiftCTStock && (
+                <View>
+                  {[1, 2, 3].map((key) => {
+                    return (
+                      <View
+                        key={key}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(5),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {"CT-" + key}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {cshiftCTStock["ct" + key + "stock"]}
+                        </Text>
+                      </View>
+                    );
+                  })}
+
+                  <Card.Divider />
+
+                  <View>
+                    <View
+                      style={{
+                        marginBottom: 10,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: hp(3),
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: wp(35),
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(6),
+                            fontWeight: "bold",
+                            color: "red",
+                          }}
+                        >
+                          Total
+                        </Text>
+                      </View>
+                      <Divider orientation="vertical" />
+                      <View
+                        style={{
+                          width: wp(25),
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontSize: wp(6),
+                            fontWeight: "bold",
+                            color: "red",
+                          }}
+                        >
+                          {cshiftCTStock.total_stock}
+                        </Text>
+                      </View>
+                    </View>
+                    <Card.Divider />
+                  </View>
+                </View>
+              )}
+            </Card>
+
+            <Card>
+              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
                 Pushings
               </Card.Title>
               <Card.Divider />
@@ -1462,6 +1802,47 @@ export default function DayReportView({ navigation }) {
                     </View>
                     <Card.Divider />
                   </View>
+                </View>
+              )}
+            </Card>
+
+            <Card>
+              <Card.Title h3 h3Style={{ color: "#6495ED" }}>
+                Avg of Coal Analysis
+              </Card.Title>
+              <Card.Divider />
+
+              {dayAvgAnalysis && (
+                <View>
+                  {["avgci", "avgash", "avgvm", "avgfc", "avgtm"].map((key) => {
+                    return (
+                      <View
+                        key={key}
+                        style={{
+                          marginBottom: 10,
+                          display: "flex",
+                          flexDirection: "row",
+                          marginLeft: wp(5),
+                          gap: hp(3),
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: wp(30),
+                            alignItems: "flex-end",
+                          }}
+                        >
+                          <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                            {key.replace("avg", "").toUpperCase()}
+                          </Text>
+                        </View>
+                        <Divider orientation="vertical" />
+                        <Text style={{ fontSize: wp(5), fontWeight: "bold" }}>
+                          {dayAvgAnalysis[key].toFixed(2)}
+                        </Text>
+                      </View>
+                    );
+                  })}
                 </View>
               )}
             </Card>

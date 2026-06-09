@@ -24,6 +24,7 @@ export default function BinStock({ navigation }) {
   const [selectedCoalNameCpp3, setSelectedCoalNameCpp3] = useState("");
   const [isLoaded, setIsLoaded] = useState(true);
   const [count, setCount] = useState();
+
   const [doneScreen, setDoneScreen] = useState(false);
   const [buttonEnable, setButtonEnable] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -44,7 +45,7 @@ export default function BinStock({ navigation }) {
   const [oldTotalValues, setOldTotalValues] = useState(Array(count).fill(""));
 
   const [cpp3Coal, setCpp3Coal] = useState([""]);
-  const [cpp3Count, setCpp3Count] = useState(0);
+  const [cpp3Count, setCpp3Count] = useState(1);
   const [cpp3TotalReclaiming, setCpp3TotalReclaiming] = useState(0);
   const [cpp3TotalValues, setCpp3TotalValues] = useState(Array(count).fill(""));
 
@@ -190,7 +191,7 @@ export default function BinStock({ navigation }) {
         values["oldcoal" + i + "stock"] = 0;
       }
     }
-    for (let i = 1; i <= 6; i++) {
+    for (let i = 1; i <= cpp3Count; i++) {
       if (values["cpp3coal" + i + "stock"] === "") {
         values["cpp3coal" + i + "stock"] = 0;
       }
@@ -204,9 +205,16 @@ export default function BinStock({ navigation }) {
           TotalStock +
           parseInt(values["coal" + i + "stock"]) +
           parseInt(values["oldcoal" + i + "stock"]);
-      Cpp3TotalStock =
-        Cpp3TotalStock + parseInt(values["cpp3coal" + i + "stock"]);
     }
+    for (let i = 1; i <= cpp3Count; i++) {
+      if (values["cpp3coal" + i + "stock"] === "") {
+        alert("Enter all fields..");
+        return;
+      } else
+        Cpp3TotalStock =
+          Cpp3TotalStock + parseInt(values["cpp3coal" + i + "stock"]);
+    }
+
     let newValues = {
       ...values,
       coal1name: coalNames.cn1 ? coalNames.cn1 : "",
@@ -249,6 +257,8 @@ export default function BinStock({ navigation }) {
     for (let i = 1; i <= count; i++) {
       values["coal" + i + "stock"] = "";
       values["oldcoal" + i + "stock"] = "";
+    }
+    for (let i = 1; i <= cpp3Count; i++) {
       values["cpp3coal" + i + "stock"] = "";
     }
     setTimeout(() => navigation.goBack(), 1000);
@@ -825,4 +835,4 @@ export default function BinStock({ navigation }) {
       )}
     </Formik>
   );
-}
+} //cpp3total_stock

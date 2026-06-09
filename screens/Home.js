@@ -11,12 +11,16 @@ import { GlobalContext } from "../contextApi/GlobalContext";
 import axios from "axios";
 import shift from "../utils/Shift";
 import BlendAuthentication from "./BlendAuthentication";
+import EnterCrusherDetails from "./EnterCrusherDetails";
+import CrusherAuthentication from "./CrusherAuthentication";
 
 export default function Home({ navigation }) {
   const [enableCpp3, setEnableCpp3] = useState(false);
+  const [enableCrusherDetails, setEnableCrusherDetails] = useState(false);
   const [enableAddJob, setEnableAddJob] = useState(false);
   const [authModelVisible, setAuthModelVisible] = useState(false);
   const [blendAuthModelVisible, setBlendAuthModelVisible] = useState(false);
+  const [crusherAuthModelVisible, setCrusherAuthModelVisible] = useState(false);
   const [shiftReportEnteredBy, setShiftReportEnteredBy] = useState();
   const {
     credentials,
@@ -42,6 +46,9 @@ export default function Home({ navigation }) {
   const handleBlendAuthClose = () => {
     setBlendAuthModelVisible(false);
   };
+  const handleCrusherAuthClose = () => {
+    setCrusherAuthModelVisible(false);
+  };
 
   const handleEnterShiftReport = () => {
     setAuthModelVisible(true);
@@ -53,9 +60,32 @@ export default function Home({ navigation }) {
     setEnableCpp3(true);
     setBlendAuthModelVisible(true);
   };
+  const handleEnterCrusherDetails = () => {
+    setEnableCrusherDetails(true);
+    setCrusherAuthModelVisible(true);
+  };
   const handleAddJob = () => {
     setEnableAddJob(true);
     setBlendAuthModelVisible(true);
+  };
+
+  const handleCrusherAuthModelSubmit = async (empnum) => {
+    await axios
+      .get(BaseUrl + "/employedetails", {
+        params: {
+          empnum: empnum,
+        },
+      })
+      .then((responce) => {
+        if (responce.data.data[0]) {
+          setCredentials(responce.data.data[0]);
+          if (enableCrusherDetails) {
+            navigation.navigate("EnterCrusherDetails");
+            setEnableCrusherDetails(false);
+          }
+        } else alert("Wrong Employee Number..");
+      })
+      .catch((error) => console.log(error));
   };
 
   const handleBlendAuthModelSubmit = async (empnum) => {
@@ -190,7 +220,21 @@ export default function Home({ navigation }) {
           onSubmit={handleBlendAuthModelSubmit}
         />
 
-        {/*  <Button
+        {/* <Button
+          title={"Enter Crusher Details"}
+          buttonStyle={{ width: 200, height: 60 }}
+          titleStyle={{ fontSize: 18, color: "white" }}
+          radius={25}
+          color="#FF5000"
+          onPress={handleEnterCrusherDetails}
+        ></Button>
+        <CrusherAuthentication
+          onClose={handleCrusherAuthClose}
+          visible={crusherAuthModelVisible}
+          onSubmit={handleCrusherAuthModelSubmit}
+        />
+
+        <Button
           title={"Add New Job"}
           buttonStyle={{ width: 200, height: 60 }}
           titleStyle={{ fontSize: 20, color: "white" }}

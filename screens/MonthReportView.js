@@ -452,7 +452,7 @@ export default function MonthReportView({ navigation }) {
                 gap: wp(1),
                 alignItems: "center",
                 height: hp(5),
-                width: wp(40),
+                width: wp(42),
                 backgroundColor: "white",
                 borderRadius: 20,
               }}
@@ -481,7 +481,7 @@ export default function MonthReportView({ navigation }) {
               <Picker
                 id="Shift"
                 style={{
-                  width: wp(25),
+                  width: wp(27),
                 }}
                 mode="dropdown"
                 enabled={true}
@@ -586,7 +586,7 @@ export default function MonthReportView({ navigation }) {
                 gap: wp(1),
                 alignItems: "center",
                 height: hp(5),
-                width: wp(40),
+                width: wp(42),
                 backgroundColor: "white",
                 borderRadius: 20,
               }}
@@ -615,7 +615,7 @@ export default function MonthReportView({ navigation }) {
               <Picker
                 id="Shift"
                 style={{
-                  width: wp(25),
+                  width: wp(27),
                 }}
                 mode="dropdown"
                 enabled={true}
@@ -788,40 +788,6 @@ export default function MonthReportView({ navigation }) {
                 </View>
               ))}
             </View>
-
-            {/* <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr34 Feeder-1 "}
-              {crusherFeedersTotal.cr34Feeder1Total}
-            </Card.Title>
-            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr34 Feeder-2 "}
-              {crusherFeedersTotal.cr34Feeder2Total}
-            </Card.Title>
-            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr35 Feeder-1 "}
-              {crusherFeedersTotal.cr35Feeder1Total}
-            </Card.Title>
-            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr35 Feeder-2 Total - " + crusherFeedersTotal.cr35Feeder2Total}
-            </Card.Title>
-            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr36 Feeder-1 Total - " + crusherFeedersTotal.cr36Feeder1Total}
-            </Card.Title>
-            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr36 Feeder-2 Total - " + crusherFeedersTotal.cr36Feeder2Total}
-            </Card.Title>
-            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr37 Feeder-1 Total - " + crusherFeedersTotal.cr37Feeder1Total}
-            </Card.Title>
-            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr37 Feeder-2 Total - " + crusherFeedersTotal.cr37Feeder2Total}
-            </Card.Title>
-            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr38 Feeder-1 Total - " + crusherFeedersTotal.cr38Feeder1Total}
-            </Card.Title>
-            <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Cr38 Feeder-2 Total - " + crusherFeedersTotal.cr38Feeder2Total}
-            </Card.Title>*/}
           </Card>
         )}
         {toDateCShiftCTStock !== undefined && (

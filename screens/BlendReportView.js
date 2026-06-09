@@ -11,6 +11,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import { FormatDate } from "../utils/FormatDate";
+import * as MediaLibrary from "expo-media-library";
+import * as Print from "expo-print";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 
 export default function BlendReportView({ navigation }) {
   const [selectedFromDate, setSelectedFromDate] = useState(new Date());
@@ -30,6 +34,129 @@ export default function BlendReportView({ navigation }) {
     "empnum",
     "total",
   ]);
+
+  const generatePDF = async () => {
+    try {
+      const htmlContent = `
+          <html>
+            <body>
+              <div style="display:flex; flex-direction: column; text-align:center; width: 800px; height:100px;">
+                <h1 style="text-decoration: underline;">CPP-1 Blend Report</h1>
+                <div style=" flex-direction: row">
+                  <span style="font-size: 30px; font-weight:bold;">
+                    From Date : ${selectedFromDate.toISOString().split("T")[0]}
+                  </span>   
+                  <span style="font-size: 30px; font-weight:bold; margin-left:10px">
+                    To Date : ${selectedToDate.toISOString().split("T")[0]}
+                  </span>            
+                </div>
+              </div>
+     
+              <div style="display:flex; flex-direction:row; width:800px; height:800px; border:2px solid black; margin-top:10px">
+                <div style=" flex-direction:column;width:200px;float:left; border-right: 2px solid black; text-align:center;align-items:flex-start;">
+                ${
+                  blendData.length !== 0
+                    ? blendData
+                        .map(
+                          (item, index) => `
+                          <h2 style="text-decoration: underline;">Blend- ${
+                            index + 1
+                          }</h2>
+                          <div style="margin-bottom: 10px;  flex-direction: row; ">
+                          <span style="font-size: 20px; font-weight:bold">
+                            Date
+                          </span>
+                          <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                          ${blendData[index]["date"].split("T", 1)}
+                          </span>
+                        </div>
+
+                        <div style="margin-bottom: 10px;  flex-direction: row; ">
+                        <span style="font-size: 20px; font-weight:bold">
+                          Shift
+                        </span>
+                        <span style=" margin-left: 20px;font-size: 20px; font-weight:bold">
+                        ${blendData[index]["shift"].split("T", 1)}
+                        </span>
+                      </div>
+                          `
+                        )
+                        .join("")
+                    : ""
+                }
+              </div>  
+         
+  
+              <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
+                <h2 style="text-decoration: underline;">CPP3 Reclaiming</h2>
+              </div> 
+       
+
+              <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
+                <h2 style="text-decoration: underline;">Feeding Data</h2>
+                <h2 style="text-decoration: underline; margin-top:30px">Stream-Feeding</h2>
+                <h2 style="text-decoration: underline; margin-top:30px">Total Feeding</h2>    
+              </div>
+
+              <div style=" flex-direction:column;width:200px; text-align:center; border-right: 2px solid black; align-items:flex-end;">
+                <h2 style="text-decoration: underline;">MB Top Stock</h2>
+              </div>
+            
+            </body>
+          </html>
+        `;
+
+      const { uri } = await Print.printToFileAsync({ html: htmlContent });
+      //console.log("PDF generated at:", uri);
+
+      // Save the PDF to the file system
+      const fileUri = `${FileSystem.documentDirectory}cpp1_blend_report.pdf`;
+      await FileSystem.moveAsync({
+        from: uri,
+        to: fileUri,
+      });
+      //console.log("PDF saved at:", fileUri);
+
+      // Share the PDF
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri);
+      } else {
+        Alert.alert("PDF Generated", `PDF has been saved to: ${fileUri}`);
+      }
+    } catch (error) {
+      console.error("Error generating PDF", error);
+      Alert.alert("Error", "An error occurred while generating the PDF.");
+    }
+  };
+
+  const requestStoragePermission = async () => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+      // console.log("Permission status:", status);
+
+      if (status === "granted") {
+        // console.log("Permission granted");
+        return true;
+      } else {
+        //console.log("Permission denied");
+        /* Alert.alert(
+          "Permission Denied!",
+          "You need to give storage permission to download the file"
+        );*/
+        return false;
+      }
+    } catch (err) {
+      console.warn(err);
+      return false;
+    }
+  };
+
+  const handleGeneratePdf = async () => {
+    const permissionGranted = await requestStoragePermission();
+    if (permissionGranted) {
+      generatePDF();
+    }
+  };
 
   useEffect(() => {
     if (blendData.length > 0) {
@@ -497,6 +624,24 @@ export default function BlendReportView({ navigation }) {
                 </Text>
               </View>
             )}
+        {/* <Button
+          title={"Download PDF"}
+          color={"#000080"}
+          buttonStyle={{
+            height: hp(5),
+            width: wp(40),
+            marginTop: hp(2),
+            marginBottom: hp(2),
+            alignSelf: "center",
+          }}
+          onPress={handleGeneratePdf}
+          radius={20}
+          titleStyle={{
+            textDecorationLine: "underline",
+            fontSize: hp(2),
+            fontWeight: "600",
+          }}
+        />*/}
       </ScrollView>
     </View>
   );
