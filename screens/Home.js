@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import React, { useState, useContext, useEffect } from "react";
 import { Button, Text } from "@rneui/base";
@@ -17,7 +17,8 @@ import CrusherAuthentication from "./CrusherAuthentication";
 export default function Home({ navigation }) {
   const [enableCpp3, setEnableCpp3] = useState(false);
   const [enableCrusherDetails, setEnableCrusherDetails] = useState(false);
-  const [enableAddJob, setEnableAddJob] = useState(false);
+  const [enableAddComplaint, setEnableAddComplaint] = useState(false);
+  const [enablePendingComplaints, setEnablePendingComplaints] = useState(false);
   const [authModelVisible, setAuthModelVisible] = useState(false);
   const [blendAuthModelVisible, setBlendAuthModelVisible] = useState(false);
   const [crusherAuthModelVisible, setCrusherAuthModelVisible] = useState(false);
@@ -64,8 +65,12 @@ export default function Home({ navigation }) {
     setEnableCrusherDetails(true);
     setCrusherAuthModelVisible(true);
   };
-  const handleAddJob = () => {
-    setEnableAddJob(true);
+  const handleAddComplaint = () => {
+    setEnableAddComplaint(true);
+    setBlendAuthModelVisible(true);
+  };
+  const handlePendingComplaints = () => {
+    setEnablePendingComplaints(true);
     setBlendAuthModelVisible(true);
   };
 
@@ -98,9 +103,12 @@ export default function Home({ navigation }) {
       .then((responce) => {
         if (responce.data.data[0]) {
           setCredentials(responce.data.data[0]);
-          if (enableAddJob) {
-            navigation.navigate("AddJob");
-            setEnableAddJob(false);
+          if (enablePendingComplaints) {
+            navigation.navigate("PendingComplaintType");
+            setEnablePendingComplaints(false);
+          } else if (enableAddComplaint) {
+            navigation.navigate("ComplaintType");
+            setEnableAddComplaint(false);
           } else if (enableCpp3) {
             navigation.navigate("AddBlendCpp3");
             setEnableCpp3(false);
@@ -147,17 +155,20 @@ export default function Home({ navigation }) {
         style={{
           position: "absolute",
           zIndex: 1,
-          height: hp(30),
+          height: hp(15),
           width: wp(100),
           backgroundColor: "#2FF3E0",
           borderBottomLeftRadius: hp(8),
           borderBottomRightRadius: hp(8),
         }}
       >
-        <View style={{ alignItems: "center", marginVertical: 80 }}>
-          <Text h2>Welcome To CPP</Text>
+        <View style={{ alignItems: "center", marginTop: hp(7) }}>
+          <Text style={{ fontSize: hp(3), fontWeight: "bold" }}>
+            Welcome To CPP
+          </Text>
         </View>
       </View>
+
       <View
         style={{
           flex: 1,
@@ -166,24 +177,22 @@ export default function Home({ navigation }) {
           alignItems: "center",
           justifyContent: "center",
           gap: 30,
-          top: wp(10),
+          top: wp(20),
         }}
       >
         <Button
           title={"Enter Shift Reports"}
-          buttonStyle={{ width: 200, height: 100, elevation: 20 }}
+          buttonStyle={{ width: 200, height: 60 }}
           titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
           color="#E3E587"
           onPress={handleEnterShiftReport}
         />
-
         <ShiftReportAuthentication
           onClose={handleAuthModelClose}
           visible={authModelVisible}
           onSubmit={handleAuthModelSubmit}
         />
-
         <Button
           title={"View Reports"}
           buttonStyle={{ width: 200, height: 60 }}
@@ -191,7 +200,6 @@ export default function Home({ navigation }) {
           radius={25}
           onPress={() => navigation.navigate("ViewReports")}
         ></Button>
-
         <Button
           title={"Add Blend Cpp1"}
           buttonStyle={{ width: 200, height: 60 }}
@@ -200,12 +208,6 @@ export default function Home({ navigation }) {
           color="#FF8080"
           onPress={handleEnterBlendCpp1} //{() => navigation.navigate("AddBlend")}
         ></Button>
-        <BlendAuthentication
-          onClose={handleBlendAuthClose}
-          visible={blendAuthModelVisible}
-          onSubmit={handleBlendAuthModelSubmit}
-        />
-
         <Button
           title={"Add Blend Cpp3"}
           buttonStyle={{ width: 200, height: 60 }}
@@ -219,8 +221,15 @@ export default function Home({ navigation }) {
           visible={blendAuthModelVisible}
           onSubmit={handleBlendAuthModelSubmit}
         />
-
-        {/* <Button
+        <Button
+          title={"Complaints"}
+          buttonStyle={{ width: 200, height: 60 }}
+          titleStyle={{ fontSize: 18, color: "white" }}
+          radius={25}
+          onPress={() => navigation.navigate("ComplaintsHome")}
+          color="#A5CF83"
+        ></Button>
+        {/*  <Button
           title={"Enter Crusher Details"}
           buttonStyle={{ width: 200, height: 60 }}
           titleStyle={{ fontSize: 18, color: "white" }}
@@ -233,27 +242,6 @@ export default function Home({ navigation }) {
           visible={crusherAuthModelVisible}
           onSubmit={handleCrusherAuthModelSubmit}
         />
-
-        <Button
-          title={"Add New Job"}
-          buttonStyle={{ width: 200, height: 60 }}
-          titleStyle={{ fontSize: 20, color: "white" }}
-          radius={25}
-          color="#FF8080"
-          onPress={handleAddJob} //{() => navigation.navigate("AddBlend")}
-        ></Button>
-        <BlendAuthentication
-          onClose={handleBlendAuthClose}
-          visible={blendAuthModelVisible}
-          onSubmit={handleBlendAuthModelSubmit}
-        />
-        <Button
-          title={"Show Pending Jobs"}
-          buttonStyle={{ width: 200, height: 60 }}
-          titleStyle={{ fontSize: 18, color: "white" }}
-          radius={25}
-          onPress={() => navigation.navigate("ViewReports")}
-        ></Button>
       <Button
           title={"Crushers Report"}
           buttonStyle={{ width: 200, height: 100 }}

@@ -26,9 +26,7 @@ export default function AddBlend({ navigation }) {
   const { credentials, setCredentials } = useContext(GlobalContext);
 
   const displayDate = new Date();
-  /* let blendDate = moment()
-    .tz("Asia/Kolkata")
-    .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]");*/
+
   const blendDate = new Date().toISOString().split("T")[0];
 
   const currentShift = shift(new Date().getHours());

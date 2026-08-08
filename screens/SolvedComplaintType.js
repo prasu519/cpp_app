@@ -12,7 +12,7 @@ import axios from "axios";
 import shift from "../utils/Shift";
 import BlendAuthentication from "./BlendAuthentication";
 
-export default function AddJob({ navigation }) {
+export default function SolvedComplaintType({ navigation }) {
   const [enableCpp3, setEnableCpp3] = useState(false);
   const [authModelVisible, setAuthModelVisible] = useState(false);
   const [blendAuthModelVisible, setBlendAuthModelVisible] = useState(false);
@@ -101,16 +101,55 @@ export default function AddJob({ navigation }) {
       <View
         style={{
           position: "absolute",
-          zIndex: 1,
           height: hp(15),
           width: wp(100),
           backgroundColor: "#2FF3E0",
           borderBottomLeftRadius: hp(8),
           borderBottomRightRadius: hp(8),
+          gap: hp(2),
         }}
       >
-        <View style={{ alignItems: "center", marginVertical: 35 }}>
-          <Text h2>Add Job</Text>
+        <View
+          style={{
+            alignItems: "center",
+            height: hp(8),
+          }}
+        >
+          <Text
+            style={{
+              alignItems: "center",
+              fontSize: hp(4),
+              marginTop: hp(2),
+            }}
+          >
+            Solved Complaint Type
+          </Text>
+        </View>
+        <View
+          style={{
+            alignItems: "center",
+            width: wp(85),
+            left: wp(8),
+            flexDirection: "row",
+            gap: wp(45),
+          }}
+        >
+          <Text
+            style={{
+              alignItems: "center",
+              fontSize: hp(2.5),
+            }}
+          >
+            {credentials.empnum}
+          </Text>
+          <Text
+            style={{
+              alignItems: "center",
+              fontSize: hp(2.5),
+            }}
+          >
+            {credentials.name}
+          </Text>
         </View>
       </View>
       <View
@@ -121,53 +160,74 @@ export default function AddJob({ navigation }) {
           alignItems: "center",
           justifyContent: "center",
           gap: 40,
-          top: wp(8),
+          marginTop: hp(15),
         }}
       >
-        <Button
-          title={"Operational Job"}
+        {/* <Button
+          title={"Housekeeping"}
           buttonStyle={{ width: 250, height: 60 }}
           titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
-          onPress={() => navigation.navigate("AddJobDetails")}
+          onPress={() =>
+            navigation.navigate("SolvedComplaintList", { type: "hk" })
+          }
+          color="#E3E587"
+        ></Button>*/}
+
+        <Button
+          title={"Operational"}
+          buttonStyle={{ width: 250, height: 60 }}
+          titleStyle={{ fontSize: 20, color: "black" }}
+          radius={25}
+          onPress={() =>
+            navigation.navigate("SolvedComplaintList", { type: "oper" })
+          }
           color="#E3E587"
         ></Button>
 
         <Button
-          title={"Mechanical Job"}
+          title={"Mechanical"}
           buttonStyle={{ width: 250, height: 60 }}
           titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
-          onPress={() => navigation.navigate("AddJobDetails")}
+          onPress={() =>
+            navigation.navigate("SolvedComplaintList", { type: "mech" })
+          }
           color="#E3E587"
         ></Button>
 
         <Button
-          title={"Electrical Job"}
+          title={"Electrical"}
           buttonStyle={{ width: 250, height: 60 }}
           titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
-          onPress={() => navigation.navigate("AddJobDetails")}
+          onPress={() =>
+            navigation.navigate("SolvedComplaintList", { type: "elec" })
+          }
           color="#E3E587"
         ></Button>
 
         <Button
-          title={"Instrumentation Job"}
+          title={"Instrumentation"}
           buttonStyle={{ width: 250, height: 60 }}
           titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
-          onPress={() => navigation.navigate("AddJobDetails")}
+          onPress={() =>
+            navigation.navigate("SolvedComplaintList", { type: "inst" })
+          }
           color="#E3E587"
         ></Button>
 
-        <Button
-          title={"Other Jobs"}
+        {/* <Button
+          title={"Others"}
           buttonStyle={{ width: 250, height: 60 }}
           titleStyle={{ fontSize: 20, color: "black" }}
           radius={25}
-          onPress={() => navigation.navigate("AddJobDetails")}
+          onPress={() =>
+            navigation.navigate("SolvedComplaintList", { type: "other" })
+          }
           color="#E3E587"
-        ></Button>
+        ></Button>*/}
       </View>
     </View>
   );

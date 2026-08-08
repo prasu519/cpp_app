@@ -9,7 +9,6 @@ import EnterRunningHours from "../screens/EnterRunningHours";
 import Review from "../screens/Review";
 import AddBlend from "../screens/AddBlend";
 import AddBlendCpp3 from "../screens/AddBlendCpp3";
-import AppBlendTextBox from "../components/AppBlendTextBox";
 import DoneScreen from "../screens/DoneScreen";
 import EnterDelays from "../screens/EnterDelays";
 import BinStock from "../screens/BinStock";
@@ -29,13 +28,23 @@ import BlendReportViewCpp3 from "../screens/BlendReportViewCpp3";
 import CrusherStatus from "../screens/CrusherStatus";
 import CrushersDataEntry from "../screens/CrushersDataEntry";
 import CrusherEdit from "../components/CrusherEdit";
-import AddJob from "../screens/AddJob";
-import AddJobDetails from "../screens/AddJobDetails";
+import NewComplaintType from "../screens/NewComplaintType";
+import EnterComplaintDetails from "../screens/EnterComplaintDetails";
 import FeedingReportInExcel from "../screens/FeedingReportInExcel";
 import PushingsReportInExcel from "../screens/PushingsReportInExcel";
 import ReclaimingReportExcel from "../screens/ReclaimingReportExcel";
 import CrusherDetails from "../screens/CrusherDetails";
 import EnterCrusherDetails from "../screens/EnterCrusherDetails";
+import PendingComplaintType from "../screens/PendingComplaintType";
+import PendingComplaintList from "../screens/PendingComplaintList";
+import ComplaintsHome from "../screens/ComplaintsHome";
+import SolvedComplaintType from "../screens/SolvedComplaintType";
+import DeleteComplaintType from "../screens/DeleteComplaintType";
+import SolvedComplaintList from "../screens/SolvedComplaintList";
+import PendingComplaintDetails from "../screens/PendingComplaintDetails";
+import SolvedComplaintDetails from "../screens/SolvedComplaintDetails";
+import DeleteComplaintDetails from "../screens/DeleteComplaintDetails";
+import DeleteComplaintList from "../screens/DeleteComplaintList";
 
 const stack = createNativeStackNavigator();
 
@@ -84,8 +93,35 @@ function AppNavigator(props) {
       />
       <stack.Screen name="CrusherStatus" component={CrusherStatus} />
       <stack.Screen name="CrushersDataEntry" component={CrushersDataEntry} />
-      <stack.Screen name="AddJob" component={AddJob} />
-      <stack.Screen name="AddJobDetails" component={AddJobDetails} />
+      <stack.Screen name="NewComplaintType" component={NewComplaintType} />
+      <stack.Screen
+        name="PendingComplaintType"
+        component={PendingComplaintType}
+      />
+      <stack.Screen
+        name="SolvedComplaintType"
+        component={SolvedComplaintType}
+      />
+      <stack.Screen
+        name="DeleteComplaintType"
+        component={DeleteComplaintType}
+      />
+      <stack.Screen
+        name="EnterComplaintDetails"
+        component={EnterComplaintDetails}
+      />
+      <stack.Screen
+        name="PendingComplaintList"
+        component={PendingComplaintList}
+      />
+      <stack.Screen
+        name="SolvedComplaintList"
+        component={SolvedComplaintList}
+      />
+      <stack.Screen
+        name="DeleteComplaintList"
+        component={DeleteComplaintList}
+      />
       <stack.Screen
         name="FeedingReportInExcel"
         component={FeedingReportInExcel}
@@ -103,6 +139,19 @@ function AppNavigator(props) {
         name="EnterCrusherDetails"
         component={EnterCrusherDetails}
       />
+      <stack.Screen
+        name="PendingComplaintDetails"
+        component={PendingComplaintDetails}
+      />
+      <stack.Screen
+        name="SolvedComplaintDetails"
+        component={SolvedComplaintDetails}
+      />
+      <stack.Screen
+        name="DeleteComplaintDetails"
+        component={DeleteComplaintDetails}
+      />
+      <stack.Screen name="ComplaintsHome" component={ComplaintsHome} />
     </stack.Navigator>
   );
 }

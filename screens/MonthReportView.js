@@ -668,7 +668,7 @@ export default function MonthReportView({ navigation }) {
         {avgCI !== undefined && (
           <Card>
             <Card.Title h4 h4Style={{ color: "#6495ED" }}>
-              {"Average CI - " + Number(avgCI).toFixed(2)}
+              {"Average CI - " + Number(avgCI.avgci).toFixed(2)}
             </Card.Title>
           </Card>
         )}
