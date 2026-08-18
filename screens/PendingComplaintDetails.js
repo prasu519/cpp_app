@@ -60,6 +60,7 @@ export default function PendingComplaintDetails({ navigation, route }) {
             (responce.data.data[0].name == "Prasanna" ||
               responce.data.data[0].name == "Phaneendra" ||
               responce.data.data[0].name == "Sandeep" ||
+              responce.data.data[0].name == "Dharma Rao" ||
               responce.data.data[0].name == "Anurag")
           ) {
             updateComplaint();
@@ -68,6 +69,7 @@ export default function PendingComplaintDetails({ navigation, route }) {
             (responce.data.data[0].name == "Prasanna" ||
               responce.data.data[0].name == "Phaneendra" ||
               responce.data.data[0].name == "Sandeep" ||
+              responce.data.data[0].name == "Dharma Rao" ||
               responce.data.data[0].name == "Suryanarayana")
           ) {
             updateComplaint();
@@ -76,6 +78,7 @@ export default function PendingComplaintDetails({ navigation, route }) {
             (responce.data.data[0].name == "Prasanna" ||
               responce.data.data[0].name == "Phaneendra" ||
               responce.data.data[0].name == "Sandeep" ||
+              responce.data.data[0].name == "Dharma Rao" ||
               responce.data.data[0].name == "Babji")
           ) {
             updateComplaint();
@@ -83,6 +86,7 @@ export default function PendingComplaintDetails({ navigation, route }) {
             complaint.complaintType == "other" &&
             (responce.data.data[0].name == "Prasanna" ||
               responce.data.data[0].name == "Phaneendra" ||
+              responce.data.data[0].name == "Dharma Rao" ||
               responce.data.data[0].name == "Sandeep")
           ) {
             updateComplaint();

@@ -13,8 +13,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { Picker } from "@react-native-picker/picker";
 import { FormatDate } from "../utils/FormatDate";
 import axios from "axios";
 
@@ -23,63 +21,12 @@ export default function ShiftReportAuthentication({
   onClose,
   onSubmit,
 }) {
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [empnum, setEmpnum] = useState();
   const [selectedDate, setSelectedDate] = useState();
   const [selectedShift, setSelectedShift] = useState();
-  const [shiftReportEnteredBy, setShiftReportEnteredBy] = useState();
-
   const [loading, setLoading] = useState(false);
-  const [presDataChecked, setPresDataChecked] = useState(false);
-  const [prevDataChecked, setPrevDataChecked] = useState(false);
-  const [presEntryFound, setPresEntryFound] = useState(true);
   const [latestRecord, setLatestRecord] = useState();
   const [latestRecordLoaded, setLatestRecordLoaded] = useState(false);
-
-  /* useEffect(() => {
-    if (presDataChecked) {
-      setPresDataChecked(false);
-      if (shiftReportEnteredBy === undefined) {
-        if (selectedShift === "A") {
-          fdate = new Date(selectedDate);
-          fdate.setDate(fdate.getDate() - 1);
-          previousDate = fdate.toISOString().split("T")[0];
-          getPrevShiftReportEntryDetails(previousDate, "C");
-        } else if (selectedShift === "B") {
-          fdate = new Date(selectedDate).toISOString().split("T")[0];
-          getPrevShiftReportEntryDetails(fdate, "A");
-        } else {
-          fdate = new Date(selectedDate).toISOString().split("T")[0];
-          getPrevShiftReportEntryDetails(fdate, "B");
-        }
-      } else {
-        alert("This Shift report has been submitted already..");
-        setPresDataChecked(false);
-      }
-    }
-    if (prevDataChecked) {
-      if (shiftReportEnteredBy === undefined) {
-        alert("Please enter previous Shift report first..");
-      } else {
-        let nextdate = new Date(latestRecord.date);
-        nextdate.setDate(nextdate.getDate() + 1);
-
-        if (latestRecord.shift === "C") {
-          onSubmit(empnum, nextdate, "A");
-        } else if (latestRecord.shift === "B") {
-          onSubmit(empnum, latestRecord.date, "C");
-        } else {
-          onSubmit(empnum, latestRecord.date, "B");
-        }
-
-        setSelectedDate(null);
-        setSelectedShift(null);
-        setEmpnum(null);
-        onClose();
-      }
-      setPrevDataChecked(false);
-    }
-  }, [presDataChecked, prevDataChecked]);*/
 
   useEffect(() => {
     const getLatestRecord = async () => {
@@ -95,44 +42,6 @@ export default function ShiftReportAuthentication({
     };
     getLatestRecord();
   }, []);
-
-  const getPresShiftReportEntryDetails = async (date, shift) => {
-    await axios
-      .get(BaseUrl + "/shiftreportenteredby", {
-        params: {
-          date: date,
-          shift: shift,
-        },
-      })
-      .then((responce) => {
-        setShiftReportEnteredBy(responce.data.data[0]);
-      })
-      .catch((error) => console.log(error));
-    setPresDataChecked(true);
-  };
-
-  const getPrevShiftReportEntryDetails = async (date, shift) => {
-    await axios
-      .get(BaseUrl + "/shiftreportenteredby", {
-        params: {
-          date: date,
-          shift: shift,
-        },
-      })
-      .then((responce) => {
-        setShiftReportEnteredBy(responce.data.data[0]);
-      })
-      .catch((error) => console.log(error));
-    setPrevDataChecked(true);
-    setPresEntryFound(true);
-  };
-
-  const handleDateChange = (event, date) => {
-    setShowDatePicker(false);
-    if (date) {
-      setSelectedDate(date);
-    }
-  };
 
   const handleSubmit = async () => {
     if (empnum != null) {
@@ -156,25 +65,6 @@ export default function ShiftReportAuthentication({
       setEmpnum(null);
       onClose();
 
-      /* let fdate;
-      let previousDate;
-      fdate = new Date(selectedDate).toISOString().split("T")[0];
-      await getPresShiftReportEntryDetails(fdate, selectedShift);
-
-      if (!presEntryFound) {
-        if (selectedShift === "A") {
-          fdate = new Date(selectedDate);
-          fdate.setDate(fdate.getDate() - 1);
-          previousDate = fdate.toISOString().split("T")[0];
-          await getPrevShiftReportEntryDetails(previousDate, "C");
-        } else if (selectedShift === "B") {
-          fdate = new Date(selectedDate).toISOString().split("T")[0];
-          await getPrevShiftReportEntryDetails(fdate, "A");
-        } else {
-          fdate = new Date(selectedDate).toISOString().split("T")[0];
-          await getPrevShiftReportEntryDetails(fdate, "B");
-        }
-      }*/
       setLoading(false);
     } else alert("Enter Employee number.. ");
   };

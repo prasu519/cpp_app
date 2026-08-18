@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState, useCallback } from "react";
-import { View, ScrollView, TextInput } from "react-native";
+import { View, ActivityIndicator } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { Text } from "@rneui/base";
 import { FlatList, TouchableOpacity } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
 import axios from "axios";
 import { FormatDate } from "../utils/FormatDate";
-import AppButton from "../components/AppButton";
 import { GlobalContext } from "../contextApi/GlobalContext";
 import shift from "../utils/Shift";
 import {
@@ -16,20 +14,12 @@ import {
 
 export default function SolvedComplaintList({ navigation, route }) {
   const [streamList, setStreamList] = useState([]);
-  const [equipmentList, setEquipmentList] = useState([]);
-  const [cleaningAreaList, setCleaningAreaList] = useState([]);
-  const [selectedStream, setSelectedStream] = useState(null);
-  const [selectedEquipment, setSelectedEquipment] = useState(null);
-  const [selectedCleaningArea, setSelectedCleaningArea] = useState(null);
-  const [description, setDescription] = useState("");
   const [complaints, setComplaints] = useState([]);
+  const [solvedComplaintsLoaded, setSolvedComplaintsLoaded] = useState(false);
   const { credentials } = useContext(GlobalContext);
   const { type } = route.params;
 
   const displayDate = new Date();
-
-  const blendDate = new Date().toISOString().split("T")[0];
-
   const currentShift = shift(new Date().getHours());
 
   useFocusEffect(
@@ -61,6 +51,7 @@ export default function SolvedComplaintList({ navigation, route }) {
         `${BaseUrl}/complaintlist/${type}?status=solved`
       );
       setComplaints(response.data);
+      setSolvedComplaintsLoaded(true);
     } catch (err) {
       console.log(err);
     }
@@ -160,109 +151,124 @@ export default function SolvedComplaintList({ navigation, route }) {
           paddingHorizontal: 15,
         }}
       >
-        <FlatList
-          data={complaints}
-          keyExtractor={(item) => item._id}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                backgroundColor: "#F7FCFF",
-                borderRadius: 15,
-                padding: 18,
-                marginBottom: 15,
-
-                shadowColor: "#000",
-                shadowOpacity: 0.15,
-                shadowRadius: 4,
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-
-                elevation: 5,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  color: "#1565C0",
-                }}
-              >
-                {FormatDate(new Date(item.date))}
-              </Text>
-
-              <Text
-                style={{
-                  marginTop: 8,
-                  fontSize: 17,
-                }}
-              >
-                Equipment : {item.equipment}
-              </Text>
-
-              <Text
-                style={{
-                  marginTop: 4,
-                  fontSize: 17,
-                }}
-              >
-                Area : {item.area}
-              </Text>
-
+        {!solvedComplaintsLoaded ? (
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <ActivityIndicator size="large" color="#0000ff" />
+            <Text style={{ marginTop: hp(1), color: "gray" }}>
+              Please wait...
+            </Text>
+          </View>
+        ) : complaints == "" ? (
+          <View style={{ alignItems: "center", justifyContent: "center" }}>
+            <Text style={{ marginTop: hp(1), color: "green" }}>
+              No Complaints
+            </Text>
+          </View>
+        ) : (
+          <FlatList
+            data={complaints}
+            keyExtractor={(item) => item._id}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
               <View
                 style={{
-                  marginTop: 12,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  backgroundColor: "#F7FCFF",
+                  borderRadius: 15,
+                  padding: 18,
+                  marginBottom: 15,
+
+                  shadowColor: "#000",
+                  shadowOpacity: 0.15,
+                  shadowRadius: 4,
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+
+                  elevation: 5,
                 }}
               >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: "bold",
+                    color: "#1565C0",
+                  }}
+                >
+                  {FormatDate(new Date(item.date))}
+                </Text>
+
+                <Text
+                  style={{
+                    marginTop: 8,
+                    fontSize: 17,
+                  }}
+                >
+                  Equipment : {item.equipment}
+                </Text>
+
+                <Text
+                  style={{
+                    marginTop: 4,
+                    fontSize: 17,
+                  }}
+                >
+                  Area : {item.area}
+                </Text>
+
                 <View
                   style={{
-                    backgroundColor: "#A1CB35",
-                    borderRadius: 20,
-                    paddingHorizontal: 15,
-                    paddingVertical: 6,
+                    marginTop: 12,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  <Text
+                  <View
                     style={{
-                      color: "white",
-                      fontWeight: "bold",
+                      backgroundColor: "#A1CB35",
+                      borderRadius: 20,
+                      paddingHorizontal: 15,
+                      paddingVertical: 6,
                     }}
                   >
-                    {item.status}
-                  </Text>
-                </View>
+                    <Text
+                      style={{
+                        color: "white",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {item.status}
+                    </Text>
+                  </View>
 
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: "#2196F3",
-                    borderRadius: 8,
-                    paddingHorizontal: 18,
-                    paddingVertical: 8,
-                  }}
-                  onPress={() => {
-                    navigation.navigate("SolvedComplaintDetails", {
-                      complaint: item,
-                    });
-                  }}
-                >
-                  <Text
+                  <TouchableOpacity
                     style={{
-                      color: "white",
-                      fontWeight: "bold",
+                      backgroundColor: "#2196F3",
+                      borderRadius: 8,
+                      paddingHorizontal: 18,
+                      paddingVertical: 8,
+                    }}
+                    onPress={() => {
+                      navigation.navigate("SolvedComplaintDetails", {
+                        complaint: item,
+                      });
                     }}
                   >
-                    Details
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={{
+                        color: "white",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      Details
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
-        />
+            )}
+          />
+        )}
       </View>
     </View>
   );
