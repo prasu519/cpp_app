@@ -106,51 +106,17 @@ export default function PendingComplaintType({ navigation }) {
           backgroundColor: "#2FF3E0",
           borderBottomLeftRadius: hp(8),
           borderBottomRightRadius: hp(8),
-          gap: hp(4),
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <View
+        <Text
           style={{
-            alignItems: "center",
-            height: hp(8),
+            fontSize: hp(4),
           }}
         >
-          <Text
-            style={{
-              alignItems: "center",
-              fontSize: hp(4),
-              marginTop: hp(2),
-            }}
-          >
-            Pending Complaint Type
-          </Text>
-        </View>
-        <View
-          style={{
-            alignItems: "center",
-            width: wp(85),
-            left: wp(8),
-            flexDirection: "row",
-            gap: wp(45),
-          }}
-        >
-          <Text
-            style={{
-              alignItems: "center",
-              fontSize: hp(2.5),
-            }}
-          >
-            {credentials.empnum}
-          </Text>
-          <Text
-            style={{
-              alignItems: "center",
-              fontSize: hp(2.5),
-            }}
-          >
-            {credentials.name}
-          </Text>
-        </View>
+          Pending Complaint Type
+        </Text>
       </View>
       <View
         style={{

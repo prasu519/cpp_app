@@ -471,6 +471,18 @@ export default function ShiftReportView({ navigation }) {
                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                  ${coalTowerStock.total_stock}
                </p>
+              
+
+             <h2 style="text-decoration: underline;">Total Stock of all MBtops & Coal Towers</h2>
+                    <div style="margin-bottom: 10px;  flex-direction: row; ">
+                     <span style="font-size: 30px; font-weight:bold">
+                       ${
+                         mbTopStock.total_stock +
+                         mbTopStock.cpp3total_stock +
+                         coalTowerStock.total_stock
+                       }
+                     </span>
+                   </div>
                
               
                </div>
